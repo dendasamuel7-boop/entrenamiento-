@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Plan de Entrenamiento</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --accent: #e63946;
+    --accent-dark: #c1121f;
+    --accent-light: #fce4e6;
+    --green: #2d6a4f;
+    --green-light: #d8f3dc;
+    --text: #1a1a1a;
+    --muted: #888880;
+    --border: #e0ddd8;
+    --radius: 16px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  }
+ 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+ 
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 16px 80px;
+  }
+ 
+  /* ---- HEADER ---- */
+  header {
+    margin-bottom: 28px;
+  }
+ 
+  .header-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+ 
+  h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+ 
+  h1 span {
+    color: var(--accent);
+  }
+ 
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+ 
+  /* ---- LEVEL CARD ---- */
+  .xp-card {
+    background: var(--text);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow);
+  }
+ 
+  .level-badge {
+    background: var(--accent);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.4rem;
+    color: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 1px;
+  }
+ 
+  .xp-info { flex: 1; min-width: 0; }
+  .xp-label { font-size: 0.7rem; color: #aaa; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+  .xp-bar-wrap { background: rgba(255,255,255,0.15); border-radius: 8px; height: 8px; margin-top: 6px; overflow: hidden; }
+  .xp-bar { height: 100%; border-radius: 8px; background: var(--accent); transition: width 0.5s ease; }
+  .xp-text { font-size: 0.75rem; color: #aaa; margin-top: 4px; font-weight: 600; }
+ 
+  /* ---- DAYS NAV ---- */
+  .days-nav {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+ 
+  .day-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 4px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    box-shadow: var(--shadow);
+  }
+ 
+  .day-btn .day-abbr { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .day-btn .day-dot { display: block; width: 6px; height: 6px; border-radius: 50%; background: transparent; margin: 5px auto 0; transition: background 0.15s; }
+ 
+  .day-btn:hover { border-color: var(--accent); color: var(--text); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .day-btn.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .day-btn.active .day-dot { background: rgba(255,255,255,0.5); }
+  .day-btn.today:not(.active) { border-color: var(--accent); color: var(--accent); }
+  .day-btn.done:not(.active) { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .day-btn.done:not(.active) .day-dot { background: var(--green); }
+  .day-btn.rest { opacity: 0.45; cursor: default; }
+  .day-btn.rest:hover { transform: none; border-color: var(--border); box-shadow: var(--shadow); color: var(--muted); }
+ 
+  /* ---- TIP CARD ---- */
+  .tip-card {
+    background: var(--surface);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+ 
+  .tip-label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 4px; }
+  .tip-text { font-size: 0.92rem; color: var(--text); font-weight: 700; line-height: 1.4; }
+ 
+  /* ---- WORKOUT CARD ---- */
+  .workout-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+ 
+  .workout-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #fff 60%, var(--accent-light));
+  }
+ 
+  .workout-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    color: var(--text);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+ 
+  .workout-meta {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+ 
+  .workout-meta strong { color: var(--accent); }
+ 
+  /* ---- PROGRESS ---- */
+  .progress-wrap { padding: 14px 20px 0; }
+  .progress-label { font-size: 0.78rem; color: var(--muted); font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .progress-track { background: var(--surface2); border-radius: 8px; height: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 8px; background: var(--accent); transition: width 0.35s ease; }
+ 
+  /* ---- EXERCISES ---- */
+  .exercises { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+ 
+  .exercise-item {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+    user-select: none;
+  }
+ 
+  .exercise-item:hover { border-color: var(--accent); background: var(--accent-light); }
+  .exercise-item.completed { border-color: var(--green); background: var(--green-light); }
+  .exercise-item.locked { cursor: default; opacity: 0.6; }
+  .exercise-item.locked:hover { border-color: transparent; background: var(--bg); }
+ 
+  .ex-check {
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    color: transparent;
+  }
+ 
+  .exercise-item.completed .ex-check {
+    border-color: var(--green);
+    background: var(--green);
+    color: #fff;
+  }
+ 
+  .ex-info { flex: 1; min-width: 0; }
+  .ex-name { font-weight: 800; font-size: 0.93rem; color: var(--text); }
+  .ex-detail { font-size: 0.78rem; color: var(--muted); margin-top: 2px; font-weight: 600; }
+ 
+  .ex-reps {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+ 
+  .exercise-item.completed .ex-reps { color: var(--green); }
+ 
+  /* ---- COMPLETE BUTTON ---- */
+  .complete-btn {
+    width: calc(100% - 32px);
+    margin: 8px 16px 16px;
+    padding: 15px;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 14px rgba(230,57,70,0.35);
+  }
+ 
+  .complete-btn:hover:not(:disabled) { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(230,57,70,0.4); }
+  .complete-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; box-shadow: none; transform: none; }
+  .complete-btn.day-done { background: var(--green); box-shadow: 0 4px 14px rgba(45,106,79,0.3); cursor: default; }
+  .complete-btn.day-done:hover { background: var(--green); transform: none; }
+ 
+  /* ---- HOW TO SECTION ---- */
+  .how-section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 18px 18px 8px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+ 
+  .how-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+ 
+  .how-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+ 
+  .how-item:last-child { border-bottom: none; padding-bottom: 4px; }
+  .how-name { font-weight: 900; font-size: 0.88rem; color: var(--text); }
+  .how-desc { font-size: 0.83rem; color: var(--muted); margin-top: 3px; font-weight: 600; line-height: 1.4; }
+ 
+  /* ---- REST DAY ---- */
+  .rest-day {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 50px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+ 
+  .rest-day h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.2rem;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+ 
+  .rest-day p { color: var(--muted); font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
+  .rest-tip { margin-top: 16px !important; color: var(--accent) !important; }
+ 
+  /* ---- CELEBRATION OVERLAY ---- */
+  #celebration {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(250,248,245,0.96);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+ 
+  #celebration.show { display: flex; }
+ 
+  .cel-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+ 
+  @keyframes pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+ 
+  .cel-icon svg { width: 40px; height: 40px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+ 
+  .cel-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.8rem;
+    color: var(--text);
+    letter-spacing: 2px;
+    line-height: 1.1;
+  }
+ 
+  .cel-sub { font-size: 1rem; color: var(--muted); margin-top: 8px; font-weight: 700; }
+  .cel-xp { font-family: 'Bebas Neue', cursive; font-size: 2rem; color: var(--accent); margin-top: 10px; letter-spacing: 1px; }
+ 
+  .close-cel {
+    margin-top: 28px;
+    padding: 14px 44px;
+    background: var(--text);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.15s;
+  }
+ 
+  .close-cel:hover { background: var(--accent); }
+ 
+  /* ---- CONFETTI ---- */
+  .confetti-piece {
+    position: fixed;
+    top: -12px;
+    animation: fall linear forwards;
+    border-radius: 2px;
+    z-index: 101;
+    pointer-events: none;
+  }
+ 
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+ 
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 380px) {
+    h1 { font-size: 2.2rem; }
+    .days-nav { gap: 4px; }
+    .day-btn { padding: 8px 2px 6px; }
+    .day-btn .day-abbr { font-size: 0.62rem; }
+  }
+</style>
+</head>
+<body>
+ 
+<!-- Celebration overlay -->
+<div id="celebration">
+  <div class="cel-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  </div>
+  <div class="cel-title">ENTRENAMIENTO<br>COMPLETADO</div>
+  <div class="cel-sub" id="cel-sub">¡Muy bien! Cada dia eres mas fuerte.</div>
+  <div class="cel-xp" id="cel-xp">+50 XP</div>
+  <button class="close-cel" onclick="closeCelebration()">CONTINUAR</button>
+</div>
+ 
+<div class="container">
+ 
+  <header>
+    <div class="header-top">
+      <div>
+        <h1>MI <span>PLAN</span></h1>
+        <div class="subtitle">Sin pesas &bull; Solo tu cuerpo</div>
+      </div>
+    </div>
+  </header>
+ 
+  <!-- XP bar -->
+  <div class="xp-card">
+    <div class="level-badge">NV. <span id="lvl-num">1</span></div>
+    <div class="xp-info">
+      <div class="xp-label">Experiencia (XP)</div>
+      <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar" style="width:0%"></div></div>
+      <div class="xp-text"><span id="xp-cur">0</span> / <span id="xp-max">100</span> XP para subir de nivel</div>
+    </div>
+  </div>
+ 
+  <!-- Days nav -->
+  <div class="days-nav" id="days-nav"></div>
+ 
+  <!-- Workout area -->
+  <div id="workout-area"></div>
+ 
+  <!-- How to section -->
+  <div class="how-section" id="how-section" style="display:none">
+    <div class="how-title">Como se hacen</div>
+    <div id="how-list"></div>
+  </div>
+ 
+</div>
+ 
+<script>
+// =====================
+// DATA
+// =====================
+const DAYS = [
+  {
+    id: 0, name: "Lun", fullName: "Lunes",
+    duration: "15-20 min", xp: 40,
+    tip: "Empieza la semana con energia. Haz cada ejercicio despacio al principio.",
+    exercises: [
+      { name: "Calentamiento",        detail: "Salta en el sitio o corre sin moverte del sitio",  reps: "2 min",    how: "Da saltitos en el sitio moviendo los brazos. El objetivo es calentar los musculos antes de empezar." },
+      { name: "Sentadillas",          detail: "3 series de 8 repeticiones",                       reps: "3 x 8",    how: "Pies separados al ancho de los hombros. Baja como si fueras a sentarte en una silla. Espalda recta siempre. Sube lentamente." },
+      { name: "Flexiones de rodillas",detail: "3 series de 5 repeticiones",                       reps: "3 x 5",    how: "Como las flexiones normales pero con las rodillas en el suelo. Manos al ancho de los hombros, baja el pecho hasta casi tocar el suelo." },
+      { name: "Plancha",              detail: "3 series de 20 segundos",                          reps: "3 x 20s",  how: "Apoya los codos y las puntas de los pies. Mantén el cuerpo recto como una tabla. No saques el trasero hacia arriba." },
+      { name: "Estiramiento",         detail: "Estira piernas y brazos suavemente",               reps: "2 min",    how: "Tira suavemente de cada musculo durante 15-20 segundos. Nunca hagas rebotes al estirar. Respira con calma." }
+    ]
+  },
+  {
+    id: 1, name: "Mar", fullName: "Martes",
+    duration: "20-30 min", xp: 55,
+    tip: "Martes de resistencia. Descansa entre series solo 30-40 segundos.",
+    exercises: [
+      { name: "Calentamiento",        detail: "Jumping jacks",                                    reps: "3 min",    how: "Salta abriendo piernas y brazos al mismo tiempo. Aterriza suave doblando un poco las rodillas." },
+      { name: "Zancadas",             detail: "3 series de 8 repeticiones por pierna",            reps: "3 x 8",    how: "Da un gran paso adelante y baja la rodilla de atras hacia el suelo. Luego vuelve al centro. Alterna piernas." },
+      { name: "Flexiones normales",   detail: "3 series de 5 a 8 repeticiones",                  reps: "3 x 5-8",  how: "Cuerpo recto, manos al ancho de hombros. Baja hasta casi tocar el suelo con el pecho. Si no puedes, hazlas de rodillas." },
+      { name: "Superman",             detail: "3 series de 10 repeticiones",                      reps: "3 x 10",   how: "Tumbate boca abajo. Levanta brazos y piernas a la vez como si volaras. Aguanta 2 segundos arriba y baja con control." },
+      { name: "Abdominales",          detail: "3 series de 10 repeticiones",                      reps: "3 x 10",   how: "Tumbado boca arriba, rodillas dobladas. Sube solo hasta que los hombros despejen el suelo. No tires del cuello." },
+      { name: "Estiramiento",         detail: "Estiramiento completo",                            reps: "3 min",    how: "Estira cuadriceps, isquiotibiales y hombros. Aguanta cada posicion 20 segundos sin rebotes." }
+    ]
+  },
+  {
+    id: 2, name: "Mie", fullName: "Miercoles",
+    duration: "15-20 min", xp: 40,
+    tip: "Mitad de semana. Hoy trabajamos el tronco y la estabilidad.",
+    exercises: [
+      { name: "Calentamiento",        detail: "Movimientos de cuello, hombros y cadera",         reps: "2 min",    how: "Gira el cuello suavemente, haz circulos con los hombros y mueve las caderas en circulo. Todo despacio." },
+      { name: "Plancha lateral",      detail: "2 series de 15 segundos por lado",                reps: "2 x 15s",  how: "Apoyate en un codo y el borde del pie. Sube las caderas para que el cuerpo quede recto. No dejes caer la cadera." },
+      { name: "Sentadillas sumo",     detail: "3 series de 10 repeticiones",                     reps: "3 x 10",   how: "Pies muy separados y puntas hacia fuera. Baja con la espalda recta. Trabaja mas el interior de los muslos." },
+      { name: "Fondos de triceps",    detail: "3 series de 8 repeticiones (usa una silla)",      reps: "3 x 8",    how: "Sientate en el borde de una silla, manos agarradas al borde. Desliza el trasero hacia delante y baja doblando los codos." },
+      { name: "Estiramiento lateral", detail: "Estiramiento de costados",                        reps: "2 min",    how: "Estira los costados levantando un brazo y doblando hacia el lado contrario. Aguanta 15 segundos por lado." }
+    ]
+  },
+  {
+    id: 3, name: "Jue", fullName: "Jueves",
+    duration: "15-20 min", xp: 40,
+    tip: "Casi el fin de semana. Hoy trabajamos las piernas con potencia.",
+    exercises: [
+      { name: "Calentamiento",        detail: "Trotar en el sitio levantando rodillas",           reps: "2 min",    how: "Corre sin moverte del sitio levantando las rodillas bien alto. Brazos en movimiento como si corrieras de verdad." },
+      { name: "Sentadillas con salto",detail: "3 series de 6 repeticiones",                      reps: "3 x 6",    how: "Haz una sentadilla normal y cuando subas, salta. Aterriza suave doblando las rodillas. Descansa 40 segundos entre series." },
+      { name: "Montanero",            detail: "3 series de 20 segundos",                         reps: "3 x 20s",  how: "En posicion de flexion, alterna llevar cada rodilla al pecho lo mas rapido que puedas. Mantén el cuerpo plano y los brazos rectos." },
+      { name: "Puente de gluteos",    detail: "3 series de 12 repeticiones",                     reps: "3 x 12",   how: "Tumbado boca arriba, pies en el suelo cerca del trasero. Sube las caderas hasta que el cuerpo quede recto. Aprieta el trasero arriba." },
+      { name: "Estiramiento",         detail: "Cuadriceps, pantorrillas y lumbar",               reps: "2 min",    how: "Para el cuadriceps: de pie, dobla una rodilla y agarra el pie con la mano. Para la pantorrilla: apoya el pie en la pared y empuja el talon." }
+    ]
+  },
+  {
+    id: 4, name: "Vie", fullName: "Viernes",
+    duration: "30-35 min", xp: 70,
+    tip: "Viernes. El entrenamiento mas completo de la semana. Dale todo lo que tienes.",
+    exercises: [
+      { name: "Calentamiento",        detail: "Saltos, carrera y movimiento de articulaciones",  reps: "3 min",    how: "Combina saltos, carrera en el sitio y giros de todas las articulaciones. Termina con algo de sudor." },
+      { name: "Sentadillas",          detail: "4 series de 10 repeticiones",                     reps: "4 x 10",   how: "Baja lento en 2 segundos y sube explosivo. Mantén el peso en los talones. Esta semana intenta bajar mas que la anterior." },
+      { name: "Flexiones",            detail: "4 series de 8 repeticiones",                      reps: "4 x 8",    how: "Si puedes, hazlas normales. Si no, de rodillas. Lo importante es que el pecho llegue cerca del suelo." },
+      { name: "Abdominales bicicleta",detail: "3 series de 15 repeticiones",                     reps: "3 x 15",   how: "Tumbado, lleva el codo derecho a la rodilla izquierda y viceversa, alternando. Lento y controlado, no rapido." },
+      { name: "Burpee (version facil)",detail: "3 series de 5 repeticiones",                     reps: "3 x 5",    how: "Sentadilla, manos al suelo, estira las piernas atras (plancha), vuelve y salta. Si es muy dificil, omite el salto final." },
+      { name: "Plancha",              detail: "3 series de 25 segundos",                         reps: "3 x 25s",  how: "Intenta aguantar mas que la semana pasada. Ese es el progreso real. Respira con ritmo." },
+      { name: "Estiramiento completo",detail: "Todo el cuerpo",                                  reps: "5 min",    how: "Estira cada grupo muscular: piernas, espalda, hombros, brazos. No te saltes esta parte, es muy importante para recuperarte." }
+    ]
+  },
+  {
+    id: 5, name: "Sab", fullName: "Sabado",
+    duration: "30-45 min", xp: 80,
+    tip: "Fin de semana. Puedes tomarlo mas tranquilo o ir con todo. Tu decides.",
+    exercises: [
+      { name: "Calentamiento libre",  detail: "Muevete como quieras: baile, saltos...",          reps: "4 min",    how: "El objetivo es calentar y pasarlo bien. Corre, salta, baila. Empieza a sudar un poco antes de los ejercicios." },
+      { name: "Sentadillas lentas",   detail: "4 series de 12 repeticiones",                     reps: "4 x 12",   how: "Baja muy lento en 4 segundos. El musculo trabaja mas con este ritmo lento. Notaras la diferencia enseguida." },
+      { name: "Flexiones diamante",   detail: "3 series de 5 repeticiones",                      reps: "3 x 5",    how: "Junta las manos formando un triangulo (diamante) bajo el pecho. Trabaja mas el triceps. Hazlas de rodillas si es necesario." },
+      { name: "Saltos a una altura baja", detail: "3 series de 8 repeticiones (usa un escalon)", reps: "3 x 8",    how: "Salta encima de algo bajo como un escalon. Aterriza con las dos piernas y dobla las rodillas al caer. Con cuidado." },
+      { name: "Abdominales V",        detail: "3 series de 8 repeticiones",                      reps: "3 x 8",    how: "Siéntate, levanta las piernas y el tronco al mismo tiempo formando una V. Aguanta 2 segundos. Dobla las rodillas si es muy dificil." },
+      { name: "Caminar tranquilo",    detail: "Paseo de recuperacion",                           reps: "5 min",    how: "Da una vuelta por casa o el barrio. Deja que la respiracion y las pulsaciones vuelvan a la normalidad." },
+      { name: "Estiramiento completo",detail: "Todo el cuerpo con calma",                        reps: "5-8 min",  how: "Estira todo el cuerpo despacio. Usa este tiempo para relajarte. Los musculos crecen y se reparan cuando descansas bien." }
+    ]
+  },
+  {
+    id: 6, name: "Dom", fullName: "Domingo",
+    duration: "Descanso", xp: 0,
+    isRest: true,
+    tip: "El descanso es parte del entrenamiento. Los musculos crecen cuando descansas.",
+    exercises: []
+  }
+];
+ 
+// =====================
+// STATE
+// =====================
+const DEFAULT_STATE = { currentDay: 0, completedExercises: {}, completedDays: {}, xp: 0, level: 1 };
+let state = { ...DEFAULT_STATE };
+ 
+function loadState() {
+  try {
+    const raw = localStorage.getItem('fit_v3');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Merge carefully to avoid missing keys
+      state = {
+        currentDay: typeof parsed.currentDay === 'number' ? parsed.currentDay : 0,
+        completedExercises: parsed.completedExercises && typeof parsed.completedExercises === 'object' ? parsed.completedExercises : {},
+        completedDays: parsed.completedDays && typeof parsed.completedDays === 'object' ? parsed.completedDays : {},
+        xp: typeof parsed.xp === 'number' ? parsed.xp : 0,
+        level: typeof parsed.level === 'number' && parsed.level >= 1 ? parsed.level : 1
+      };
+    } else {
+      // First visit: default to today's day
+      const jsDay = new Date().getDay(); // 0=Sun
+      state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
+    }
+  } catch(e) {
+    state = { ...DEFAULT_STATE };
+    const jsDay = new Date().getDay();
+    state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
+  }
+}
+ 
+function saveState() {
+  try {
+    localStorage.setItem('fit_v3', JSON.stringify(state));
+  } catch(e) { /* localStorage unavailable, silently ignore */ }
+}
+ 
+// =====================
+// XP / LEVEL
+// =====================
+function xpForLevel(lvl) { return lvl * 100; }
+ 
+function addXP(amount) {
+  if (amount <= 0) return;
+  state.xp += amount;
+  let cap = xpForLevel(state.level);
+  while (state.xp >= cap) {
+    state.xp -= cap;
+    state.level++;
+    cap = xpForLevel(state.level);
+  }
+  updateXPBar();
+  saveState();
+}
+ 
+function updateXPBar() {
+  const cap = xpForLevel(state.level);
+  const pct = cap > 0 ? Math.min(100, Math.round((state.xp / cap) * 100)) : 0;
+  document.getElementById('xp-bar').style.width = pct + '%';
+  document.getElementById('xp-cur').textContent = state.xp;
+  document.getElementById('xp-max').textContent = cap;
+  document.getElementById('lvl-num').textContent = state.level;
+}
+ 
+// =====================
+// RENDER DAYS NAV
+// =====================
+function todayIndex() {
+  const jsDay = new Date().getDay(); // 0=Sun..6=Sat
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+ 
+function renderDays() {
+  const nav = document.getElementById('days-nav');
+  nav.innerHTML = '';
+  const today = todayIndex();
+ 
+  DAYS.forEach((d, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn';
+ 
+    const isActive = state.currentDay === i;
+    const isToday = today === i;
+    const isDone = !!state.completedDays[i];
+    const isRest = !!d.isRest;
+ 
+    if (isActive) btn.classList.add('active');
+    if (isToday && !isActive) btn.classList.add('today');
+    if (isDone && !isActive) btn.classList.add('done');
+    if (isRest) btn.classList.add('rest');
+ 
+    btn.innerHTML = `<span class="day-abbr">${d.name}</span><span class="day-dot"></span>`;
+    btn.title = d.fullName;
+    btn.setAttribute('aria-label', d.fullName);
+    btn.onclick = () => { state.currentDay = i; render(); };
+ 
+    nav.appendChild(btn);
+  });
+}
+ 
+// =====================
+// RENDER WORKOUT
+// =====================
+function renderWorkout() {
+  const area = document.getElementById('workout-area');
+  const howSection = document.getElementById('how-section');
+  const howList = document.getElementById('how-list');
+  const d = DAYS[state.currentDay];
+ 
+  // Rest day
+  if (d.isRest) {
+    area.innerHTML = `
+      <div class="rest-day">
+        <h2>DIA DE DESCANSO</h2>
+        <p>Tu cuerpo necesita descansar para crecer y hacerse mas fuerte.</p>
+        <p>Hoy toca recargar energias y dormir bien.</p>
+        <p class="rest-tip">${d.tip}</p>
+      </div>`;
+    howSection.style.display = 'none';
+    return;
+  }
+ 
+  const total = d.exercises.length;
+  const doneCount = d.exercises.filter((_, idx) => !!state.completedExercises[`${d.id}-${idx}`]).length;
+  const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+  const allDone = doneCount === total && total > 0;
+  const dayAlreadyCompleted = !!state.completedDays[d.id];
+ 
+  const exHtml = d.exercises.map((ex, idx) => {
+    const key = `${d.id}-${idx}`;
+    const isComp = !!state.completedExercises[key];
+    const isLocked = dayAlreadyCompleted;
+    return `
+      <div class="exercise-item${isComp ? ' completed' : ''}${isLocked ? ' locked' : ''}"
+           onclick="toggleEx(${d.id}, ${idx})"
+           role="checkbox" aria-checked="${isComp}" tabindex="0"
+           onkeydown="if(event.key==='Enter'||event.key===' ')toggleEx(${d.id},${idx})">
+        <div class="ex-check">${isComp ? '&#10003;' : ''}</div>
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-detail">${ex.detail}</div>
+        </div>
+        <div class="ex-reps">${ex.reps}</div>
+      </div>`;
+  }).join('');
+ 
+  let btnClass = 'complete-btn';
+  let btnDisabled = '';
+  let btnText = 'COMPLETAR ENTRENAMIENTO';
+  if (dayAlreadyCompleted) {
+    btnClass += ' day-done';
+    btnText = 'DIA COMPLETADO';
+    btnDisabled = 'disabled';
+  } else if (!allDone) {
+    btnDisabled = 'disabled';
+  }
+ 
+  area.innerHTML = `
+    <div class="tip-card">
+      <div class="tip-label">Consejo del dia</div>
+      <div class="tip-text">${d.tip}</div>
+    </div>
+    <div class="workout-card">
+      <div class="workout-header">
+        <div class="workout-title">${d.fullName.toUpperCase()}</div>
+        <div class="workout-meta">Duracion: <strong>${d.duration}</strong> &nbsp;&bull;&nbsp; Recompensa: <strong>+${d.xp} XP</strong></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">${doneCount} de ${total} ejercicios &mdash; ${pct}%</div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="exercises">${exHtml}</div>
+      <button class="${btnClass}" id="complete-btn" onclick="completeDay()" ${btnDisabled}>${btnText}</button>
+    </div>`;
+ 
+  // How-to section
+  howSection.style.display = '';
+  howList.innerHTML = d.exercises.map(ex => `
+    <div class="how-item">
+      <div class="how-name">${ex.name} &mdash; ${ex.reps}</div>
+      <div class="how-desc">${ex.how}</div>
+    </div>`).join('');
+}
+ 
+function render() {
+  renderDays();
+  renderWorkout();
+  updateXPBar();
+}
+ 
+// =====================
+// TOGGLE EXERCISE
+// =====================
+function toggleEx(dayId, exIdx) {
+  // Only allow toggling if viewing that day and it's not already completed
+  if (state.completedDays[dayId]) return;
+  // Ensure we're on the right day
+  if (DAYS[state.currentDay].id !== dayId) return;
+ 
+  const key = `${dayId}-${exIdx}`;
+  if (state.completedExercises[key]) {
+    delete state.completedExercises[key];
+  } else {
+    state.completedExercises[key] = true;
+  }
+  saveState();
+  renderWorkout(); // Only re-render workout, not full render (avoids days flicker)
+}
+ 
+// =====================
+// COMPLETE DAY
+// =====================
+function completeDay() {
+  const d = DAYS[state.currentDay];
+  if (d.isRest) return;
+  if (state.completedDays[d.id]) return;
+ 
+  // Safety check: all exercises must be done
+  const allDone = d.exercises.every((_, idx) => !!state.completedExercises[`${d.id}-${idx}`]);
+  if (!allDone) return;
+ 
+  state.completedDays[d.id] = true;
+  saveState();
+  addXP(d.xp);  // addXP already calls saveState and updateXPBar
+  showCelebration(d.xp);
+  render();
+}
+ 
+// =====================
+// CELEBRATION
+// =====================
+const MESSAGES = [
+  "Cada dia que entrenas eres un poco mas fuerte.",
+  "El esfuerzo de hoy es el resultado de manana.",
+  "Lo has conseguido. Sigue asi campeon.",
+  "Un dia mas, un dia mejor. Orgullo total.",
+  "Bien hecho. Tu cuerpo te lo agradece."
+];
+ 
+function showCelebration(xp) {
+  document.getElementById('cel-sub').textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+  document.getElementById('cel-xp').textContent = '+' + xp + ' XP GANADOS';
+  document.getElementById('celebration').classList.add('show');
+  spawnConfetti();
+}
+ 
+function closeCelebration() {
+  document.getElementById('celebration').classList.remove('show');
+}
+ 
+function spawnConfetti() {
+  const colors = ['#e63946','#1a1a1a','#2d6a4f','#c1121f','#457b9d','#f4a261'];
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText = [
+        'left:' + (Math.random() * 100) + 'vw',
+        'background:' + colors[Math.floor(Math.random() * colors.length)],
+        'animation-duration:' + (1.4 + Math.random() * 2) + 's',
+        'animation-delay:' + (Math.random() * 0.3) + 's',
+        'width:' + (5 + Math.random() * 8) + 'px',
+        'height:' + (5 + Math.random() * 8) + 'px',
+        'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px')
+      ].join(';');
+      document.body.appendChild(c);
+      setTimeout(() => { if (c.parentNode) c.parentNode.removeChild(c); }, 4000);
+    }, i * 35);
+  }
+}
+ 
+// =====================
+// INIT
+// =====================
+loadState();
+render();
+</script>
+</body>
+</html>
+ 
