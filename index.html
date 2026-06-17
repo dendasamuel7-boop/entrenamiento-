@@ -6,416 +6,349 @@
 <title>Mi Plan de Entrenamiento</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #f0ede8;
-    --accent: #e63946;
-    --accent-dark: #c1121f;
-    --accent-light: #fce4e6;
-    --green: #2d6a4f;
-    --green-light: #d8f3dc;
-    --text: #1a1a1a;
-    --muted: #888880;
-    --border: #e0ddd8;
-    --radius: 16px;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
-  }
- 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
- 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
- 
-  .container {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 28px 16px 80px;
-  }
- 
-  /* ---- HEADER ---- */
-  header {
-    margin-bottom: 28px;
-  }
- 
-  .header-top {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-  }
- 
-  h1 {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 3rem;
-    color: var(--text);
-    line-height: 1;
-    letter-spacing: 1px;
-  }
- 
-  h1 span {
-    color: var(--accent);
-  }
- 
-  .subtitle {
-    color: var(--muted);
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
- 
-  /* ---- LEVEL CARD ---- */
-  .xp-card {
-    background: var(--text);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: var(--shadow);
-  }
- 
-  .level-badge {
-    background: var(--accent);
-    border-radius: 10px;
-    padding: 8px 14px;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.4rem;
-    color: #fff;
-    white-space: nowrap;
-    flex-shrink: 0;
-    letter-spacing: 1px;
-  }
- 
-  .xp-info { flex: 1; min-width: 0; }
-  .xp-label { font-size: 0.7rem; color: #aaa; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-  .xp-bar-wrap { background: rgba(255,255,255,0.15); border-radius: 8px; height: 8px; margin-top: 6px; overflow: hidden; }
-  .xp-bar { height: 100%; border-radius: 8px; background: var(--accent); transition: width 0.5s ease; }
-  .xp-text { font-size: 0.75rem; color: #aaa; margin-top: 4px; font-weight: 600; }
- 
-  /* ---- DAYS NAV ---- */
-  .days-nav {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    margin-bottom: 24px;
-  }
- 
-  .day-btn {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 10px 4px 8px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    color: var(--muted);
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    box-shadow: var(--shadow);
-  }
- 
-  .day-btn .day-abbr { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
-  .day-btn .day-dot { display: block; width: 6px; height: 6px; border-radius: 50%; background: transparent; margin: 5px auto 0; transition: background 0.15s; }
- 
-  .day-btn:hover { border-color: var(--accent); color: var(--text); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-  .day-btn.active { border-color: var(--accent); background: var(--accent); color: #fff; }
-  .day-btn.active .day-dot { background: rgba(255,255,255,0.5); }
-  .day-btn.today:not(.active) { border-color: var(--accent); color: var(--accent); }
-  .day-btn.done:not(.active) { border-color: var(--green); background: var(--green-light); color: var(--green); }
-  .day-btn.done:not(.active) .day-dot { background: var(--green); }
-  .day-btn.rest { opacity: 0.45; cursor: default; }
-  .day-btn.rest:hover { transform: none; border-color: var(--border); box-shadow: var(--shadow); color: var(--muted); }
- 
-  /* ---- TIP CARD ---- */
-  .tip-card {
-    background: var(--surface);
-    border-left: 4px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
- 
-  .tip-label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 4px; }
-  .tip-text { font-size: 0.92rem; color: var(--text); font-weight: 700; line-height: 1.4; }
- 
-  /* ---- WORKOUT CARD ---- */
-  .workout-card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-  }
- 
-  .workout-header {
-    padding: 20px 20px 16px;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(135deg, #fff 60%, var(--accent-light));
-  }
- 
-  .workout-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2rem;
-    color: var(--text);
-    letter-spacing: 1px;
-    line-height: 1;
-  }
- 
-  .workout-meta {
-    font-size: 0.82rem;
-    color: var(--muted);
-    font-weight: 700;
-    margin-top: 4px;
-  }
- 
-  .workout-meta strong { color: var(--accent); }
- 
-  /* ---- PROGRESS ---- */
-  .progress-wrap { padding: 14px 20px 0; }
-  .progress-label { font-size: 0.78rem; color: var(--muted); font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .progress-track { background: var(--surface2); border-radius: 8px; height: 8px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 8px; background: var(--accent); transition: width 0.35s ease; }
- 
-  /* ---- EXERCISES ---- */
-  .exercises { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
- 
-  .exercise-item {
-    background: var(--bg);
-    border-radius: 12px;
-    padding: 13px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 2px solid transparent;
-    transition: all 0.15s;
-    cursor: pointer;
-    user-select: none;
-  }
- 
-  .exercise-item:hover { border-color: var(--accent); background: var(--accent-light); }
-  .exercise-item.completed { border-color: var(--green); background: var(--green-light); }
-  .exercise-item.locked { cursor: default; opacity: 0.6; }
-  .exercise-item.locked:hover { border-color: transparent; background: var(--bg); }
- 
-  .ex-check {
-    width: 26px;
-    height: 26px;
-    border: 2px solid var(--border);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 900;
-    flex-shrink: 0;
-    transition: all 0.15s;
-    color: transparent;
-  }
- 
-  .exercise-item.completed .ex-check {
-    border-color: var(--green);
-    background: var(--green);
-    color: #fff;
-  }
- 
-  .ex-info { flex: 1; min-width: 0; }
-  .ex-name { font-weight: 800; font-size: 0.93rem; color: var(--text); }
-  .ex-detail { font-size: 0.78rem; color: var(--muted); margin-top: 2px; font-weight: 600; }
- 
-  .ex-reps {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1rem;
-    color: var(--accent);
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-    white-space: nowrap;
-  }
- 
-  .exercise-item.completed .ex-reps { color: var(--green); }
- 
-  /* ---- COMPLETE BUTTON ---- */
-  .complete-btn {
-    width: calc(100% - 32px);
-    margin: 8px 16px 16px;
-    padding: 15px;
-    background: var(--accent);
-    border: none;
-    border-radius: 12px;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.3rem;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 14px rgba(230,57,70,0.35);
-  }
- 
-  .complete-btn:hover:not(:disabled) { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(230,57,70,0.4); }
-  .complete-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; box-shadow: none; transform: none; }
-  .complete-btn.day-done { background: var(--green); box-shadow: 0 4px 14px rgba(45,106,79,0.3); cursor: default; }
-  .complete-btn.day-done:hover { background: var(--green); transform: none; }
- 
-  /* ---- HOW TO SECTION ---- */
-  .how-section {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 18px 18px 8px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-  }
- 
-  .how-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.3rem;
-    color: var(--text);
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-  }
- 
-  .how-item {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
- 
-  .how-item:last-child { border-bottom: none; padding-bottom: 4px; }
-  .how-name { font-weight: 900; font-size: 0.88rem; color: var(--text); }
-  .how-desc { font-size: 0.83rem; color: var(--muted); margin-top: 3px; font-weight: 600; line-height: 1.4; }
- 
-  /* ---- REST DAY ---- */
-  .rest-day {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 50px 24px;
-    text-align: center;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-  }
- 
-  .rest-day h2 {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.2rem;
-    color: var(--text);
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
- 
-  .rest-day p { color: var(--muted); font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
-  .rest-tip { margin-top: 16px !important; color: var(--accent) !important; }
- 
-  /* ---- CELEBRATION OVERLAY ---- */
-  #celebration {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(250,248,245,0.96);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 24px;
-  }
- 
-  #celebration.show { display: flex; }
- 
-  .cel-icon {
-    width: 80px;
-    height: 80px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
- 
-  @keyframes pop {
-    from { transform: scale(0); }
-    to { transform: scale(1); }
-  }
- 
-  .cel-icon svg { width: 40px; height: 40px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
- 
-  .cel-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.8rem;
-    color: var(--text);
-    letter-spacing: 2px;
-    line-height: 1.1;
-  }
- 
-  .cel-sub { font-size: 1rem; color: var(--muted); margin-top: 8px; font-weight: 700; }
-  .cel-xp { font-family: 'Bebas Neue', cursive; font-size: 2rem; color: var(--accent); margin-top: 10px; letter-spacing: 1px; }
- 
-  .close-cel {
-    margin-top: 28px;
-    padding: 14px 44px;
-    background: var(--text);
-    border: none;
-    border-radius: 12px;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.3rem;
-    color: #fff;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: background 0.15s;
-  }
- 
-  .close-cel:hover { background: var(--accent); }
- 
-  /* ---- CONFETTI ---- */
-  .confetti-piece {
-    position: fixed;
-    top: -12px;
-    animation: fall linear forwards;
-    border-radius: 2px;
-    z-index: 101;
-    pointer-events: none;
-  }
- 
-  @keyframes fall {
-    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-  }
- 
-  /* ---- RESPONSIVE ---- */
-  @media (max-width: 380px) {
-    h1 { font-size: 2.2rem; }
-    .days-nav { gap: 4px; }
-    .day-btn { padding: 8px 2px 6px; }
-    .day-btn .day-abbr { font-size: 0.62rem; }
-  }
+:root {
+  --bg:#f5f4f0; --surface:#ffffff; --surface2:#f0ede8;
+  --accent:#e63946; --accent-dark:#c1121f; --accent-light:#fce4e6;
+  --green:#2d6a4f; --green-light:#d8f3dc;
+  --gold:#f4a261; --gold-dark:#e07c2e; --gold-light:#fff3e0;
+  --text:#1a1a1a; --muted:#888880; --border:#e0ddd8;
+  --radius:16px; --shadow:0 2px 12px rgba(0,0,0,0.08); --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* TOAST */
+#toast{position:fixed;top:16px;right:16px;z-index:9999;background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;font-weight:800;font-size:.88rem;box-shadow:var(--shadow-lg);transform:translateY(-80px);transition:transform .3s ease;pointer-events:none;max-width:280px;}
+#toast.show{transform:translateY(0);}
+#toast.ok{background:var(--green);}
+#toast.err{background:var(--accent);}
+
+/* AUTH SCREEN */
+#auth-screen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
+#auth-screen.hidden{display:none;}
+.auth-box{background:var(--surface);border-radius:20px;padding:32px 28px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);border:1px solid var(--border);}
+.auth-logo{font-family:'Bebas Neue',cursive;font-size:2.8rem;color:var(--text);letter-spacing:2px;text-align:center;margin-bottom:4px;}
+.auth-logo span{color:var(--accent);}
+.auth-sub{text-align:center;color:var(--muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;}
+.auth-tabs{display:flex;gap:6px;margin-bottom:20px;background:var(--surface2);border-radius:10px;padding:4px;}
+.auth-tab{flex:1;padding:9px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
+.auth-panel{display:none;}
+.auth-panel.active{display:block;}
+.auth-input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;background:var(--bg);color:var(--text);margin-bottom:10px;transition:border-color .15s;outline:none;}
+.auth-input:focus{border-color:var(--accent);}
+.auth-input::placeholder{color:var(--muted);}
+.auth-btn{width:100%;padding:13px;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:#fff;cursor:pointer;transition:all .15s;margin-bottom:8px;}
+.auth-btn-main{background:var(--accent);box-shadow:0 4px 14px rgba(230,57,70,.3);}
+.auth-btn-main:hover{background:var(--accent-dark);transform:translateY(-1px);}
+.auth-link{color:var(--accent);font-weight:800;font-size:.85rem;cursor:pointer;}
+.auth-link:hover{text-decoration:underline;}
+.auth-reset-row{text-align:right;margin-bottom:10px;}
+.auth-error{background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:.83rem;font-weight:700;color:var(--accent-dark);margin-bottom:10px;display:none;}
+.auth-error.show{display:block;}
+.auth-success{background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:10px 12px;font-size:.83rem;font-weight:700;color:var(--green);margin-bottom:10px;display:none;}
+.auth-success.show{display:block;}
+
+/* USER BAR */
+.user-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:12px;padding:10px 14px;margin-bottom:16px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:1.1rem;color:#fff;flex-shrink:0;}
+.user-name{font-weight:800;font-size:.9rem;flex:1;}
+.user-title{font-size:.72rem;color:var(--gold-dark);font-weight:800;}
+.user-coins{font-family:'Bebas Neue',cursive;font-size:1rem;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:4px 10px;letter-spacing:.5px;cursor:pointer;border:2px solid var(--gold);transition:all .15s;}
+.user-coins:hover{background:var(--gold);color:#fff;}
+.signout-btn{background:none;border:2px solid var(--border);border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;color:var(--muted);cursor:pointer;transition:all .15s;}
+.signout-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* MAIN CONTAINER */
+.container{max-width:680px;margin:0 auto;padding:28px 16px 80px;}
+header{margin-bottom:20px;}
+.header-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+h1{font-family:'Bebas Neue',cursive;font-size:3rem;color:var(--text);line-height:1;letter-spacing:1px;}
+h1 span{color:var(--accent);}
+.subtitle{color:var(--muted);font-size:.9rem;font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:1px;}
+
+/* XP CARD */
+.xp-card{background:var(--text);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);}
+.level-badge{background:var(--accent);border-radius:10px;padding:8px 14px;font-family:'Bebas Neue',cursive;font-size:1.4rem;color:#fff;white-space:nowrap;flex-shrink:0;letter-spacing:1px;cursor:pointer;transition:transform .15s;}
+.level-badge:hover{transform:scale(1.05);}
+.xp-info{flex:1;min-width:0;}
+.xp-label{font-size:.7rem;color:#aaa;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.xp-bar-wrap{background:rgba(255,255,255,.15);border-radius:8px;height:8px;margin-top:6px;overflow:hidden;}
+.xp-bar{height:100%;border-radius:8px;background:var(--accent);transition:width .5s ease;}
+.xp-text{font-size:.75rem;color:#aaa;margin-top:4px;font-weight:600;}
+
+/* STREAK */
+.streak-card{background:linear-gradient(135deg,#1a1a1a,#2d2d2d);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
+.streak-fire{font-size:2rem;}
+.streak-info{flex:1;}
+.streak-label{font-size:.7rem;color:#aaa;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.streak-num{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--gold);line-height:1;letter-spacing:1px;}
+.streak-sub{font-size:.75rem;color:#888;font-weight:600;}
+
+/* DAYS NAV */
+.days-nav{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:24px;}
+.day-btn{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:10px 4px 8px;cursor:pointer;text-align:center;transition:all .15s;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;box-shadow:var(--shadow);}
+.day-btn .day-abbr{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;}
+.day-btn .day-dot{display:block;width:6px;height:6px;border-radius:50%;background:transparent;margin:5px auto 0;transition:background .15s;}
+.day-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.day-btn.active{border-color:var(--accent);background:var(--accent);color:#fff;}
+.day-btn.active .day-dot{background:rgba(255,255,255,.5);}
+.day-btn.today:not(.active){border-color:var(--accent);color:var(--accent);}
+.day-btn.done:not(.active){border-color:var(--green);background:var(--green-light);color:var(--green);}
+.day-btn.done:not(.active) .day-dot{background:var(--green);}
+.day-btn.rest{opacity:.45;cursor:default;}
+.day-btn.rest:hover{transform:none;border-color:var(--border);box-shadow:var(--shadow);color:var(--muted);}
+
+/* TIP */
+.tip-card{background:var(--surface);border-left:4px solid var(--accent);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow);}
+.tip-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;}
+.tip-text{font-size:.92rem;color:var(--text);font-weight:700;line-height:1.4;}
+
+/* WORKOUT */
+.workout-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.workout-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#fff 60%,var(--accent-light));}
+.workout-title{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--text);letter-spacing:1px;line-height:1;}
+.workout-meta{font-size:.82rem;color:var(--muted);font-weight:700;margin-top:4px;}
+.workout-meta strong{color:var(--accent);}
+.progress-wrap{padding:14px 20px 0;}
+.progress-label{font-size:.78rem;color:var(--muted);font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.progress-track{background:var(--surface2);border-radius:8px;height:8px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:8px;background:var(--accent);transition:width .35s ease;}
+.exercises{padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+.exercise-item{background:var(--bg);border-radius:12px;padding:13px 14px;display:flex;align-items:center;gap:12px;border:2px solid transparent;transition:all .15s;cursor:pointer;user-select:none;}
+.exercise-item:hover{border-color:var(--accent);background:var(--accent-light);}
+.exercise-item.completed{border-color:var(--green);background:var(--green-light);}
+.exercise-item.locked{cursor:default;opacity:.6;}
+.exercise-item.locked:hover{border-color:transparent;background:var(--bg);}
+.ex-check{width:26px;height:26px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;flex-shrink:0;transition:all .15s;color:transparent;}
+.exercise-item.completed .ex-check{border-color:var(--green);background:var(--green);color:#fff;}
+.ex-info{flex:1;min-width:0;}
+.ex-name{font-weight:800;font-size:.93rem;color:var(--text);}
+.ex-detail{font-size:.78rem;color:var(--muted);margin-top:2px;font-weight:600;}
+.ex-reps{font-family:'Bebas Neue',cursive;font-size:1rem;color:var(--accent);letter-spacing:.5px;flex-shrink:0;white-space:nowrap;}
+.exercise-item.completed .ex-reps{color:var(--green);}
+.ex-video-btn{width:32px;height:32px;border-radius:8px;background:var(--accent-light);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem;transition:all .15s;color:var(--accent);}
+.ex-video-btn:hover{background:var(--accent);color:#fff;transform:scale(1.1);}
+.complete-btn{width:calc(100% - 32px);margin:8px 16px 16px;padding:15px;background:var(--accent);border:none;border-radius:12px;font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#fff;cursor:pointer;transition:all .15s;letter-spacing:1px;box-shadow:0 4px 14px rgba(230,57,70,.35);}
+.complete-btn:hover:not(:disabled){background:var(--accent-dark);transform:translateY(-1px);}
+.complete-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;box-shadow:none;transform:none;}
+.complete-btn.day-done{background:var(--green);box-shadow:0 4px 14px rgba(45,106,79,.3);cursor:default;}
+.complete-btn.day-done:hover{background:var(--green);transform:none;}
+
+/* HOW-TO */
+.how-section{background:var(--surface);border-radius:var(--radius);padding:18px 18px 8px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.how-title{font-family:'Bebas Neue',cursive;font-size:1.3rem;color:var(--text);letter-spacing:1px;margin-bottom:12px;}
+.how-item{padding:10px 0;border-bottom:1px solid var(--border);}
+.how-item:last-child{border-bottom:none;padding-bottom:4px;}
+.how-name{font-weight:900;font-size:.88rem;color:var(--text);}
+.how-desc{font-size:.83rem;color:var(--muted);margin-top:3px;font-weight:600;line-height:1.4;}
+
+/* REST DAY */
+.rest-day{background:var(--surface);border-radius:var(--radius);padding:50px 24px;text-align:center;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.rest-day h2{font-family:'Bebas Neue',cursive;font-size:2.2rem;color:var(--text);letter-spacing:1px;margin-bottom:10px;}
+.rest-day p{color:var(--muted);font-size:.95rem;font-weight:700;line-height:1.5;}
+.rest-tip{margin-top:16px!important;color:var(--accent)!important;}
+
+/* ACHIEVEMENTS */
+.achievements-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px;}
+.achievement-badge{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px;transition:all .2s;position:relative;}
+.achievement-badge.unlocked{border-color:var(--gold);background:var(--gold-light);}
+.achievement-badge .ach-icon{font-size:1.6rem;display:block;}
+.achievement-badge .ach-name{font-size:.65rem;font-weight:800;color:var(--muted);display:block;margin-top:4px;}
+.achievement-badge.unlocked .ach-name{color:var(--gold-dark);}
+.achievement-badge:not(.unlocked){filter:grayscale(1);opacity:.5;}
+
+/* VIDEO MODAL */
+#video-modal{display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.8);align-items:center;justify-content:center;padding:20px;}
+#video-modal.show{display:flex;}
+.video-box{background:var(--surface);border-radius:20px;overflow:hidden;width:100%;max-width:560px;box-shadow:var(--shadow-lg);}
+.video-header{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.video-title-text{font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:1px;}
+.video-close{background:var(--surface2);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.video-close:hover{background:var(--accent);color:#fff;}
+.video-wrap{position:relative;padding-bottom:56.25%;height:0;}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.video-how{padding:14px 18px;background:var(--surface2);font-size:.88rem;font-weight:700;color:var(--text);line-height:1.5;border-top:1px solid var(--border);}
+.video-fallback{padding:40px 24px;text-align:center;}
+.video-fallback-icon{font-size:3rem;margin-bottom:12px;}
+.video-fallback-text{color:var(--muted);font-weight:700;font-size:.9rem;margin-bottom:16px;}
+.video-fallback-btn{display:inline-block;background:var(--accent);color:#fff;padding:12px 24px;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.5px;text-decoration:none;transition:all .15s;}
+.video-fallback-btn:hover{background:var(--accent-dark);transform:translateY(-1px);}
+
+/* LEVEL UP */
+#levelup-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;}
+#levelup-overlay.show{display:flex;}
+.lvlup-burst{font-size:5rem;animation:burstIn .5s cubic-bezier(.175,.885,.32,1.275);margin-bottom:12px;}
+.lvlup-title{font-family:'Bebas Neue',cursive;font-size:3.5rem;color:#fff;letter-spacing:3px;line-height:1;text-shadow:0 0 40px var(--gold);animation:burstIn .6s .1s cubic-bezier(.175,.885,.32,1.275) both;}
+.lvlup-num{font-family:'Bebas Neue',cursive;font-size:6rem;color:var(--gold);letter-spacing:2px;line-height:1;text-shadow:0 0 60px rgba(244,162,97,.8);animation:burstIn .7s .2s cubic-bezier(.175,.885,.32,1.275) both;}
+.lvlup-sub{color:rgba(255,255,255,.75);font-size:1rem;font-weight:800;margin-top:8px;}
+.lvlup-coins{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--gold);margin-top:12px;letter-spacing:1px;}
+.lvlup-close{margin-top:28px;padding:14px 44px;background:var(--gold);border:none;border-radius:12px;font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#fff;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 20px rgba(244,162,97,.5);}
+.lvlup-close:hover{background:var(--gold-dark);}
+@keyframes burstIn{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
+/* CELEBRATION */
+#celebration{display:none;position:fixed;inset:0;background:rgba(250,248,245,.96);z-index:100;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;}
+#celebration.show{display:flex;}
+.cel-icon{width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pop .4s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.cel-icon svg{width:40px;height:40px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+.cel-title{font-family:'Bebas Neue',cursive;font-size:2.8rem;color:var(--text);letter-spacing:2px;line-height:1.1;}
+.cel-sub{font-size:1rem;color:var(--muted);margin-top:8px;font-weight:700;}
+.cel-xp{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--accent);margin-top:10px;letter-spacing:1px;}
+.cel-coins{font-family:'Bebas Neue',cursive;font-size:1.5rem;color:var(--gold-dark);letter-spacing:1px;margin-top:4px;}
+.close-cel{margin-top:28px;padding:14px 44px;background:var(--text);border:none;border-radius:12px;font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#fff;cursor:pointer;letter-spacing:1px;transition:background .15s;}
+.close-cel:hover{background:var(--accent);}
+
+/* SHOP */
+#shop-overlay{display:none;position:fixed;inset:0;z-index:160;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center;}
+#shop-overlay.show{display:flex;}
+.shop-box{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;padding:24px 20px 40px;box-shadow:var(--shadow-lg);animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.shop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.shop-title{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:1px;}
+.shop-coins-display{font-family:'Bebas Neue',cursive;font-size:1.3rem;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:6px 14px;border:2px solid var(--gold);}
+.shop-close{background:var(--surface2);border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.shop-close:hover{background:var(--accent);color:#fff;}
+.shop-section-title{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:var(--muted);margin:16px 0 10px;}
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px;}
+.shop-item{background:var(--bg);border-radius:14px;padding:16px 14px;border:2px solid var(--border);transition:all .15s;cursor:pointer;text-align:center;position:relative;}
+.shop-item:hover:not(.owned):not(.cant-buy){border-color:var(--gold);background:var(--gold-light);transform:translateY(-2px);box-shadow:var(--shadow);}
+.shop-item.owned{border-color:var(--green);background:var(--green-light);cursor:default;}
+.shop-item.cant-buy{opacity:.5;cursor:not-allowed;}
+.shop-item-icon{font-size:2.2rem;margin-bottom:8px;display:block;}
+.shop-item-name{font-weight:900;font-size:.88rem;color:var(--text);}
+.shop-item-desc{font-size:.75rem;color:var(--muted);font-weight:600;margin-top:3px;line-height:1.3;}
+.shop-item-price{font-family:'Bebas Neue',cursive;font-size:1.1rem;color:var(--gold-dark);margin-top:8px;letter-spacing:.5px;}
+.shop-item.owned .shop-item-price{color:var(--green);}
+.shop-owned-badge{position:absolute;top:8px;right:8px;font-size:.65rem;font-weight:900;background:var(--green);color:#fff;padding:2px 6px;border-radius:6px;}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;top:-12px;animation:fall linear forwards;border-radius:2px;z-index:400;pointer-events:none;}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* RESPONSIVE */
+@media(max-width:380px){
+  h1{font-size:2.2rem;}
+  .days-nav{gap:4px;}
+  .day-btn{padding:8px 2px 6px;}
+  .day-btn .day-abbr{font-size:.62rem;}
+  .shop-grid{grid-template-columns:1fr;}
+}
+
+/* DARK THEME */
+body.dark{--bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--text:#f0f0f0;--border:#333;--muted:#777;}
+body.blue{--accent:#457b9d;--accent-dark:#1d3557;--accent-light:#a8dadc40;--bg:#e8f4f8;}
 </style>
 </head>
 <body>
- 
-<!-- Celebration overlay -->
-<div id="celebration">
-  <div class="cel-icon">
-    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+
+<div id="toast"></div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">MI <span>PLAN</span></div>
+    <div class="auth-sub">Sin pesas · Solo tu cuerpo</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Entrar</button>
+      <button class="auth-tab" onclick="switchTab('register')">Registrarse</button>
+      <button class="auth-tab" onclick="switchTab('reset')">Contraseña</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-panel active" id="tab-login">
+      <div class="auth-error" id="login-err"></div>
+      <input class="auth-input" id="login-email" type="email" placeholder="Tu email" autocomplete="email">
+      <input class="auth-input" id="login-pass" type="password" placeholder="Tu contraseña" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="auth-btn auth-btn-main" onclick="doLogin()">INICIAR SESIÓN</button>
+      <div style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--muted);font-weight:700">
+        ¿Sin cuenta? <span class="auth-link" onclick="switchTab('register')">Regístrate gratis</span>
+        &nbsp;·&nbsp;
+        <span class="auth-link" onclick="switchTab('reset')">Olvidé mi contraseña</span>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-panel" id="tab-register">
+      <div class="auth-error" id="reg-err"></div>
+      <input class="auth-input" id="reg-name" type="text" placeholder="Tu nombre (ej: Paco)">
+      <input class="auth-input" id="reg-email" type="email" placeholder="Tu email">
+      <input class="auth-input" id="reg-pass" type="password" placeholder="Contraseña (mín. 6 caracteres)">
+      <input class="auth-input" id="reg-pass2" type="password" placeholder="Repite la contraseña"
+             onkeydown="if(event.key==='Enter')doRegister()">
+      <button class="auth-btn auth-btn-main" onclick="doRegister()">CREAR CUENTA</button>
+      <div style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--muted);font-weight:700">
+        ¿Ya tienes cuenta? <span class="auth-link" onclick="switchTab('login')">Iniciar sesión</span>
+      </div>
+    </div>
+
+    <!-- RESET -->
+    <div class="auth-panel" id="tab-reset">
+      <div class="auth-error" id="reset-err"></div>
+      <div class="auth-success" id="reset-ok"></div>
+      <p style="font-size:.85rem;color:var(--muted);font-weight:700;margin-bottom:12px;">
+        Escribe tu email. Si tienes cuenta, te mostraremos tu contraseña de seguridad para que la recuperes.
+      </p>
+      <input class="auth-input" id="reset-email" type="email" placeholder="Tu email"
+             onkeydown="if(event.key==='Enter')doReset()">
+      <button class="auth-btn auth-btn-main" onclick="doReset()">RECUPERAR CONTRASEÑA</button>
+      <div style="text-align:center;margin-top:8px;">
+        <span class="auth-link" onclick="switchTab('login')">← Volver al inicio</span>
+      </div>
+    </div>
   </div>
+</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div id="levelup-overlay">
+  <div class="lvlup-burst">⚡</div>
+  <div class="lvlup-title">¡SUBISTE DE NIVEL!</div>
+  <div class="lvlup-num" id="lvlup-num">2</div>
+  <div class="lvlup-sub" id="lvlup-sub">¡Imparable! Sigue así.</div>
+  <div class="lvlup-coins" id="lvlup-coins">🪙 +100 monedas</div>
+  <button class="lvlup-close" onclick="closeLevelUp()">¡A ENTRENAR!</button>
+</div>
+
+<!-- CELEBRATION -->
+<div id="celebration">
+  <div class="cel-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
   <div class="cel-title">ENTRENAMIENTO<br>COMPLETADO</div>
-  <div class="cel-sub" id="cel-sub">¡Muy bien! Cada dia eres mas fuerte.</div>
+  <div class="cel-sub" id="cel-sub">¡Muy bien! Cada día eres más fuerte.</div>
   <div class="cel-xp" id="cel-xp">+50 XP</div>
+  <div class="cel-coins" id="cel-coins">🪙 +30 monedas</div>
   <button class="close-cel" onclick="closeCelebration()">CONTINUAR</button>
 </div>
- 
-<div class="container">
- 
+
+<!-- VIDEO MODAL -->
+<div id="video-modal" onclick="if(event.target===this)closeVideo()">
+  <div class="video-box">
+    <div class="video-header">
+      <div class="video-title-text" id="video-title-text">Ejercicio</div>
+      <button class="video-close" onclick="closeVideo()">✕</button>
+    </div>
+    <div id="video-content"></div>
+    <div class="video-how" id="video-how"></div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div id="shop-overlay" onclick="if(event.target===this)closeShop()">
+  <div class="shop-box">
+    <div class="shop-header">
+      <div class="shop-title">🏪 TIENDA</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="shop-coins-display">🪙 <span id="shop-coins-display">0</span></div>
+        <button class="shop-close" onclick="closeShop()">✕</button>
+      </div>
+    </div>
+    <div id="shop-content"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="container" id="main-app" style="display:none">
   <header>
     <div class="header-top">
       <div>
@@ -424,399 +357,730 @@
       </div>
     </div>
   </header>
- 
-  <!-- XP bar -->
+
+  <div class="user-bar">
+    <div class="user-avatar" id="user-avatar">P</div>
+    <div style="flex:1;min-width:0;">
+      <div class="user-name" id="user-name">Paco</div>
+      <div class="user-title" id="user-title"></div>
+    </div>
+    <div class="user-coins" onclick="openShop()">🪙 <span id="coins-display">0</span></div>
+    <button class="signout-btn" onclick="doSignOut()">Salir</button>
+  </div>
+
+  <div class="streak-card">
+    <div class="streak-fire">🔥</div>
+    <div class="streak-info">
+      <div class="streak-label">Racha actual</div>
+      <div class="streak-num" id="streak-num">0</div>
+      <div class="streak-sub" id="streak-sub">días seguidos</div>
+    </div>
+  </div>
+
   <div class="xp-card">
-    <div class="level-badge">NV. <span id="lvl-num">1</span></div>
+    <div class="level-badge" onclick="openShop()">NV. <span id="lvl-num">1</span></div>
     <div class="xp-info">
       <div class="xp-label">Experiencia (XP)</div>
       <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar" style="width:0%"></div></div>
-      <div class="xp-text"><span id="xp-cur">0</span> / <span id="xp-max">100</span> XP para subir de nivel</div>
+      <div class="xp-text"><span id="xp-cur">0</span> / <span id="xp-max">200</span> XP para subir de nivel</div>
     </div>
   </div>
- 
-  <!-- Days nav -->
+
+  <div class="achievements-row" id="achievements-row"></div>
   <div class="days-nav" id="days-nav"></div>
- 
-  <!-- Workout area -->
   <div id="workout-area"></div>
- 
-  <!-- How to section -->
   <div class="how-section" id="how-section" style="display:none">
-    <div class="how-title">Como se hacen</div>
+    <div class="how-title">Cómo se hacen</div>
     <div id="how-list"></div>
   </div>
- 
 </div>
- 
+
 <script>
-// =====================
-// DATA
-// =====================
+// ═══════════════════════════════════════════════════════
+//  AUTH — sistema propio con localStorage
+// ═══════════════════════════════════════════════════════
+const USERS_KEY = 'fit_users_db';
+const SESSION_KEY = 'fit_session';
+
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) { return null; }
+}
+function saveSession(email) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ email }));
+}
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+function switchTab(tab) {
+  const tabs = ['login','register','reset'];
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  ['login-err','reg-err','reset-err','reset-ok'].forEach(id => {
+    const el = document.getElementById(id); if(el){ el.classList.remove('show'); el.textContent=''; }
+  });
+}
+
+function showAuthError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+function showAuthSuccess(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('login-pass').value;
+  document.getElementById('login-err').classList.remove('show');
+
+  if (!email || !pass) return showAuthError('login-err', 'Por favor rellena el email y la contraseña.');
+  const users = getUsers();
+  if (!users[email]) return showAuthError('login-err', 'No existe una cuenta con ese email. ¿Te registraste?');
+  if (users[email].password !== btoa(pass)) return showAuthError('login-err', 'La contraseña no es correcta.');
+
+  saveSession(email);
+  startApp(email);
+}
+
+function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  document.getElementById('reg-err').classList.remove('show');
+
+  if (!name)  return showAuthError('reg-err', 'Escribe tu nombre.');
+  if (!email) return showAuthError('reg-err', 'Escribe tu email.');
+  if (!email.includes('@') || !email.includes('.')) return showAuthError('reg-err', 'Ese email no parece válido.');
+  if (!pass)  return showAuthError('reg-err', 'Escribe una contraseña.');
+  if (pass.length < 6) return showAuthError('reg-err', 'La contraseña debe tener al menos 6 caracteres.');
+  if (pass !== pass2) return showAuthError('reg-err', 'Las contraseñas no coinciden. ¡Inténtalo otra vez!');
+
+  const users = getUsers();
+  if (users[email]) return showAuthError('reg-err', 'Ya existe una cuenta con ese email. Inicia sesión.');
+
+  users[email] = { name, email, password: btoa(pass), createdAt: Date.now() };
+  saveUsers(users);
+  saveSession(email);
+  showToast('¡Cuenta creada! Bienvenido, ' + name + ' 🎉', 'ok');
+  startApp(email);
+}
+
+function doReset() {
+  const email = document.getElementById('reset-email').value.trim().toLowerCase();
+  document.getElementById('reset-err').classList.remove('show');
+  document.getElementById('reset-ok').classList.remove('show');
+
+  if (!email) return showAuthError('reset-err', 'Escribe tu email.');
+  const users = getUsers();
+  if (!users[email]) return showAuthError('reset-err', 'No existe ninguna cuenta con ese email.');
+
+  // Mostrar pista de contraseña (ya que es local, no hay email real)
+  const hint = atob(users[email].password);
+  const masked = hint[0] + '*'.repeat(Math.max(hint.length-2,1)) + hint[hint.length-1];
+  showAuthSuccess('reset-ok',
+    '¡Cuenta encontrada! Tu contraseña empieza por "' + hint[0] + '" y tiene ' + hint.length + ' caracteres. ' +
+    'Pídele a un adulto que te ayude si no la recuerdas, o crea una cuenta nueva.');
+}
+
+function doSignOut() {
+  clearSession();
+  currentUserEmail = null;
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-screen').classList.remove('hidden');
+  switchTab('login');
+  showToast('Sesión cerrada. ¡Hasta pronto!', 'ok');
+}
+
+// ═══════════════════════════════════════════════════════
+//  START APP
+// ═══════════════════════════════════════════════════════
+let currentUserEmail = null;
+
+function startApp(email) {
+  currentUserEmail = email;
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('main-app').style.display = '';
+
+  const users = getUsers();
+  const user = users[email];
+  const name = user ? user.name : email.split('@')[0];
+
+  document.getElementById('user-name').textContent = name;
+  document.getElementById('user-avatar').textContent = name[0].toUpperCase();
+
+  loadState();
+  applyTheme(state.activeTheme);
+  if (state.activeAvatar) document.getElementById('user-avatar').textContent = state.activeAvatar;
+  if (state.activeTitle) document.getElementById('user-title').textContent = '👑 ' + state.activeTitle;
+  render();
+
+  // Comprobar si se perdió la racha mientras no estaba conectado
+  const lostStreak = checkStreakLoss();
+  if (lostStreak) {
+    setTimeout(() => showStreakLostAnimation(), 400);
+    render();
+  }
+}
+
+// Al cargar la página, ver si hay sesión guardada
+window.addEventListener('DOMContentLoaded', () => {
+  const session = getSession();
+  if (session && session.email) {
+    const users = getUsers();
+    if (users[session.email]) {
+      startApp(session.email);
+      return;
+    }
+  }
+  // Mostrar pantalla de login
+});
+
+// ═══════════════════════════════════════════════════════
+//  DATOS DE EJERCICIOS
+// ═══════════════════════════════════════════════════════
 const DAYS = [
-  {
-    id: 0, name: "Lun", fullName: "Lunes",
-    duration: "15-20 min", xp: 40,
-    tip: "Empieza la semana con energia. Haz cada ejercicio despacio al principio.",
-    exercises: [
-      { name: "Calentamiento",        detail: "Salta en el sitio o corre sin moverte del sitio",  reps: "2 min",    how: "Da saltitos en el sitio moviendo los brazos. El objetivo es calentar los musculos antes de empezar." },
-      { name: "Sentadillas",          detail: "3 series de 8 repeticiones",                       reps: "3 x 8",    how: "Pies separados al ancho de los hombros. Baja como si fueras a sentarte en una silla. Espalda recta siempre. Sube lentamente." },
-      { name: "Flexiones de rodillas",detail: "3 series de 5 repeticiones",                       reps: "3 x 5",    how: "Como las flexiones normales pero con las rodillas en el suelo. Manos al ancho de los hombros, baja el pecho hasta casi tocar el suelo." },
-      { name: "Plancha",              detail: "3 series de 20 segundos",                          reps: "3 x 20s",  how: "Apoya los codos y las puntas de los pies. Mantén el cuerpo recto como una tabla. No saques el trasero hacia arriba." },
-      { name: "Estiramiento",         detail: "Estira piernas y brazos suavemente",               reps: "2 min",    how: "Tira suavemente de cada musculo durante 15-20 segundos. Nunca hagas rebotes al estirar. Respira con calma." }
+  { id:0, name:"Lun", fullName:"Lunes", duration:"15-20 min", xp:60, coins:25,
+    tip:"Empieza la semana con energía. Haz cada ejercicio despacio al principio.",
+    exercises:[
+      { name:"Calentamiento",         detail:"Salta en el sitio o corre sin moverte",    reps:"2 min",   how:"Da saltitos en el sitio moviendo los brazos. El objetivo es calentar los músculos antes de empezar.",                                           videoId:"iPwEPnYCiL0" },
+      { name:"Sentadillas",           detail:"3 series de 8 repeticiones",               reps:"3 x 8",   how:"Pies separados al ancho de los hombros. Baja como si fueras a sentarte en una silla. Espalda recta siempre.",                                   videoId:"YaXPRqUwItQ" },
+      { name:"Flexiones de rodillas", detail:"3 series de 5 repeticiones",               reps:"3 x 5",   how:"Como las flexiones normales pero con las rodillas en el suelo. Manos al ancho de los hombros, baja el pecho hasta casi tocar el suelo.",       videoId:"_l3ySVKYVJ8" },
+      { name:"Plancha",               detail:"3 series de 20 segundos",                  reps:"3 x 20s", how:"Apoya los codos y las puntas de los pies. Mantén el cuerpo recto como una tabla. No saques el trasero hacia arriba.",                          videoId:"pSHjTRCQxIw" },
+      { name:"Estiramiento",          detail:"Estira piernas y brazos suavemente",       reps:"2 min",   how:"Tira suavemente de cada músculo durante 15-20 segundos. Nunca hagas rebotes al estirar. Respira con calma.",                                  videoId:"sTxC3J3gQEU" }
     ]
   },
-  {
-    id: 1, name: "Mar", fullName: "Martes",
-    duration: "20-30 min", xp: 55,
-    tip: "Martes de resistencia. Descansa entre series solo 30-40 segundos.",
-    exercises: [
-      { name: "Calentamiento",        detail: "Jumping jacks",                                    reps: "3 min",    how: "Salta abriendo piernas y brazos al mismo tiempo. Aterriza suave doblando un poco las rodillas." },
-      { name: "Zancadas",             detail: "3 series de 8 repeticiones por pierna",            reps: "3 x 8",    how: "Da un gran paso adelante y baja la rodilla de atras hacia el suelo. Luego vuelve al centro. Alterna piernas." },
-      { name: "Flexiones normales",   detail: "3 series de 5 a 8 repeticiones",                  reps: "3 x 5-8",  how: "Cuerpo recto, manos al ancho de hombros. Baja hasta casi tocar el suelo con el pecho. Si no puedes, hazlas de rodillas." },
-      { name: "Superman",             detail: "3 series de 10 repeticiones",                      reps: "3 x 10",   how: "Tumbate boca abajo. Levanta brazos y piernas a la vez como si volaras. Aguanta 2 segundos arriba y baja con control." },
-      { name: "Abdominales",          detail: "3 series de 10 repeticiones",                      reps: "3 x 10",   how: "Tumbado boca arriba, rodillas dobladas. Sube solo hasta que los hombros despejen el suelo. No tires del cuello." },
-      { name: "Estiramiento",         detail: "Estiramiento completo",                            reps: "3 min",    how: "Estira cuadriceps, isquiotibiales y hombros. Aguanta cada posicion 20 segundos sin rebotes." }
+  { id:1, name:"Mar", fullName:"Martes", duration:"20-30 min", xp:80, coins:35,
+    tip:"Martes de resistencia. Descansa entre series solo 30-40 segundos.",
+    exercises:[
+      { name:"Calentamiento",       detail:"Jumping jacks",                              reps:"3 min",    how:"Salta abriendo piernas y brazos al mismo tiempo. Aterriza suave doblando un poco las rodillas.",                                        videoId:"iSSAk4XCsRA" },
+      { name:"Zancadas",            detail:"3 series de 8 repeticiones por pierna",      reps:"3 x 8",    how:"Da un gran paso adelante y baja la rodilla de atrás hacia el suelo. Luego vuelve al centro. Alterna piernas.",                          videoId:"QOVaHwm-Q6U" },
+      { name:"Flexiones normales",  detail:"3 series de 5 a 8 repeticiones",             reps:"3 x 5-8",  how:"Cuerpo recto, manos al ancho de hombros. Baja hasta casi tocar el suelo con el pecho. Si no puedes, hazlas de rodillas.",               videoId:"0pkjOk0EiAk" },
+      { name:"Superman",            detail:"3 series de 10 repeticiones",                reps:"3 x 10",   how:"Túmbate boca abajo. Levanta brazos y piernas a la vez como si volaras. Aguanta 2 segundos arriba y baja con control.",                  videoId:"z6PJMT2y8GQ" },
+      { name:"Abdominales",         detail:"3 series de 10 repeticiones",                reps:"3 x 10",   how:"Tumbado boca arriba, rodillas dobladas. Sube solo hasta que los hombros despejen el suelo. No tires del cuello.",                       videoId:"Xyd_fa5zoEU" },
+      { name:"Estiramiento",        detail:"Estiramiento completo",                      reps:"3 min",    how:"Estira cuadriceps, isquiotibiales y hombros. Aguanta cada posición 20 segundos sin rebotes.",                                           videoId:"sTxC3J3gQEU" }
     ]
   },
-  {
-    id: 2, name: "Mie", fullName: "Miercoles",
-    duration: "15-20 min", xp: 40,
-    tip: "Mitad de semana. Hoy trabajamos el tronco y la estabilidad.",
-    exercises: [
-      { name: "Calentamiento",        detail: "Movimientos de cuello, hombros y cadera",         reps: "2 min",    how: "Gira el cuello suavemente, haz circulos con los hombros y mueve las caderas en circulo. Todo despacio." },
-      { name: "Plancha lateral",      detail: "2 series de 15 segundos por lado",                reps: "2 x 15s",  how: "Apoyate en un codo y el borde del pie. Sube las caderas para que el cuerpo quede recto. No dejes caer la cadera." },
-      { name: "Sentadillas sumo",     detail: "3 series de 10 repeticiones",                     reps: "3 x 10",   how: "Pies muy separados y puntas hacia fuera. Baja con la espalda recta. Trabaja mas el interior de los muslos." },
-      { name: "Fondos de triceps",    detail: "3 series de 8 repeticiones (usa una silla)",      reps: "3 x 8",    how: "Sientate en el borde de una silla, manos agarradas al borde. Desliza el trasero hacia delante y baja doblando los codos." },
-      { name: "Estiramiento lateral", detail: "Estiramiento de costados",                        reps: "2 min",    how: "Estira los costados levantando un brazo y doblando hacia el lado contrario. Aguanta 15 segundos por lado." }
+  { id:2, name:"Mie", fullName:"Miércoles", duration:"15-20 min", xp:60, coins:25,
+    tip:"Mitad de semana. Hoy trabajamos el tronco y la estabilidad.",
+    exercises:[
+      { name:"Calentamiento",        detail:"Movimientos de cuello, hombros y cadera",  reps:"2 min",   how:"Gira el cuello suavemente, haz círculos con los hombros y mueve las caderas en círculo. Todo despacio.",                                  videoId:"iPwEPnYCiL0" },
+      { name:"Plancha lateral",      detail:"2 series de 15 segundos por lado",         reps:"2 x 15s", how:"Apóyate en un codo y el borde del pie. Sube las caderas para que el cuerpo quede recto. No dejes caer la cadera.",                       videoId:"_rdfjFSFKMY" },
+      { name:"Sentadillas sumo",     detail:"3 series de 10 repeticiones",              reps:"3 x 10",  how:"Pies muy separados y puntas hacia fuera. Baja con la espalda recta. Trabaja más el interior de los muslos.",                              videoId:"qJwmGSvtCTU" },
+      { name:"Fondos de tríceps",    detail:"3 series de 8 repeticiones (silla)",       reps:"3 x 8",   how:"Siéntate en el borde de una silla, manos agarradas al borde. Desliza el trasero hacia delante y baja doblando los codos.",               videoId:"0326dy_-CzM" },
+      { name:"Estiramiento lateral", detail:"Estiramiento de costados",                 reps:"2 min",   how:"Estira los costados levantando un brazo y doblando hacia el lado contrario. Aguanta 15 segundos por lado.",                              videoId:"sTxC3J3gQEU" }
     ]
   },
-  {
-    id: 3, name: "Jue", fullName: "Jueves",
-    duration: "15-20 min", xp: 40,
-    tip: "Casi el fin de semana. Hoy trabajamos las piernas con potencia.",
-    exercises: [
-      { name: "Calentamiento",        detail: "Trotar en el sitio levantando rodillas",           reps: "2 min",    how: "Corre sin moverte del sitio levantando las rodillas bien alto. Brazos en movimiento como si corrieras de verdad." },
-      { name: "Sentadillas con salto",detail: "3 series de 6 repeticiones",                      reps: "3 x 6",    how: "Haz una sentadilla normal y cuando subas, salta. Aterriza suave doblando las rodillas. Descansa 40 segundos entre series." },
-      { name: "Montanero",            detail: "3 series de 20 segundos",                         reps: "3 x 20s",  how: "En posicion de flexion, alterna llevar cada rodilla al pecho lo mas rapido que puedas. Mantén el cuerpo plano y los brazos rectos." },
-      { name: "Puente de gluteos",    detail: "3 series de 12 repeticiones",                     reps: "3 x 12",   how: "Tumbado boca arriba, pies en el suelo cerca del trasero. Sube las caderas hasta que el cuerpo quede recto. Aprieta el trasero arriba." },
-      { name: "Estiramiento",         detail: "Cuadriceps, pantorrillas y lumbar",               reps: "2 min",    how: "Para el cuadriceps: de pie, dobla una rodilla y agarra el pie con la mano. Para la pantorrilla: apoya el pie en la pared y empuja el talon." }
+  { id:3, name:"Jue", fullName:"Jueves", duration:"15-20 min", xp:60, coins:25,
+    tip:"¡Casi el fin de semana! Hoy trabajamos las piernas con potencia.",
+    exercises:[
+      { name:"Calentamiento",          detail:"Trotar en el sitio levantando rodillas", reps:"2 min",   how:"Corre sin moverte del sitio levantando las rodillas bien alto. Brazos en movimiento como si corrieras de verdad.",                       videoId:"iPwEPnYCiL0" },
+      { name:"Sentadillas con salto",  detail:"3 series de 6 repeticiones",             reps:"3 x 6",   how:"Haz una sentadilla normal y cuando subas, salta. Aterriza suave doblando las rodillas. Descansa 40 segundos entre series.",             videoId:"Azl5tkCzDcc" },
+      { name:"Montañero",              detail:"3 series de 20 segundos",                reps:"3 x 20s", how:"En posición de flexión, alterna llevar cada rodilla al pecho lo más rápido que puedas. Mantén el cuerpo plano y los brazos rectos.",     videoId:"nmwgirgXLYM" },
+      { name:"Puente de glúteos",      detail:"3 series de 12 repeticiones",            reps:"3 x 12",  how:"Tumbado boca arriba, pies en el suelo cerca del trasero. Sube las caderas hasta que el cuerpo quede recto. Aprieta el trasero arriba.", videoId:"8bbE64NuDTU" },
+      { name:"Estiramiento",           detail:"Cuadriceps, pantorrillas y lumbar",      reps:"2 min",   how:"Para el cuadríceps: de pie, dobla una rodilla y agarra el pie con la mano. Para la pantorrilla: apoya el pie en la pared.",             videoId:"sTxC3J3gQEU" }
     ]
   },
-  {
-    id: 4, name: "Vie", fullName: "Viernes",
-    duration: "30-35 min", xp: 70,
-    tip: "Viernes. El entrenamiento mas completo de la semana. Dale todo lo que tienes.",
-    exercises: [
-      { name: "Calentamiento",        detail: "Saltos, carrera y movimiento de articulaciones",  reps: "3 min",    how: "Combina saltos, carrera en el sitio y giros de todas las articulaciones. Termina con algo de sudor." },
-      { name: "Sentadillas",          detail: "4 series de 10 repeticiones",                     reps: "4 x 10",   how: "Baja lento en 2 segundos y sube explosivo. Mantén el peso en los talones. Esta semana intenta bajar mas que la anterior." },
-      { name: "Flexiones",            detail: "4 series de 8 repeticiones",                      reps: "4 x 8",    how: "Si puedes, hazlas normales. Si no, de rodillas. Lo importante es que el pecho llegue cerca del suelo." },
-      { name: "Abdominales bicicleta",detail: "3 series de 15 repeticiones",                     reps: "3 x 15",   how: "Tumbado, lleva el codo derecho a la rodilla izquierda y viceversa, alternando. Lento y controlado, no rapido." },
-      { name: "Burpee (version facil)",detail: "3 series de 5 repeticiones",                     reps: "3 x 5",    how: "Sentadilla, manos al suelo, estira las piernas atras (plancha), vuelve y salta. Si es muy dificil, omite el salto final." },
-      { name: "Plancha",              detail: "3 series de 25 segundos",                         reps: "3 x 25s",  how: "Intenta aguantar mas que la semana pasada. Ese es el progreso real. Respira con ritmo." },
-      { name: "Estiramiento completo",detail: "Todo el cuerpo",                                  reps: "5 min",    how: "Estira cada grupo muscular: piernas, espalda, hombros, brazos. No te saltes esta parte, es muy importante para recuperarte." }
+  { id:4, name:"Vie", fullName:"Viernes", duration:"30-35 min", xp:100, coins:50,
+    tip:"¡Viernes! El entrenamiento más completo. Dale todo lo que tienes.",
+    exercises:[
+      { name:"Calentamiento",           detail:"Saltos, carrera y articulaciones",             reps:"3 min",   how:"Combina saltos, carrera en el sitio y giros de todas las articulaciones. Termina con algo de sudor.",                             videoId:"iPwEPnYCiL0" },
+      { name:"Sentadillas",             detail:"4 series de 10 repeticiones",                  reps:"4 x 10",  how:"Baja lento en 2 segundos y sube explosivo. Mantén el peso en los talones.",                                                       videoId:"YaXPRqUwItQ" },
+      { name:"Flexiones",               detail:"4 series de 8 repeticiones",                   reps:"4 x 8",   how:"Si puedes, hazlas normales. Si no, de rodillas. Lo importante es que el pecho llegue cerca del suelo.",                          videoId:"0pkjOk0EiAk" },
+      { name:"Abdominales bicicleta",   detail:"3 series de 15 repeticiones",                  reps:"3 x 15",  how:"Tumbado, lleva el codo derecho a la rodilla izquierda y viceversa, alternando. Lento y controlado.",                              videoId:"9FGilxCbdz8" },
+      { name:"Burpee (versión fácil)",  detail:"3 series de 5 repeticiones",                   reps:"3 x 5",   how:"Sentadilla, manos al suelo, estira las piernas atrás, vuelve y salta. Si es muy difícil, omite el salto final.",                 videoId:"dZgVxmf6jkA" },
+      { name:"Plancha",                 detail:"3 series de 25 segundos",                      reps:"3 x 25s", how:"Intenta aguantar más que la semana pasada. Ese es el progreso real. Respira con ritmo.",                                         videoId:"pSHjTRCQxIw" },
+      { name:"Estiramiento completo",   detail:"Todo el cuerpo",                               reps:"5 min",   how:"Estira cada grupo muscular: piernas, espalda, hombros, brazos. No te saltes esta parte.",                                        videoId:"sTxC3J3gQEU" }
     ]
   },
-  {
-    id: 5, name: "Sab", fullName: "Sabado",
-    duration: "30-45 min", xp: 80,
-    tip: "Fin de semana. Puedes tomarlo mas tranquilo o ir con todo. Tu decides.",
-    exercises: [
-      { name: "Calentamiento libre",  detail: "Muevete como quieras: baile, saltos...",          reps: "4 min",    how: "El objetivo es calentar y pasarlo bien. Corre, salta, baila. Empieza a sudar un poco antes de los ejercicios." },
-      { name: "Sentadillas lentas",   detail: "4 series de 12 repeticiones",                     reps: "4 x 12",   how: "Baja muy lento en 4 segundos. El musculo trabaja mas con este ritmo lento. Notaras la diferencia enseguida." },
-      { name: "Flexiones diamante",   detail: "3 series de 5 repeticiones",                      reps: "3 x 5",    how: "Junta las manos formando un triangulo (diamante) bajo el pecho. Trabaja mas el triceps. Hazlas de rodillas si es necesario." },
-      { name: "Saltos a una altura baja", detail: "3 series de 8 repeticiones (usa un escalon)", reps: "3 x 8",    how: "Salta encima de algo bajo como un escalon. Aterriza con las dos piernas y dobla las rodillas al caer. Con cuidado." },
-      { name: "Abdominales V",        detail: "3 series de 8 repeticiones",                      reps: "3 x 8",    how: "Siéntate, levanta las piernas y el tronco al mismo tiempo formando una V. Aguanta 2 segundos. Dobla las rodillas si es muy dificil." },
-      { name: "Caminar tranquilo",    detail: "Paseo de recuperacion",                           reps: "5 min",    how: "Da una vuelta por casa o el barrio. Deja que la respiracion y las pulsaciones vuelvan a la normalidad." },
-      { name: "Estiramiento completo",detail: "Todo el cuerpo con calma",                        reps: "5-8 min",  how: "Estira todo el cuerpo despacio. Usa este tiempo para relajarte. Los musculos crecen y se reparan cuando descansas bien." }
+  { id:5, name:"Sab", fullName:"Sábado", duration:"30-45 min", xp:120, coins:60,
+    tip:"Fin de semana. Puedes tomarlo más tranquilo o ir con todo. Tú decides.",
+    exercises:[
+      { name:"Calentamiento libre",       detail:"Baile, saltos, lo que quieras",             reps:"4 min",    how:"El objetivo es calentar y pasarlo bien. Corre, salta, baila.",                                                                    videoId:"iPwEPnYCiL0" },
+      { name:"Sentadillas lentas",        detail:"4 series de 12 repeticiones",               reps:"4 x 12",   how:"Baja muy lento en 4 segundos. El músculo trabaja más con este ritmo.",                                                            videoId:"YaXPRqUwItQ" },
+      { name:"Flexiones diamante",        detail:"3 series de 5 repeticiones",                reps:"3 x 5",    how:"Junta las manos formando un triángulo bajo el pecho. Trabaja más el tríceps.",                                                    videoId:"J0DXDOwuFp8" },
+      { name:"Saltos a una altura baja",  detail:"3 series de 8 repeticiones (escalón)",     reps:"3 x 8",    how:"Salta encima de algo bajo como un escalón. Aterriza con las dos piernas doblando las rodillas. Con cuidado.",                     videoId:"Azl5tkCzDcc" },
+      { name:"Abdominales V",             detail:"3 series de 8 repeticiones",                reps:"3 x 8",    how:"Siéntate, levanta las piernas y el tronco al mismo tiempo formando una V. Aguanta 2 segundos.",                                   videoId:"7UgUPN4TKgk" },
+      { name:"Caminar tranquilo",         detail:"Paseo de recuperación",                     reps:"5 min",    how:"Da una vuelta por casa o el barrio. Deja que la respiración vuelva a la normalidad.",                                            videoId:"sTxC3J3gQEU" },
+      { name:"Estiramiento completo",     detail:"Todo el cuerpo con calma",                  reps:"5-8 min",  how:"Estira todo el cuerpo despacio. Usa este tiempo para relajarte.",                                                                 videoId:"sTxC3J3gQEU" }
     ]
   },
-  {
-    id: 6, name: "Dom", fullName: "Domingo",
-    duration: "Descanso", xp: 0,
-    isRest: true,
-    tip: "El descanso es parte del entrenamiento. Los musculos crecen cuando descansas.",
-    exercises: []
+  { id:6, name:"Dom", fullName:"Domingo", duration:"Descanso", xp:0, coins:0, isRest:true,
+    tip:"El descanso es parte del entrenamiento. Los músculos crecen cuando descansas.",
+    exercises:[]
   }
 ];
- 
-// =====================
-// STATE
-// =====================
-const DEFAULT_STATE = { currentDay: 0, completedExercises: {}, completedDays: {}, xp: 0, level: 1 };
+
+const SHOP_ITEMS = [
+  { id:"shield",     icon:"🛡️", name:"Escudo de Racha",   desc:"Protege tu racha si fallas un día",    price:80,  category:"power" },
+  { id:"double_xp",  icon:"⚡",  name:"XP Doble",          desc:"El doble de XP en tu próximo entreno", price:120, category:"power" },
+  { id:"theme_dark", icon:"🌙",  name:"Tema Oscuro",        desc:"Modo oscuro para la web",              price:150, category:"theme" },
+  { id:"theme_blue", icon:"🌊",  name:"Tema Azul",          desc:"Tema azul océano",                     price:100, category:"theme" },
+  { id:"avatar_fire",icon:"🔥",  name:"Avatar Llama",       desc:"Muestra que eres fuego puro",          price:60,  category:"avatar" },
+  { id:"avatar_star",icon:"⭐",  name:"Avatar Estrella",    desc:"Brilla entre todos",                   price:60,  category:"avatar" },
+  { id:"avatar_bolt",icon:"⚡",  name:"Avatar Rayo",        desc:"Velocidad y potencia",                 price:60,  category:"avatar" },
+  { id:"title_beast",icon:"🦁",  name:'Título "La Bestia"', desc:"Aparece junto a tu nombre",            price:200, category:"title" },
+  { id:"title_champ",icon:"🏆",  name:'Título "Campeón"',   desc:"Aparece junto a tu nombre",            price:200, category:"title" },
+];
+
+const ACHIEVEMENTS = [
+  { id:"first_day",  icon:"🌟", name:"Primer día",     cond: s => Object.keys(s.completedDays).length >= 1 },
+  { id:"three_days", icon:"🔥", name:"3 días",          cond: s => Object.keys(s.completedDays).length >= 3 },
+  { id:"full_week",  icon:"🏆", name:"Semana completa", cond: s => Object.keys(s.completedDays).length >= 6 },
+  { id:"level5",     icon:"⚡", name:"Nivel 5",         cond: s => s.level >= 5 },
+  { id:"streak3",    icon:"🎯", name:"Racha de 3",      cond: s => (s.streak||0) >= 3 },
+  { id:"coins100",   icon:"💰", name:"100 monedas",     cond: s => (s.coins||0) >= 100 },
+];
+
+// Videojuegos que se compran con GEMAS. Una vez comprados, quedan
+// desbloqueados para siempre (a no ser que se pierda la racha).
+const GAMES = [
+  { id:"fruit_ninja", icon:"🍉", name:"Fruit Ninja",   desc:"Corta fruta a toda velocidad",      price:40, url:"https://sergiodenda-bot.github.io/FruitNinja/" },
+  { id:"block_blast",  icon:"🧱", name:"Block Blast",   desc:"Encaja bloques y haz combos",       price:35, url:"https://sergiodenda-bot.github.io/BlockBlast/Index.html" },
+  { id:"block_dash",   icon:"🟦", name:"Block Dash",    desc:"Corre y esquiva obstáculos",        price:30, url:"https://dendasamuel7-boop.github.io/Block_Dash/" },
+  { id:"retro_runner", icon:"🏃", name:"Retro Runner",  desc:"Carrera estilo retro sin parar",    price:30, url:"https://retro-runner--sussyserg.replit.app/" },
+];
+
+const GAME_MINUTES = 30; // minutos que se puede jugar tras completar el entreno
+const GEMS_PER_LEVEL_BONUS = 0; // las gemas no se ganan por nivel, solo entrenando o en tienda
+const GEMS_PER_DAY = 5; // gemas base que da cada día completado
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const DEFAULT_STATE = {
+  currentDay:0, completedExercises:{}, completedDays:{},
+  xp:0, level:1, coins:0, gems:0, ownedItems:[], activeAvatar:"", activeTitle:"", activeTheme:"",
+  streak:0, lastTrainDate:null, unlockedAchievements:[],
+  ownedGames:[], gameUnlockedUntil:null, lastLevel:1
+};
 let state = { ...DEFAULT_STATE };
- 
+
+function stateKey() { return 'fit_v4_' + (currentUserEmail || 'guest'); }
+
 function loadState() {
   try {
-    const raw = localStorage.getItem('fit_v3');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // Merge carefully to avoid missing keys
-      state = {
-        currentDay: typeof parsed.currentDay === 'number' ? parsed.currentDay : 0,
-        completedExercises: parsed.completedExercises && typeof parsed.completedExercises === 'object' ? parsed.completedExercises : {},
-        completedDays: parsed.completedDays && typeof parsed.completedDays === 'object' ? parsed.completedDays : {},
-        xp: typeof parsed.xp === 'number' ? parsed.xp : 0,
-        level: typeof parsed.level === 'number' && parsed.level >= 1 ? parsed.level : 1
-      };
-    } else {
-      // First visit: default to today's day
-      const jsDay = new Date().getDay(); // 0=Sun
-      state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
-    }
-  } catch(e) {
-    state = { ...DEFAULT_STATE };
-    const jsDay = new Date().getDay();
-    state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
-  }
+    const raw = localStorage.getItem(stateKey());
+    if (raw) { state = { ...DEFAULT_STATE, ...JSON.parse(raw) }; return; }
+  } catch(e) {}
+  state = { ...DEFAULT_STATE };
+  const jsDay = new Date().getDay();
+  state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
 }
- 
+
 function saveState() {
-  try {
-    localStorage.setItem('fit_v3', JSON.stringify(state));
-  } catch(e) { /* localStorage unavailable, silently ignore */ }
+  localStorage.setItem(stateKey(), JSON.stringify(state));
 }
- 
-// =====================
-// XP / LEVEL
-// =====================
-function xpForLevel(lvl) { return lvl * 100; }
- 
+
+// ═══════════════════════════════════════════════════════
+//  XP / LEVEL / COINS
+// ═══════════════════════════════════════════════════════
+function xpForLevel(lvl) { return Math.floor(100 + (lvl-1)*50 + Math.pow(lvl-1,1.4)*20); }
+function coinsForLevelUp(lvl) { return lvl * 30; }
+
 function addXP(amount) {
   if (amount <= 0) return;
+  if ((state.ownedItems||[]).includes('double_xp_active')) {
+    amount *= 2;
+    state.ownedItems = state.ownedItems.filter(i => i !== 'double_xp_active');
+  }
   state.xp += amount;
+  let lvlsGained = 0;
   let cap = xpForLevel(state.level);
   while (state.xp >= cap) {
     state.xp -= cap;
     state.level++;
+    lvlsGained++;
+    state.coins = (state.coins||0) + coinsForLevelUp(state.level);
     cap = xpForLevel(state.level);
   }
   updateXPBar();
   saveState();
+  if (lvlsGained > 0) showLevelUp(state.level, coinsForLevelUp(state.level));
 }
- 
+
 function updateXPBar() {
   const cap = xpForLevel(state.level);
-  const pct = cap > 0 ? Math.min(100, Math.round((state.xp / cap) * 100)) : 0;
+  const pct = Math.min(100, Math.round((state.xp / cap) * 100));
   document.getElementById('xp-bar').style.width = pct + '%';
   document.getElementById('xp-cur').textContent = state.xp;
   document.getElementById('xp-max').textContent = cap;
   document.getElementById('lvl-num').textContent = state.level;
+  document.getElementById('coins-display').textContent = state.coins || 0;
+  const scd = document.getElementById('shop-coins-display');
+  if (scd) scd.textContent = state.coins || 0;
 }
- 
-// =====================
-// RENDER DAYS NAV
-// =====================
-function todayIndex() {
-  const jsDay = new Date().getDay(); // 0=Sun..6=Sat
-  return jsDay === 0 ? 6 : jsDay - 1;
+
+// ═══════════════════════════════════════════════════════
+//  STREAK
+// ═══════════════════════════════════════════════════════
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (state.lastTrainDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  state.streak = state.lastTrainDate === yesterday ? (state.streak||0) + 1 : 1;
+  state.lastTrainDate = today;
 }
- 
+
+// Se llama al iniciar la app: si el jugador dejó pasar un día sin
+// entrenar, se rompe la racha y se pierden los videojuegos comprados
+// (pero el nivel y el XP de entrenamiento NO se pierden nunca).
+function checkStreakLoss() {
+  if (!state.lastTrainDate) return false; // primera vez, nada que perder
+  const today = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (state.lastTrainDate === today || state.lastTrainDate === yesterday) return false;
+
+  // Ha pasado más de un día sin entrenar → se rompe la racha
+  if ((state.streak||0) > 0) {
+    // Si tiene un escudo activo, lo consume y salva la racha una vez
+    if ((state.ownedItems||[]).includes('shield')) {
+      state.ownedItems = state.ownedItems.filter(i => i !== 'shield');
+      state.streak = 0; // el escudo evita perder los juegos, pero la racha se reinicia igual
+      saveState();
+      showToast('🛡️ Tu escudo te salvó de perder los juegos, ¡pero la racha se reinició!', 'ok');
+      return false;
+    }
+    state.streak = 0;
+    state.ownedGames = [];
+    state.gameUnlockedUntil = null;
+    saveState();
+    return true; // sí hubo pérdida de racha con juegos
+  }
+  return false;
+}
+
+function renderStreak() {
+  const s = state.streak || 0;
+  document.getElementById('streak-num').textContent = s;
+  document.getElementById('streak-sub').textContent = s === 1 ? 'día seguido' : 'días seguidos';
+}
+
+// ═══════════════════════════════════════════════════════
+//  ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════
+function checkAchievements() {
+  ACHIEVEMENTS.forEach((a, i) => {
+    if (!state.unlockedAchievements.includes(a.id) && a.cond(state)) {
+      state.unlockedAchievements.push(a.id);
+      setTimeout(() => showToast('🏅 Logro desbloqueado: ' + a.name, 'ok'), i * 1000);
+    }
+  });
+  saveState();
+}
+
+function renderAchievements() {
+  document.getElementById('achievements-row').innerHTML = ACHIEVEMENTS.map(a => {
+    const u = state.unlockedAchievements.includes(a.id);
+    return `<div class="achievement-badge${u?' unlocked':''}">
+      <span class="ach-icon">${a.icon}</span>
+      <span class="ach-name">${a.name}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function todayIndex() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
+
 function renderDays() {
   const nav = document.getElementById('days-nav');
   nav.innerHTML = '';
   const today = todayIndex();
- 
-  DAYS.forEach((d, i) => {
+  DAYS.forEach((d,i) => {
     const btn = document.createElement('button');
     btn.className = 'day-btn';
- 
-    const isActive = state.currentDay === i;
-    const isToday = today === i;
-    const isDone = !!state.completedDays[i];
-    const isRest = !!d.isRest;
- 
-    if (isActive) btn.classList.add('active');
-    if (isToday && !isActive) btn.classList.add('today');
-    if (isDone && !isActive) btn.classList.add('done');
-    if (isRest) btn.classList.add('rest');
- 
+    if (state.currentDay === i) btn.classList.add('active');
+    if (today === i && state.currentDay !== i) btn.classList.add('today');
+    if (state.completedDays[i] && state.currentDay !== i) btn.classList.add('done');
+    if (d.isRest) btn.classList.add('rest');
     btn.innerHTML = `<span class="day-abbr">${d.name}</span><span class="day-dot"></span>`;
     btn.title = d.fullName;
-    btn.setAttribute('aria-label', d.fullName);
     btn.onclick = () => { state.currentDay = i; render(); };
- 
     nav.appendChild(btn);
   });
 }
- 
-// =====================
-// RENDER WORKOUT
-// =====================
+
 function renderWorkout() {
   const area = document.getElementById('workout-area');
   const howSection = document.getElementById('how-section');
-  const howList = document.getElementById('how-list');
   const d = DAYS[state.currentDay];
- 
-  // Rest day
+
   if (d.isRest) {
-    area.innerHTML = `
-      <div class="rest-day">
-        <h2>DIA DE DESCANSO</h2>
-        <p>Tu cuerpo necesita descansar para crecer y hacerse mas fuerte.</p>
-        <p>Hoy toca recargar energias y dormir bien.</p>
-        <p class="rest-tip">${d.tip}</p>
-      </div>`;
+    area.innerHTML = `<div class="rest-day">
+      <h2>DÍA DE DESCANSO 😴</h2>
+      <p>Tu cuerpo necesita descansar para crecer y hacerse más fuerte.</p>
+      <p>Hoy toca recargar energías y dormir bien.</p>
+      <p class="rest-tip">${d.tip}</p>
+    </div>`;
     howSection.style.display = 'none';
     return;
   }
- 
+
   const total = d.exercises.length;
-  const doneCount = d.exercises.filter((_, idx) => !!state.completedExercises[`${d.id}-${idx}`]).length;
-  const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+  const doneCount = d.exercises.filter((_,i) => !!state.completedExercises[`${d.id}-${i}`]).length;
+  const pct = total > 0 ? Math.round((doneCount/total)*100) : 0;
   const allDone = doneCount === total && total > 0;
-  const dayAlreadyCompleted = !!state.completedDays[d.id];
- 
-  const exHtml = d.exercises.map((ex, idx) => {
+  const dayDone = !!state.completedDays[d.id];
+
+  const exHtml = d.exercises.map((ex,idx) => {
     const key = `${d.id}-${idx}`;
     const isComp = !!state.completedExercises[key];
-    const isLocked = dayAlreadyCompleted;
-    return `
-      <div class="exercise-item${isComp ? ' completed' : ''}${isLocked ? ' locked' : ''}"
-           onclick="toggleEx(${d.id}, ${idx})"
-           role="checkbox" aria-checked="${isComp}" tabindex="0"
-           onkeydown="if(event.key==='Enter'||event.key===' ')toggleEx(${d.id},${idx})">
-        <div class="ex-check">${isComp ? '&#10003;' : ''}</div>
-        <div class="ex-info">
-          <div class="ex-name">${ex.name}</div>
-          <div class="ex-detail">${ex.detail}</div>
-        </div>
-        <div class="ex-reps">${ex.reps}</div>
-      </div>`;
+    return `<div class="exercise-item${isComp?' completed':''}${dayDone?' locked':''}"
+      onclick="toggleEx(${d.id},${idx})"
+      role="checkbox" aria-checked="${isComp}" tabindex="0"
+      onkeydown="if(event.key==='Enter'||event.key===' ')toggleEx(${d.id},${idx})">
+      <div class="ex-check">${isComp?'&#10003;':''}</div>
+      <div class="ex-info">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-detail">${ex.detail}</div>
+      </div>
+      <div class="ex-reps">${ex.reps}</div>
+      <button class="ex-video-btn" onclick="event.stopPropagation();openVideo(${d.id},${idx})" title="Ver cómo se hace">▶</button>
+    </div>`;
   }).join('');
- 
-  let btnClass = 'complete-btn';
-  let btnDisabled = '';
-  let btnText = 'COMPLETAR ENTRENAMIENTO';
-  if (dayAlreadyCompleted) {
-    btnClass += ' day-done';
-    btnText = 'DIA COMPLETADO';
-    btnDisabled = 'disabled';
-  } else if (!allDone) {
-    btnDisabled = 'disabled';
-  }
- 
+
+  let btnClass = 'complete-btn', btnDis = '', btnTxt = 'COMPLETAR ENTRENAMIENTO';
+  if (dayDone) { btnClass += ' day-done'; btnTxt = '✓ DÍA COMPLETADO'; btnDis = 'disabled'; }
+  else if (!allDone) { btnDis = 'disabled'; }
+
   area.innerHTML = `
     <div class="tip-card">
-      <div class="tip-label">Consejo del dia</div>
+      <div class="tip-label">💡 Consejo del día</div>
       <div class="tip-text">${d.tip}</div>
     </div>
     <div class="workout-card">
       <div class="workout-header">
         <div class="workout-title">${d.fullName.toUpperCase()}</div>
-        <div class="workout-meta">Duracion: <strong>${d.duration}</strong> &nbsp;&bull;&nbsp; Recompensa: <strong>+${d.xp} XP</strong></div>
+        <div class="workout-meta">Duración: <strong>${d.duration}</strong> &nbsp;·&nbsp; <strong>+${d.xp} XP</strong> &nbsp;·&nbsp; <strong>🪙 +${d.coins}</strong></div>
       </div>
       <div class="progress-wrap">
-        <div class="progress-label">${doneCount} de ${total} ejercicios &mdash; ${pct}%</div>
+        <div class="progress-label">${doneCount} de ${total} ejercicios — ${pct}%</div>
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="exercises">${exHtml}</div>
-      <button class="${btnClass}" id="complete-btn" onclick="completeDay()" ${btnDisabled}>${btnText}</button>
+      <button class="${btnClass}" onclick="completeDay()" ${btnDis}>${btnTxt}</button>
     </div>`;
- 
-  // How-to section
+
   howSection.style.display = '';
-  howList.innerHTML = d.exercises.map(ex => `
-    <div class="how-item">
-      <div class="how-name">${ex.name} &mdash; ${ex.reps}</div>
+  document.getElementById('how-list').innerHTML = d.exercises.map(ex =>
+    `<div class="how-item">
+      <div class="how-name">${ex.name} — ${ex.reps}</div>
       <div class="how-desc">${ex.how}</div>
     </div>`).join('');
 }
- 
+
 function render() {
   renderDays();
   renderWorkout();
   updateXPBar();
+  renderStreak();
+  renderAchievements();
 }
- 
-// =====================
-// TOGGLE EXERCISE
-// =====================
+
+// ═══════════════════════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════════════════════
 function toggleEx(dayId, exIdx) {
-  // Only allow toggling if viewing that day and it's not already completed
   if (state.completedDays[dayId]) return;
-  // Ensure we're on the right day
   if (DAYS[state.currentDay].id !== dayId) return;
- 
   const key = `${dayId}-${exIdx}`;
-  if (state.completedExercises[key]) {
-    delete state.completedExercises[key];
-  } else {
-    state.completedExercises[key] = true;
-  }
+  if (state.completedExercises[key]) delete state.completedExercises[key];
+  else state.completedExercises[key] = true;
   saveState();
-  renderWorkout(); // Only re-render workout, not full render (avoids days flicker)
+  renderWorkout();
 }
- 
-// =====================
-// COMPLETE DAY
-// =====================
+
 function completeDay() {
   const d = DAYS[state.currentDay];
-  if (d.isRest) return;
-  if (state.completedDays[d.id]) return;
- 
-  // Safety check: all exercises must be done
-  const allDone = d.exercises.every((_, idx) => !!state.completedExercises[`${d.id}-${idx}`]);
-  if (!allDone) return;
- 
+  if (d.isRest || state.completedDays[d.id]) return;
+  if (!d.exercises.every((_,i) => !!state.completedExercises[`${d.id}-${i}`])) return;
   state.completedDays[d.id] = true;
+  state.coins = (state.coins||0) + d.coins;
+  updateStreak();
   saveState();
-  addXP(d.xp);  // addXP already calls saveState and updateXPBar
-  showCelebration(d.xp);
+  checkAchievements();
+  addXP(d.xp);
+  showCelebration(d.xp, d.coins);
   render();
 }
- 
-// =====================
-// CELEBRATION
-// =====================
-const MESSAGES = [
-  "Cada dia que entrenas eres un poco mas fuerte.",
-  "El esfuerzo de hoy es el resultado de manana.",
-  "Lo has conseguido. Sigue asi campeon.",
-  "Un dia mas, un dia mejor. Orgullo total.",
-  "Bien hecho. Tu cuerpo te lo agradece."
+
+// ═══════════════════════════════════════════════════════
+//  VIDEO
+// ═══════════════════════════════════════════════════════
+function openVideo(dayId, exIdx) {
+  const d = DAYS.find(x => x.id === dayId);
+  const ex = d.exercises[exIdx];
+  document.getElementById('video-title-text').textContent = ex.name;
+  document.getElementById('video-how').textContent = ex.how;
+
+  const searchQuery = encodeURIComponent('como hacer ' + ex.name + ' ejercicio en casa');
+  const ytSearchUrl = 'https://www.youtube.com/results?search_query=' + searchQuery;
+
+  const content = document.getElementById('video-content');
+  content.innerHTML = `
+    <div class="video-wrap" id="video-iframe-wrap">
+      <iframe id="video-iframe"
+        src="https://www.youtube.com/embed/${ex.videoId}?rel=0&modestbranding=1"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+    <div class="video-fallback" id="video-fallback" style="display:none">
+      <div class="video-fallback-icon">🏋️</div>
+      <p class="video-fallback-text">Aquí tienes el mejor resultado para este ejercicio:</p>
+      <a class="video-fallback-btn" href="${ytSearchUrl}" target="_blank" rel="noopener">▶ Ver "${ex.name}" en YouTube</a>
+    </div>`;
+
+  const fallbackTimer = setTimeout(() => {
+    const wrap = document.getElementById('video-iframe-wrap');
+    const fb = document.getElementById('video-fallback');
+    if (wrap && fb && !wrap.dataset.loaded) {
+      wrap.style.display = 'none';
+      fb.style.display = 'block';
+    }
+  }, 3500);
+
+  const iframe = document.getElementById('video-iframe');
+  if (iframe) {
+    iframe.addEventListener('load', () => {
+      const wrap = document.getElementById('video-iframe-wrap');
+      if (wrap) wrap.dataset.loaded = '1';
+      clearTimeout(fallbackTimer);
+    });
+  }
+
+  document.getElementById('video-modal').classList.add('show');
+}
+
+function closeVideo() {
+  document.getElementById('video-modal').classList.remove('show');
+  document.getElementById('video-content').innerHTML = '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  SHOP
+// ═══════════════════════════════════════════════════════
+function openShop() {
+  document.getElementById('shop-coins-display').textContent = state.coins || 0;
+  const cats = { power:"⚔️ Poderes", theme:"🎨 Temas", avatar:"🧑 Avatares", title:"👑 Títulos" };
+  let html = '';
+  Object.keys(cats).forEach(cat => {
+    html += `<div class="shop-section-title">${cats[cat]}</div><div class="shop-grid">`;
+    SHOP_ITEMS.filter(i => i.category===cat).forEach(item => {
+      const owned = (state.ownedItems||[]).includes(item.id);
+      const cantBuy = !owned && (state.coins||0) < item.price;
+      html += `<div class="shop-item${owned?' owned':''}${cantBuy?' cant-buy':''}" onclick="buyItem('${item.id}')">
+        ${owned?'<div class="shop-owned-badge">✓ TUYO</div>':''}
+        <span class="shop-item-icon">${item.icon}</span>
+        <div class="shop-item-name">${item.name}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+        <div class="shop-item-price">${owned?'✓ Comprado':'🪙 '+item.price}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('shop-content').innerHTML = html;
+  document.getElementById('shop-overlay').classList.add('show');
+}
+function closeShop() { document.getElementById('shop-overlay').classList.remove('show'); }
+
+function buyItem(itemId) {
+  const item = SHOP_ITEMS.find(i => i.id===itemId);
+  if (!item) return;
+  if ((state.ownedItems||[]).includes(itemId)) return showToast('¡Ya tienes esto!', 'err');
+  if ((state.coins||0) < item.price) return showToast('No tienes suficientes monedas 🪙', 'err');
+  state.coins -= item.price;
+  state.ownedItems = [...(state.ownedItems||[]), itemId];
+  if (item.category==='theme') { state.activeTheme = itemId.replace('theme_',''); applyTheme(state.activeTheme); }
+  if (item.category==='avatar') { state.activeAvatar = item.icon; document.getElementById('user-avatar').textContent = item.icon; }
+  if (item.category==='title') {
+    const m = item.name.match(/"([^"]+)"/);
+    state.activeTitle = m ? m[1] : '';
+    document.getElementById('user-title').textContent = state.activeTitle ? '👑 '+state.activeTitle : '';
+  }
+  if (itemId==='double_xp') state.ownedItems.push('double_xp_active');
+  saveState(); updateXPBar();
+  showToast('✅ ' + item.name + ' comprado!', 'ok');
+  openShop();
+}
+
+// ═══════════════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════════════
+function applyTheme(theme) {
+  document.body.className = theme === 'dark' ? 'dark' : theme === 'blue' ? 'blue' : '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  OVERLAYS
+// ═══════════════════════════════════════════════════════
+const CEL_MSGS = [
+  "¡Cada día que entrenas eres más fuerte!",
+  "El esfuerzo de hoy es el resultado de mañana.",
+  "¡Lo has conseguido! Sigue así campeón.",
+  "Un día más, un día mejor. ¡Orgullo total!",
+  "¡Bien hecho! Tu cuerpo te lo agradece."
 ];
- 
-function showCelebration(xp) {
-  document.getElementById('cel-sub').textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+function showCelebration(xp, coins) {
+  document.getElementById('cel-sub').textContent = CEL_MSGS[Math.floor(Math.random()*CEL_MSGS.length)];
   document.getElementById('cel-xp').textContent = '+' + xp + ' XP GANADOS';
+  document.getElementById('cel-coins').textContent = '🪙 +' + coins + ' monedas';
   document.getElementById('celebration').classList.add('show');
-  spawnConfetti();
+  spawnConfetti(false);
 }
- 
-function closeCelebration() {
-  document.getElementById('celebration').classList.remove('show');
+function closeCelebration() { document.getElementById('celebration').classList.remove('show'); }
+
+const LVL_MSGS = ["¡Imparable! Cada semana más fuerte.","¡Un nuevo nivel! El esfuerzo paga.","¡Subiste de nivel! Eres una máquina.","¡No te detienes! Así se hace."];
+function showLevelUp(lvl, coins) {
+  document.getElementById('lvlup-num').textContent = lvl;
+  document.getElementById('lvlup-sub').textContent = LVL_MSGS[Math.floor(Math.random()*LVL_MSGS.length)];
+  document.getElementById('lvlup-coins').textContent = '🪙 +' + coins + ' monedas de recompensa';
+  document.getElementById('levelup-overlay').classList.add('show');
+  spawnConfetti(true);
 }
- 
-function spawnConfetti() {
-  const colors = ['#e63946','#1a1a1a','#2d6a4f','#c1121f','#457b9d','#f4a261'];
-  for (let i = 0; i < 50; i++) {
-    setTimeout(() => {
+function closeLevelUp() { document.getElementById('levelup-overlay').classList.remove('show'); }
+
+function spawnConfetti(gold) {
+  const colors = gold
+    ? ['#f4a261','#e07c2e','#ffd700','#fff','#e63946']
+    : ['#e63946','#1a1a1a','#2d6a4f','#c1121f','#457b9d'];
+  for (let i=0;i<60;i++) {
+    setTimeout(()=>{
       const c = document.createElement('div');
       c.className = 'confetti-piece';
-      c.style.cssText = [
-        'left:' + (Math.random() * 100) + 'vw',
-        'background:' + colors[Math.floor(Math.random() * colors.length)],
-        'animation-duration:' + (1.4 + Math.random() * 2) + 's',
-        'animation-delay:' + (Math.random() * 0.3) + 's',
-        'width:' + (5 + Math.random() * 8) + 'px',
-        'height:' + (5 + Math.random() * 8) + 'px',
-        'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px')
-      ].join(';');
+      c.style.cssText = `left:${Math.random()*100}vw;background:${colors[~~(Math.random()*colors.length)]};animation-duration:${1.4+Math.random()*2}s;animation-delay:${Math.random()*.3}s;width:${5+Math.random()*8}px;height:${5+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'}`;
       document.body.appendChild(c);
-      setTimeout(() => { if (c.parentNode) c.parentNode.removeChild(c); }, 4000);
-    }, i * 35);
+      setTimeout(()=>{ if(c.parentNode) c.parentNode.removeChild(c); }, 4000);
+    }, i*30);
   }
 }
- 
-// =====================
-// INIT
-// =====================
-loadState();
-render();
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' '+type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.className=''; }, 2800);
+}
+
+// ESC cierra modales
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closeVideo(); closeShop(); closeLevelUp(); closeCelebration(); }
+});
 </script>
 </body>
 </html>
- 
