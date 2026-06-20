@@ -208,7 +208,30 @@
       "default": "UN DIA COMO HOY EN EL DEPORTE: Un dia memorable en el futbol historico donde atletas legendarios demostraron que el esfuerzo constante rompe limites. ¡Hoy es tu turno de brillar!"
     };
   </script>
+  ...
+241: body.blue{--accent:#457b9d;--accent-dark:#1d3557;--accent-light:#a8dadc40;--bg:#e8f4f8;}
+242: </style>
+243: </head>
+    
+<script>
+    // Tu motor de persistencia y variables aquí
+    let userState = { /* ... tus datos ... */ };
+    
+    function saveAppState() {
+        localStorage.setItem('fitnessAppState', JSON.stringify(userState));
+    }
+    
+    function loadAppState() {
+        const saved = localStorage.getItem('fitnessAppState');
+        if (saved) {
+            userState = JSON.parse(saved);
+        }
+    }
+    window.onload = loadAppState;
+</script>
 
+244: <body>
+...
   <!-- Contenedor para notificaciones flotantes (Toasts) sin emojis -->
   <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
