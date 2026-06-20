@@ -1,1086 +1,1815 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Plan de Entrenamiento</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:#f5f4f0; --surface:#ffffff; --surface2:#f0ede8;
-  --accent:#e63946; --accent-dark:#c1121f; --accent-light:#fce4e6;
-  --green:#2d6a4f; --green-light:#d8f3dc;
-  --gold:#f4a261; --gold-dark:#e07c2e; --gold-light:#fff3e0;
-  --text:#1a1a1a; --muted:#888880; --border:#e0ddd8;
-  --radius:16px; --shadow:0 2px 12px rgba(0,0,0,0.08); --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Plan de Entrenamiento</title>
+  <!-- Tailwind CSS para el diseño responsivo -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts de la imagen original -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome para iconos de alta calidad sin usar emojis -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Canvas Confetti para la explosión visual del Starr Drop -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-/* TOAST */
-#toast{position:fixed;top:16px;right:16px;z-index:9999;background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;font-weight:800;font-size:.88rem;box-shadow:var(--shadow-lg);transform:translateY(-80px);transition:transform .3s ease;pointer-events:none;max-width:280px;}
-#toast.show{transform:translateY(0);}
-#toast.ok{background:var(--green);}
-#toast.err{background:var(--accent);}
-
-/* AUTH SCREEN */
-#auth-screen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
-#auth-screen.hidden{display:none;}
-.auth-box{background:var(--surface);border-radius:20px;padding:32px 28px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);border:1px solid var(--border);}
-.auth-logo{font-family:'Bebas Neue',cursive;font-size:2.8rem;color:var(--text);letter-spacing:2px;text-align:center;margin-bottom:4px;}
-.auth-logo span{color:var(--accent);}
-.auth-sub{text-align:center;color:var(--muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;}
-.auth-tabs{display:flex;gap:6px;margin-bottom:20px;background:var(--surface2);border-radius:10px;padding:4px;}
-.auth-tab{flex:1;padding:9px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;}
-.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
-.auth-panel{display:none;}
-.auth-panel.active{display:block;}
-.auth-input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;background:var(--bg);color:var(--text);margin-bottom:10px;transition:border-color .15s;outline:none;}
-.auth-input:focus{border-color:var(--accent);}
-.auth-input::placeholder{color:var(--muted);}
-.auth-btn{width:100%;padding:13px;border:none;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:#fff;cursor:pointer;transition:all .15s;margin-bottom:8px;}
-.auth-btn-main{background:var(--accent);box-shadow:0 4px 14px rgba(230,57,70,.3);}
-.auth-btn-main:hover{background:var(--accent-dark);transform:translateY(-1px);}
-.auth-link{color:var(--accent);font-weight:800;font-size:.85rem;cursor:pointer;}
-.auth-link:hover{text-decoration:underline;}
-.auth-reset-row{text-align:right;margin-bottom:10px;}
-.auth-error{background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;font-size:.83rem;font-weight:700;color:var(--accent-dark);margin-bottom:10px;display:none;}
-.auth-error.show{display:block;}
-.auth-success{background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:10px 12px;font-size:.83rem;font-weight:700;color:var(--green);margin-bottom:10px;display:none;}
-.auth-success.show{display:block;}
-
-/* USER BAR */
-.user-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:12px;padding:10px 14px;margin-bottom:16px;box-shadow:var(--shadow);border:1px solid var(--border);}
-.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:1.1rem;color:#fff;flex-shrink:0;}
-.user-name{font-weight:800;font-size:.9rem;flex:1;}
-.user-title{font-size:.72rem;color:var(--gold-dark);font-weight:800;}
-.user-coins{font-family:'Bebas Neue',cursive;font-size:1rem;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:4px 10px;letter-spacing:.5px;cursor:pointer;border:2px solid var(--gold);transition:all .15s;}
-.user-coins:hover{background:var(--gold);color:#fff;}
-.signout-btn{background:none;border:2px solid var(--border);border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;color:var(--muted);cursor:pointer;transition:all .15s;}
-.signout-btn:hover{border-color:var(--accent);color:var(--accent);}
-
-/* MAIN CONTAINER */
-.container{max-width:680px;margin:0 auto;padding:28px 16px 80px;}
-header{margin-bottom:20px;}
-.header-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
-h1{font-family:'Bebas Neue',cursive;font-size:3rem;color:var(--text);line-height:1;letter-spacing:1px;}
-h1 span{color:var(--accent);}
-.subtitle{color:var(--muted);font-size:.9rem;font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:1px;}
-
-/* XP CARD */
-.xp-card{background:var(--text);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);}
-.level-badge{background:var(--accent);border-radius:10px;padding:8px 14px;font-family:'Bebas Neue',cursive;font-size:1.4rem;color:#fff;white-space:nowrap;flex-shrink:0;letter-spacing:1px;cursor:pointer;transition:transform .15s;}
-.level-badge:hover{transform:scale(1.05);}
-.xp-info{flex:1;min-width:0;}
-.xp-label{font-size:.7rem;color:#aaa;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
-.xp-bar-wrap{background:rgba(255,255,255,.15);border-radius:8px;height:8px;margin-top:6px;overflow:hidden;}
-.xp-bar{height:100%;border-radius:8px;background:var(--accent);transition:width .5s ease;}
-.xp-text{font-size:.75rem;color:#aaa;margin-top:4px;font-weight:600;}
-
-/* STREAK */
-.streak-card{background:linear-gradient(135deg,#1a1a1a,#2d2d2d);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
-.streak-fire{font-size:2rem;}
-.streak-info{flex:1;}
-.streak-label{font-size:.7rem;color:#aaa;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
-.streak-num{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--gold);line-height:1;letter-spacing:1px;}
-.streak-sub{font-size:.75rem;color:#888;font-weight:600;}
-
-/* DAYS NAV */
-.days-nav{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:24px;}
-.day-btn{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:10px 4px 8px;cursor:pointer;text-align:center;transition:all .15s;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;box-shadow:var(--shadow);}
-.day-btn .day-abbr{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;}
-.day-btn .day-dot{display:block;width:6px;height:6px;border-radius:50%;background:transparent;margin:5px auto 0;transition:background .15s;}
-.day-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-2px);box-shadow:var(--shadow-lg);}
-.day-btn.active{border-color:var(--accent);background:var(--accent);color:#fff;}
-.day-btn.active .day-dot{background:rgba(255,255,255,.5);}
-.day-btn.today:not(.active){border-color:var(--accent);color:var(--accent);}
-.day-btn.done:not(.active){border-color:var(--green);background:var(--green-light);color:var(--green);}
-.day-btn.done:not(.active) .day-dot{background:var(--green);}
-.day-btn.rest{opacity:.45;cursor:default;}
-.day-btn.rest:hover{transform:none;border-color:var(--border);box-shadow:var(--shadow);color:var(--muted);}
-
-/* TIP */
-.tip-card{background:var(--surface);border-left:4px solid var(--accent);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow);}
-.tip-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;}
-.tip-text{font-size:.92rem;color:var(--text);font-weight:700;line-height:1.4;}
-
-/* WORKOUT */
-.workout-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
-.workout-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#fff 60%,var(--accent-light));}
-.workout-title{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--text);letter-spacing:1px;line-height:1;}
-.workout-meta{font-size:.82rem;color:var(--muted);font-weight:700;margin-top:4px;}
-.workout-meta strong{color:var(--accent);}
-.progress-wrap{padding:14px 20px 0;}
-.progress-label{font-size:.78rem;color:var(--muted);font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
-.progress-track{background:var(--surface2);border-radius:8px;height:8px;overflow:hidden;}
-.progress-fill{height:100%;border-radius:8px;background:var(--accent);transition:width .35s ease;}
-.exercises{padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
-.exercise-item{background:var(--bg);border-radius:12px;padding:13px 14px;display:flex;align-items:center;gap:12px;border:2px solid transparent;transition:all .15s;cursor:pointer;user-select:none;}
-.exercise-item:hover{border-color:var(--accent);background:var(--accent-light);}
-.exercise-item.completed{border-color:var(--green);background:var(--green-light);}
-.exercise-item.locked{cursor:default;opacity:.6;}
-.exercise-item.locked:hover{border-color:transparent;background:var(--bg);}
-.ex-check{width:26px;height:26px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;flex-shrink:0;transition:all .15s;color:transparent;}
-.exercise-item.completed .ex-check{border-color:var(--green);background:var(--green);color:#fff;}
-.ex-info{flex:1;min-width:0;}
-.ex-name{font-weight:800;font-size:.93rem;color:var(--text);}
-.ex-detail{font-size:.78rem;color:var(--muted);margin-top:2px;font-weight:600;}
-.ex-reps{font-family:'Bebas Neue',cursive;font-size:1rem;color:var(--accent);letter-spacing:.5px;flex-shrink:0;white-space:nowrap;}
-.exercise-item.completed .ex-reps{color:var(--green);}
-.ex-video-btn{width:32px;height:32px;border-radius:8px;background:var(--accent-light);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.9rem;transition:all .15s;color:var(--accent);}
-.ex-video-btn:hover{background:var(--accent);color:#fff;transform:scale(1.1);}
-.complete-btn{width:calc(100% - 32px);margin:8px 16px 16px;padding:15px;background:var(--accent);border:none;border-radius:12px;font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#fff;cursor:pointer;transition:all .15s;letter-spacing:1px;box-shadow:0 4px 14px rgba(230,57,70,.35);}
-.complete-btn:hover:not(:disabled){background:var(--accent-dark);transform:translateY(-1px);}
-.complete-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;box-shadow:none;transform:none;}
-.complete-btn.day-done{background:var(--green);box-shadow:0 4px 14px rgba(45,106,79,.3);cursor:default;}
-.complete-btn.day-done:hover{background:var(--green);transform:none;}
-
-/* HOW-TO */
-.how-section{background:var(--surface);border-radius:var(--radius);padding:18px 18px 8px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
-.how-title{font-family:'Bebas Neue',cursive;font-size:1.3rem;color:var(--text);letter-spacing:1px;margin-bottom:12px;}
-.how-item{padding:10px 0;border-bottom:1px solid var(--border);}
-.how-item:last-child{border-bottom:none;padding-bottom:4px;}
-.how-name{font-weight:900;font-size:.88rem;color:var(--text);}
-.how-desc{font-size:.83rem;color:var(--muted);margin-top:3px;font-weight:600;line-height:1.4;}
-
-/* REST DAY */
-.rest-day{background:var(--surface);border-radius:var(--radius);padding:50px 24px;text-align:center;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
-.rest-day h2{font-family:'Bebas Neue',cursive;font-size:2.2rem;color:var(--text);letter-spacing:1px;margin-bottom:10px;}
-.rest-day p{color:var(--muted);font-size:.95rem;font-weight:700;line-height:1.5;}
-.rest-tip{margin-top:16px!important;color:var(--accent)!important;}
-
-/* ACHIEVEMENTS */
-.achievements-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px;}
-.achievement-badge{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:10px 14px;flex-shrink:0;text-align:center;min-width:80px;transition:all .2s;position:relative;}
-.achievement-badge.unlocked{border-color:var(--gold);background:var(--gold-light);}
-.achievement-badge .ach-icon{font-size:1.6rem;display:block;}
-.achievement-badge .ach-name{font-size:.65rem;font-weight:800;color:var(--muted);display:block;margin-top:4px;}
-.achievement-badge.unlocked .ach-name{color:var(--gold-dark);}
-.achievement-badge:not(.unlocked){filter:grayscale(1);opacity:.5;}
-
-/* VIDEO MODAL */
-#video-modal{display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.8);align-items:center;justify-content:center;padding:20px;}
-#video-modal.show{display:flex;}
-.video-box{background:var(--surface);border-radius:20px;overflow:hidden;width:100%;max-width:560px;box-shadow:var(--shadow-lg);}
-.video-header{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.video-title-text{font-family:'Bebas Neue',cursive;font-size:1.3rem;letter-spacing:1px;}
-.video-close{background:var(--surface2);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.video-close:hover{background:var(--accent);color:#fff;}
-.video-wrap{position:relative;padding-bottom:56.25%;height:0;}
-.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
-.video-how{padding:14px 18px;background:var(--surface2);font-size:.88rem;font-weight:700;color:var(--text);line-height:1.5;border-top:1px solid var(--border);}
-.video-fallback{padding:40px 24px;text-align:center;}
-.video-fallback-icon{font-size:3rem;margin-bottom:12px;}
-.video-fallback-text{color:var(--muted);font-weight:700;font-size:.9rem;margin-bottom:16px;}
-.video-fallback-btn{display:inline-block;background:var(--accent);color:#fff;padding:12px 24px;border-radius:10px;font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.5px;text-decoration:none;transition:all .15s;}
-.video-fallback-btn:hover{background:var(--accent-dark);transform:translateY(-1px);}
-
-/* LEVEL UP */
-#levelup-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;}
-#levelup-overlay.show{display:flex;}
-.lvlup-burst{font-size:5rem;animation:burstIn .5s cubic-bezier(.175,.885,.32,1.275);margin-bottom:12px;}
-.lvlup-title{font-family:'Bebas Neue',cursive;font-size:3.5rem;color:#fff;letter-spacing:3px;line-height:1;text-shadow:0 0 40px var(--gold);animation:burstIn .6s .1s cubic-bezier(.175,.885,.32,1.275) both;}
-.lvlup-num{font-family:'Bebas Neue',cursive;font-size:6rem;color:var(--gold);letter-spacing:2px;line-height:1;text-shadow:0 0 60px rgba(244,162,97,.8);animation:burstIn .7s .2s cubic-bezier(.175,.885,.32,1.275) both;}
-.lvlup-sub{color:rgba(255,255,255,.75);font-size:1rem;font-weight:800;margin-top:8px;}
-.lvlup-coins{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--gold);margin-top:12px;letter-spacing:1px;}
-.lvlup-close{margin-top:28px;padding:14px 44px;background:var(--gold);border:none;border-radius:12px;font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#fff;cursor:pointer;letter-spacing:1px;box-shadow:0 4px 20px rgba(244,162,97,.5);}
-.lvlup-close:hover{background:var(--gold-dark);}
-@keyframes burstIn{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-
-/* CELEBRATION */
-#celebration{display:none;position:fixed;inset:0;background:rgba(250,248,245,.96);z-index:100;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;}
-#celebration.show{display:flex;}
-.cel-icon{width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pop .4s cubic-bezier(.175,.885,.32,1.275);}
-@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.cel-icon svg{width:40px;height:40px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
-.cel-title{font-family:'Bebas Neue',cursive;font-size:2.8rem;color:var(--text);letter-spacing:2px;line-height:1.1;}
-.cel-sub{font-size:1rem;color:var(--muted);margin-top:8px;font-weight:700;}
-.cel-xp{font-family:'Bebas Neue',cursive;font-size:2rem;color:var(--accent);margin-top:10px;letter-spacing:1px;}
-.cel-coins{font-family:'Bebas Neue',cursive;font-size:1.5rem;color:var(--gold-dark);letter-spacing:1px;margin-top:4px;}
-.close-cel{margin-top:28px;padding:14px 44px;background:var(--text);border:none;border-radius:12px;font-family:'Bebas Neue',cursive;font-size:1.3rem;color:#fff;cursor:pointer;letter-spacing:1px;transition:background .15s;}
-.close-cel:hover{background:var(--accent);}
-
-/* SHOP */
-#shop-overlay{display:none;position:fixed;inset:0;z-index:160;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center;}
-#shop-overlay.show{display:flex;}
-.shop-box{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;padding:24px 20px 40px;box-shadow:var(--shadow-lg);animation:slideUp .3s ease;}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.shop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.shop-title{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:1px;}
-.shop-coins-display{font-family:'Bebas Neue',cursive;font-size:1.3rem;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:6px 14px;border:2px solid var(--gold);}
-.shop-close{background:var(--surface2);border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.shop-close:hover{background:var(--accent);color:#fff;}
-.shop-section-title{font-family:'Bebas Neue',cursive;font-size:1.2rem;letter-spacing:1px;color:var(--muted);margin:16px 0 10px;}
-.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px;}
-.shop-item{background:var(--bg);border-radius:14px;padding:16px 14px;border:2px solid var(--border);transition:all .15s;cursor:pointer;text-align:center;position:relative;}
-.shop-item:hover:not(.owned):not(.cant-buy){border-color:var(--gold);background:var(--gold-light);transform:translateY(-2px);box-shadow:var(--shadow);}
-.shop-item.owned{border-color:var(--green);background:var(--green-light);cursor:default;}
-.shop-item.cant-buy{opacity:.5;cursor:not-allowed;}
-.shop-item-icon{font-size:2.2rem;margin-bottom:8px;display:block;}
-.shop-item-name{font-weight:900;font-size:.88rem;color:var(--text);}
-.shop-item-desc{font-size:.75rem;color:var(--muted);font-weight:600;margin-top:3px;line-height:1.3;}
-.shop-item-price{font-family:'Bebas Neue',cursive;font-size:1.1rem;color:var(--gold-dark);margin-top:8px;letter-spacing:.5px;}
-.shop-item.owned .shop-item-price{color:var(--green);}
-.shop-owned-badge{position:absolute;top:8px;right:8px;font-size:.65rem;font-weight:900;background:var(--green);color:#fff;padding:2px 6px;border-radius:6px;}
-
-/* CONFETTI */
-.confetti-piece{position:fixed;top:-12px;animation:fall linear forwards;border-radius:2px;z-index:400;pointer-events:none;}
-@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
-
-/* RESPONSIVE */
-@media(max-width:380px){
-  h1{font-size:2.2rem;}
-  .days-nav{gap:4px;}
-  .day-btn{padding:8px 2px 6px;}
-  .day-btn .day-abbr{font-size:.62rem;}
-  .shop-grid{grid-template-columns:1fr;}
-}
-
-/* DARK THEME */
-body.dark{--bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--text:#f0f0f0;--border:#333;--muted:#777;}
-body.blue{--accent:#457b9d;--accent-dark:#1d3557;--accent-light:#a8dadc40;--bg:#e8f4f8;}
-</style>
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f4f3ef; /* Fondo beige claro de la imagen image_af8849.png */
+    }
+    .font-bebas {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.03em;
+    }
+    /* Transición de botones de selección de día */
+    .day-pill {
+      transition: all 0.2s ease;
+    }
+    /* Animación interactiva para simular los golpes al Starr Drop */
+    @keyframes dropBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.18) rotate(4deg); }
+    }
+    .starr-drop-bounce {
+      animation: dropBounce 0.2s ease-in-out;
+    }
+    /* Estilización del scroll lateral y vertical */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f4f3ef;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    /* Efecto hover suave para el bloque de ejercicio sensible */
+    .exercise-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .exercise-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .exercise-card:active {
+      transform: translateY(1px);
+    }
+  </style>
 </head>
-<body>
+  <!-- Modal de Inicio de Sesión -->
+<div id="login-modal" class="hidden fixed inset-0 bg-stone-950/95 z-[100] flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+    <h2 class="text-2xl font-black font-bebas text-stone-900 mb-4">BIENVENIDO, ATLETA</h2>
+    <input type="text" id="input-username" placeholder="Tu nombre" class="w-full p-3 mb-4 border-2 border-stone-200 rounded-xl font-bold">
+    <button onclick="saveUser()" class="w-full bg-rose-600 text-white font-black py-3 rounded-xl uppercase">Comenzar</button>
+  </div>
+</div>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased">
 
-<div id="toast"></div>
+  <script>
+    // Estado inicial persistido en LocalStorage
+    let userState = {
+      username: "Usuario",
+      email: "correo@entrenamiento.com",
+      userTitle: "Principiante",
+      avatarLetter: "U",
+      avatarBg: "bg-rose-500",
+      avatarImage: null, // Foto subida en formato base64
+      level: 1,
+      xp: 0,
+      xpNeeded: 100,
+      coins: 0,
+      racha: 0,
+      lastWorkoutDate: null, // Para comprobar si se pierde la racha
+      completedToday: false,
+      inventory: []
+    };
 
-<!-- AUTH SCREEN -->
-<div id="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo">MI <span>PLAN</span></div>
-    <div class="auth-sub">Sin pesas · Solo tu cuerpo</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchTab('login')">Entrar</button>
-      <button class="auth-tab" onclick="switchTab('register')">Registrarse</button>
-      <button class="auth-tab" onclick="switchTab('reset')">Contraseña</button>
-    </div>
+    // Rutinas Semanales Adaptadas para Calistenia
+    const WEEKLY_ROUTINES = {
+      1: {
+        name: "LUNES",
+        duration: "15-20 min",
+        xp: 60,
+        coins: 25,
+        exercises: [
+          { id: "cal_lun", name: "Calentamiento", desc: "Salta en el sitio o corre sin moverte", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "sent_lun", name: "Sentadillas", desc: "Baja con la espalda recta hasta formar 90 grados", baseQty: 10, unit: "repeticiones", type: "squat" },
+          { id: "flex_lun", name: "Flexiones de rodillas", desc: "Mantén el abdomen firme al bajar el torso", baseQty: 8, unit: "repeticiones", type: "pushup" },
+          { id: "plank_lun", name: "Plancha", desc: "Apoya los antebrazos y mantén el cuerpo recto", baseQty: 1, unit: "vueltas", type: "plank" },
+          { id: "est_lun", name: "Estiramiento", desc: "Estira las piernas y la espalda relajadamente", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      2: {
+        name: "MARTES",
+        duration: "18-22 min",
+        xp: 70,
+        coins: 30,
+        exercises: [
+          { id: "cal_mar", name: "Zancadas de activación", desc: "Paso adelante bajando la cadera", baseQty: 12, unit: "repeticiones", type: "warmup" },
+          { id: "sent_mar", name: "Sentadillas Sumo", desc: "Piernas abiertas, puntas hacia afuera", baseQty: 12, unit: "repeticiones", type: "squat" },
+          { id: "flex_mar", name: "Flexiones clásicas", desc: "Codos hacia atrás en ángulo de 45 grados", baseQty: 8, unit: "repeticiones", type: "pushup" },
+          { id: "plank_mar", name: "Plancha lateral", desc: "Sostén el peso de cada lado sobre el codo", baseQty: 1, unit: "vueltas", type: "plank" },
+          { id: "est_mar", name: "Estiramiento de torso", desc: "Relaja columna y hombros de forma controlada", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      3: {
+        name: "MIÉRCOLES",
+        duration: "15-20 min",
+        xp: 65,
+        coins: 25,
+        exercises: [
+          { id: "cal_mie", name: "Saltos de tijera", desc: "Jumping Jacks coordinando brazos y piernas", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "sent_mie", name: "Sentadilla estática", desc: "Apóyate contra la pared sosteniendo el ángulo", baseQty: 1, unit: "vueltas", type: "squat" },
+          { id: "flex_mie", name: "Flexiones con manos juntas", desc: "Enfoca el esfuerzo en la zona del tríceps", baseQty: 6, unit: "repeticiones", type: "pushup" },
+          { id: "plank_mie", name: "Plancha escalador", desc: "Lleva rodillas al pecho manteniendo posición de flexión", baseQty: 1, unit: "vueltas", type: "plank" },
+          { id: "est_mie", name: "Estiramiento completo", desc: "Respira hondo y relaja todo el cuerpo", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      4: {
+        name: "JUEVES",
+        duration: "20-25 min",
+        xp: 80,
+        coins: 35,
+        exercises: [
+          { id: "cal_jue", name: "Rotación articular", desc: "Mueve brazos, cadera y tobillos suavemente", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "sent_jue", name: "Zancadas alternas", desc: "Zancada limpia alternando pierna", baseQty: 14, unit: "repeticiones", type: "squat" },
+          { id: "flex_jue", name: "Flexiones declinadas", desc: "Apoya los pies elevados sobre una silla", baseQty: 8, unit: "repeticiones", type: "pushup" },
+          { id: "plank_jue", name: "Super Plancha", desc: "Plancha clásica concentrada", baseQty: 1, unit: "vueltas", type: "plank" },
+          { id: "est_jue", name: "Flexibilidad profunda", desc: "Estira cuádriceps, glúteos y espalda", baseQty: 3, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      5: {
+        name: "VIERNES",
+        duration: "15-20 min",
+        xp: 75,
+        coins: 30,
+        exercises: [
+          { id: "cal_vie", name: "Trotar suave", desc: "Pequeño trote en el sitio para ganar pulso", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "sent_vie", name: "Sentadillas con salto", desc: "Sube de forma explosiva despegando los pies", baseQty: 8, unit: "repeticiones", type: "squat" },
+          { id: "flex_vie", name: "Flexiones de pica", desc: "Eleva la cadera empujando con tus hombros", baseQty: 6, unit: "repeticiones", type: "pushup" },
+          { id: "plank_vie", name: "Plancha de Spiderman", desc: "Lleva rodilla hacia el codo por el lateral", baseQty: 1, unit: "vueltas", type: "plank" },
+          { id: "est_vie", name: "Estiramiento relajación", desc: "Libera tensión acumulada en el tren inferior", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      6: {
+        name: "SÁBADO",
+        duration: "15-18 min",
+        xp: 60,
+        coins: 20,
+        exercises: [
+          { id: "cal_sab", name: "Calentamiento de brazos", desc: "Círculos amplios con hombros y codos", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "sent_sab", name: "Zancada lateral", desc: "Desplaza el peso a un lado flexionando rodilla", baseQty: 10, unit: "repeticiones", type: "squat" },
+          { id: "flex_sab", name: "Flexiones inclinadas", desc: "Manos elevadas en una superficie firme", baseQty: 10, unit: "repeticiones", type: "pushup" },
+          { id: "plank_sab", name: "Plancha isométrica", desc: "Sostén con máxima tensión en el abdomen", baseQty: 1, unit: "vueltas", type: "plank" },
+          { id: "est_sab", name: "Yoga estiramientos", desc: "Posiciones relajantes de estiramiento yoga", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      0: {
+        name: "DOMINGO",
+        duration: "10-12 min",
+        xp: 40,
+        coins: 15,
+        exercises: [
+          { id: "cal_dom", name: "Paseo de activación", desc: "Caminar libremente o marcha en el sitio", baseQty: 3, unit: "vueltas", type: "warmup" },
+          { id: "sent_dom", name: "Sentadillas muy suaves", desc: "Bajar poco a poco para movilizar", baseQty: 6, unit: "repeticiones", type: "squat" },
+          { id: "est_dom", name: "Gran estiramiento", desc: "Dedica este día a flexibilizar todo el cuerpo", baseQty: 3, unit: "vueltas", type: "stretch" }
+        ]
+      }
+    };
 
-    <!-- LOGIN -->
-    <div class="auth-panel active" id="tab-login">
-      <div class="auth-error" id="login-err"></div>
-      <input class="auth-input" id="login-email" type="email" placeholder="Tu email" autocomplete="email">
-      <input class="auth-input" id="login-pass" type="password" placeholder="Tu contraseña" autocomplete="current-password"
-             onkeydown="if(event.key==='Enter')doLogin()">
-      <button class="auth-btn auth-btn-main" onclick="doLogin()">INICIAR SESIÓN</button>
-      <div style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--muted);font-weight:700">
-        ¿Sin cuenta? <span class="auth-link" onclick="switchTab('register')">Regístrate gratis</span>
-        &nbsp;·&nbsp;
-        <span class="auth-link" onclick="switchTab('reset')">Olvidé mi contraseña</span>
+    // Tienda Fitness Organizada
+    const STORE_ITEMS = [
+      { id: "item_1", name: "Batido Energetico de Fresa", category: "Suplementos", cost: 30, desc: "Bebida proteica ideal para acelerar la recuperacion deportiva.", icon: "fa-prescription-bottle" },
+      { id: "item_2", name: "Guantes de Calistenia Pro", category: "Equipamiento", cost: 75, desc: "Previene la aparicion de callos al colgarte en el parque de entrenamiento.", icon: "fa-mitten" },
+      { id: "item_3", name: "Shaker Mezclador de Acero", category: "Equipamiento", cost: 150, desc: "Un lujoso mezclador metalico para llevar tus bebidas de entrenamiento.", icon: "fa-bottle-water" },
+      { id: "item_4", name: "Titulo Especial: Gladiador", category: "Titulos", cost: 200, desc: "Equipa este imponente titulo en tu perfil para lucir tu esfuerzo.", icon: "fa-crown" },
+      { id: "item_5", name: "Fondo de Perfil: Universo", category: "Cosmeticos", cost: 280, desc: "Desbloquea un maravilloso fondo cosmético para tu tarjeta de usuario.", icon: "fa-images" },
+      { id: "item_6", name: "Aura de Poder de Titanio", category: "Cosmeticos", cost: 350, desc: "Efecto místico que rodea tu avatar con pura potencia visual.", icon: "fa-wand-magic-sparkles" },
+      { id: "item_7", name: "Trofeo de Campeon 1976", category: "Cosmeticos", cost: 500, desc: "El trofeo definitivo para conmemorar los hitos del deporte clasico.", icon: "fa-trophy" },
+      { id: "item_8", name: "Compañero Robot Entrenador", category: "Cosmeticos", cost: 1000, desc: "Un asistente virtual de calistenia que te acompañara en la tienda.", icon: "fa-robot" }
+    ];
+
+    // Videojuegos integrados directamente en la tienda (Sin Emojis, con URLs reales)
+    const STORE_GAMES = [
+      { id: "game_1", name: "Fruit Ninja Calistenico", category: "Videojuegos", cost: 50, url: "https://sergiodenda-bot.github.io/FruitNinja/", desc: "Corta las frutas virtuales al estilo ninja para entrenar tus reflejos visuales.", icon: "fa-gamepad" },
+      { id: "game_2", name: "Block Blast Fitness", category: "Videojuegos", cost: 100, url: "https://sergiodenda-bot.github.io/BlockBlast/Index.html", desc: "Coloca bloques estrategicamente para despejar filas y entrenar tu mente deportiva.", icon: "fa-cube" },
+      { id: "game_3", name: "Block Dash Calistenia", category: "Videojuegos", cost: 180, url: "https://dendasamuel7-boop.github.io/Block_Dash/", desc: "Esquiva los pinchos geometricos saltando con la precision de un gimnasta.", icon: "fa-bolt" },
+      { id: "game_4", name: "Mario Retro Calistenico", category: "Videojuegos", cost: 250, url: "https://tinyfishingame.com/new-games/", desc: "Sumergete en este clasico de plataformas retro adaptado para motivar tu rutina.", icon: "fa-gamepad" }
+    ];
+
+    // Datos históricos para la cinemática adaptados a la fecha actual sin emojis
+    const HISTORICAL_EVENTS = {
+      "20-06": "UN DIA COMO HOY EN EL DEPORTE: En 1976, Antonin Panenka patenta su mitico penalti en la final de la Eurocopa frente a Alemania, cambiando la historia del futbol para siempre con su vaselina.",
+      "21-06": "UN DIA COMO HOY EN EL DEPORTE: En 1970, la seleccion de futbol de Brasil liderada por Pele se consagra campeona del mundo al derrotar a Italia 4-1 en Mexico.",
+      "22-06": "UN DIA COMO HOY EN EL DEPORTE: En 1986, Diego Maradona anota la Mano de Dios y el Gol del Siglo frente a Inglaterra en el Mundial de Mexico.",
+      "default": "UN DIA COMO HOY EN EL DEPORTE: Un dia memorable en el futbol historico donde atletas legendarios demostraron que el esfuerzo constante rompe limites. ¡Hoy es tu turno de brillar!"
+    };
+  </script>
+
+  <!-- Contenedor para notificaciones flotantes (Toasts) sin emojis -->
+  <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- PANTALLA INTRODUCCIÓN CINEMÁTICA DE BIENVENIDA -->
+  <div id="intro-screen" class="fixed inset-0 bg-stone-900/95 z-50 flex items-center justify-center p-4 transition-all duration-500 opacity-0 pointer-events-none" onclick="dismissIntro()">
+    <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-2xl w-full text-center space-y-6 shadow-2xl transform scale-95 transition-all duration-500" onclick="event.stopPropagation()">
+      <div class="inline-block px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-xs uppercase font-extrabold tracking-widest font-bebas">
+        Sucedio hoy en la historia
       </div>
-    </div>
-
-    <!-- REGISTER -->
-    <div class="auth-panel" id="tab-register">
-      <div class="auth-error" id="reg-err"></div>
-      <input class="auth-input" id="reg-name" type="text" placeholder="Tu nombre (ej: Paco)">
-      <input class="auth-input" id="reg-email" type="email" placeholder="Tu email">
-      <input class="auth-input" id="reg-pass" type="password" placeholder="Contraseña (mín. 6 caracteres)">
-      <input class="auth-input" id="reg-pass2" type="password" placeholder="Repite la contraseña"
-             onkeydown="if(event.key==='Enter')doRegister()">
-      <button class="auth-btn auth-btn-main" onclick="doRegister()">CREAR CUENTA</button>
-      <div style="text-align:center;margin-top:8px;font-size:.82rem;color:var(--muted);font-weight:700">
-        ¿Ya tienes cuenta? <span class="auth-link" onclick="switchTab('login')">Iniciar sesión</span>
-      </div>
-    </div>
-
-    <!-- RESET -->
-    <div class="auth-panel" id="tab-reset">
-      <div class="auth-error" id="reset-err"></div>
-      <div class="auth-success" id="reset-ok"></div>
-      <p style="font-size:.85rem;color:var(--muted);font-weight:700;margin-bottom:12px;">
-        Escribe tu email. Si tienes cuenta, te mostraremos tu contraseña de seguridad para que la recuperes.
+      <!-- Texto Histórico de gran tamaño y súper legible -->
+      <h2 id="intro-title" class="text-stone-900 text-4xl md:text-5xl font-bebas leading-tight uppercase font-black">
+        HITO LEGENDARIO
+      </h2>
+      <p id="intro-description" class="text-stone-700 text-lg md:text-xl font-bold leading-relaxed px-2 py-4 border-y border-stone-100">
+        Cargando la hazaña mitica de la jornada...
       </p>
-      <input class="auth-input" id="reset-email" type="email" placeholder="Tu email"
-             onkeydown="if(event.key==='Enter')doReset()">
-      <button class="auth-btn auth-btn-main" onclick="doReset()">RECUPERAR CONTRASEÑA</button>
-      <div style="text-align:center;margin-top:8px;">
-        <span class="auth-link" onclick="switchTab('login')">← Volver al inicio</span>
+      <div class="pt-2">
+        <button class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-6 py-3 rounded-xl transition-all font-bebas tracking-wide cursor-pointer text-lg shadow-lg" onclick="dismissIntro()">
+          ENTRAR AL ENTRENAMIENTO <i class="fa-solid fa-dumbbell"></i>
+        </button>
       </div>
+      <p class="text-xs text-stone-400">Toca en cualquier espacio vacio para cerrar</p>
     </div>
   </div>
-</div>
 
-<!-- LEVEL UP OVERLAY -->
-<div id="levelup-overlay">
-  <div class="lvlup-burst">⚡</div>
-  <div class="lvlup-title">¡SUBISTE DE NIVEL!</div>
-  <div class="lvlup-num" id="lvlup-num">2</div>
-  <div class="lvlup-sub" id="lvlup-sub">¡Imparable! Sigue así.</div>
-  <div class="lvlup-coins" id="lvlup-coins">🪙 +100 monedas</div>
-  <button class="lvlup-close" onclick="closeLevelUp()">¡A ENTRENAR!</button>
-</div>
-
-<!-- CELEBRATION -->
-<div id="celebration">
-  <div class="cel-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-  <div class="cel-title">ENTRENAMIENTO<br>COMPLETADO</div>
-  <div class="cel-sub" id="cel-sub">¡Muy bien! Cada día eres más fuerte.</div>
-  <div class="cel-xp" id="cel-xp">+50 XP</div>
-  <div class="cel-coins" id="cel-coins">🪙 +30 monedas</div>
-  <button class="close-cel" onclick="closeCelebration()">CONTINUAR</button>
-</div>
-
-<!-- VIDEO MODAL -->
-<div id="video-modal" onclick="if(event.target===this)closeVideo()">
-  <div class="video-box">
-    <div class="video-header">
-      <div class="video-title-text" id="video-title-text">Ejercicio</div>
-      <button class="video-close" onclick="closeVideo()">✕</button>
-    </div>
-    <div id="video-content"></div>
-    <div class="video-how" id="video-how"></div>
-  </div>
-</div>
-
-<!-- SHOP -->
-<div id="shop-overlay" onclick="if(event.target===this)closeShop()">
-  <div class="shop-box">
-    <div class="shop-header">
-      <div class="shop-title">🏪 TIENDA</div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div class="shop-coins-display">🪙 <span id="shop-coins-display">0</span></div>
-        <button class="shop-close" onclick="closeShop()">✕</button>
+  <!-- MODAL DE EXCLUSIÓN / NOTIFICACIÓN DEL HUEVO DE RACHA PERDIDA -->
+  <div id="racha-lost-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[90] flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl transform scale-100 transition-all">
+      
+      <!-- Huevo Triste Animado por SVG -->
+      <div class="w-40 h-48 mx-auto relative flex items-center justify-center">
+        <svg viewBox="0 0 100 120" class="w-full h-full animate-bounce">
+          <!-- Cuerpo de Huevo -->
+          <path d="M50,15 C25,15 15,55 15,85 C15,100 30,110 50,110 C70,110 85,100 85,85 C85,55 75,15 50,15 Z" fill="#fffaf0" stroke="#78716c" stroke-width="4" />
+          <!-- Grieta de huevo roto por perder la racha -->
+          <path d="M30,55 L45,65 L50,60 L60,70 L70,55" fill="none" stroke="#e11d48" stroke-width="3" stroke-linecap="round" />
+          <!-- Ojos Tristes -->
+          <path d="M32,45 C35,40 40,40 40,45" fill="none" stroke="#292524" stroke-width="3" stroke-linecap="round" />
+          <path d="M60,45 C60,40 65,40 68,45" fill="none" stroke="#292524" stroke-width="3" stroke-linecap="round" />
+          <!-- Lágrimas cayendo -->
+          <circle cx="36" cy="53" r="4" fill="#38bdf8" />
+          <circle cx="64" cy="53" r="4" fill="#38bdf8" />
+          <!-- Boca Triste -->
+          <path d="M44,80 C44,75 56,75 56,80" fill="none" stroke="#292524" stroke-width="3" stroke-linecap="round" />
+        </svg>
       </div>
-    </div>
-    <div id="shop-content"></div>
-  </div>
-</div>
 
-<!-- MAIN APP -->
-<div class="container" id="main-app" style="display:none">
-  <header>
-    <div class="header-top">
+      <h2 class="text-3xl font-black font-bebas text-stone-900">¡EL HUEVO DE LA RACHA ESTA TRISTE!</h2>
+      <p class="text-stone-600 text-sm font-bold leading-relaxed">
+        No has entrenado ayer y has perdido tu racha de dias seguidos... ¡Tu compañero huevo se ha agrietado de la tristeza!
+      </p>
+      
+      <div class="bg-rose-50 border border-rose-100 rounded-xl p-3 text-rose-700 text-xs font-black uppercase">
+        Racha anterior: <span id="lost-racha-value" class="text-lg">0</span> dias
+      </div>
+
+      <button onclick="dismissRachaLostModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
+        ¡Entrenare duro hoy para arreglarlo!
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR GENERAL DE LA ENTRENAMIENTO (Vista Principal) -->
+  <div id="workout-view-container" class="w-full flex-grow flex flex-col">
+    
+    <header class="max-w-3xl mx-auto px-4 pt-8 pb-4 w-full">
+      <!-- Logotipo principal estilo image_af8849.png sin emojis -->
+      <div class="mb-6 flex flex-col items-center md:items-start">
+        <h1 class="text-5xl font-black text-rose-600 tracking-tight font-bebas leading-none">MI <span class="text-rose-600">PLAN</span></h1>
+        <p class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">SIN PESAS • SOLO TU CUERPO</p>
+      </div>
+
+      <!-- Barra de Usuario Original de la imagen image_af8849.png sin emojis -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-stone-200 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <!-- Avatar interactivo con foto subida o inicial fallback -->
+          <button onclick="toggleProfileModal()" class="relative group" title="Editar Perfil">
+            <div id="user-avatar-display" class="w-12 h-12 rounded-full flex items-center justify-center text-xl text-white font-bold bg-rose-500 transition-all shadow border-2 border-white overflow-hidden">
+              U
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-stone-900 border border-white text-white rounded-full flex items-center justify-center text-[10px] group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-pencil"></i>
+            </div>
+          </button>
+          <div>
+            <h2 id="user-display-name" class="font-extrabold text-stone-800 text-lg leading-tight">Usuario</h2>
+            <p id="user-display-title" class="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Principiante</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Monedas de Oro -->
+          <div class="flex items-center gap-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
+            <span class="text-amber-500 font-bold text-sm"><i class="fa-solid fa-coins"></i></span>
+            <span id="user-coins-display" class="font-black text-amber-700 text-sm">0</span>
+          </div>
+
+          <!-- Botón de Tienda Dedicado (Abre pantalla completa) -->
+          <button onclick="openFullpageStore()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-3 py-1.5 rounded-lg text-xs uppercase flex items-center gap-1.5 transition-all shadow-sm">
+            <i class="fa-solid fa-store"></i> Tienda
+          </button>
+
+          <!-- Botón de Salir (Reset Progress) -->
+          <button onclick="resetProgress()" class="border border-stone-300 hover:bg-stone-100 text-stone-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors">
+            Salir
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 pb-12 w-full flex-grow space-y-4">
+
+      <!-- Tarjeta de Racha Actual -->
+      <div class="bg-[#202020] rounded-3xl p-6 shadow-md border border-stone-800 text-white flex items-center gap-5">
+        <div class="text-4xl text-orange-500 flex items-center justify-center animate-pulse">
+          <i class="fa-solid fa-fire text-orange-500"></i>
+        </div>
+        <div>
+          <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">RACHA ACTUAL</p>
+          <p class="text-4xl font-black text-orange-400 mt-1 leading-none" id="user-racha-display">0</p>
+          <p class="text-xs text-stone-400 font-bold mt-1">dias seguidos entrenando duro</p>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Experiencia (XP) -->
+      <div class="bg-[#202020] rounded-3xl p-6 shadow-md border border-stone-800 text-white">
+        <div class="flex items-center gap-4">
+          <!-- Insignia de Nivel -->
+          <div class="bg-rose-600 text-white font-black px-4 py-2.5 rounded-xl text-lg flex items-center justify-center min-w-[70px]" id="user-level-badge">
+            NV. 1
+          </div>
+          <div class="flex-grow">
+            <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2">EXPERIENCIA (XP)</p>
+            <!-- Barra de Progreso XP -->
+            <div class="w-full bg-stone-800 rounded-full h-3 overflow-hidden border border-stone-700">
+              <div id="user-xp-bar" class="bg-rose-600 h-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p id="user-xp-text" class="text-xs text-stone-400 font-bold mt-1.5">0 / 100 XP para subir de nivel</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carrusel de Selección Semanal idéntico a image_af8849.png -->
+      <div class="grid grid-cols-7 gap-1.5" id="week-calendar-grid">
+        <!-- Rellenado dinámicamente con JS -->
+      </div>
+
+      <!-- Consejo del Día original sin emojis -->
+      <div class="bg-white border-l-4 border-rose-500 rounded-2xl p-4 shadow-sm">
+        <p class="text-xs font-black text-rose-600 uppercase tracking-widest flex items-center gap-1.5 mb-1">
+          <i class="fa-solid fa-lightbulb"></i> CONSEJO DEL DIA
+        </p>
+        <p class="text-sm text-stone-700 font-bold">
+          Empieza la semana con energia. Haz cada ejercicio despacio al principio para perfeccionar tu tecnica de calistenia.
+        </p>
+      </div>
+
+      <!-- Listado de Ejercicios del Día de Hoy -->
+      <div class="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-stone-100 pb-4 gap-3">
+          <div>
+            <h2 id="current-routine-title" class="text-3xl font-black text-stone-900 font-bebas">LUNES</h2>
+            <p id="current-routine-meta" class="text-xs font-bold text-stone-500 mt-1">
+              Duracion: <span class="text-rose-600 font-extrabold">15-20 min</span> • <span class="text-indigo-600 font-extrabold">+60 XP</span> • <span class="text-amber-600 font-extrabold">MONEDAS +25</span>
+            </p>
+          </div>
+          
+          <button onclick="finishRoutineAndGetDrop()" id="btn-finish-routine" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-sm text-sm flex items-center justify-center gap-1.5 transition-all w-full sm:w-auto">
+            <i class="fa-solid fa-check-double"></i> Terminar Rutina
+          </button>
+        </div>
+
+        <!-- Barra de Progreso del Entrenamiento -->
+        <div>
+          <div class="flex justify-between items-center text-xs font-extrabold text-stone-500 mb-2 uppercase tracking-wide">
+            <span id="exercises-progress-text">0 de 5 Ejercicios</span>
+            <span id="exercises-progress-percent">0%</span>
+          </div>
+          <div class="w-full bg-stone-100 rounded-full h-2.5 overflow-hidden">
+            <div id="exercises-progress-bar" class="bg-rose-50 h-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Lista dinámica de Ejercicios (Sensibles y totalmente clickeables) -->
+        <div id="exercises-list-container" class="space-y-3">
+          <!-- Rellenado por JS -->
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- VISTA DE TIENDA A PANTALLA COMPLETA -->
+  <div id="store-fullpage-view" class="hidden min-h-screen bg-[#f4f3ef] flex-col w-full z-40">
+    <header class="bg-indigo-900 text-white py-6 px-4 shadow-md">
+      <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-indigo-700 rounded-full flex items-center justify-center text-lg text-white">
+            <i class="fa-solid fa-store"></i>
+          </div>
+          <div>
+            <h1 class="text-3xl font-black font-bebas tracking-wide">TIENDA FITNESS</h1>
+            <p class="text-xs text-indigo-200 font-bold uppercase tracking-wider">Adquiere equipamiento y desbloquea videojuegos</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- Monedas del usuario -->
+          <div class="bg-indigo-800 border border-indigo-700 px-4 py-2 rounded-xl flex items-center gap-2">
+            <span class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></span>
+            <span id="store-coins-display" class="font-black text-amber-300 text-lg">0</span>
+            <span class="text-xs text-indigo-300 font-bold uppercase">MONEDAS</span>
+          </div>
+
+          <!-- Botón de Salir de la Tienda -->
+          <button onclick="closeFullpageStore()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase flex items-center gap-2 transition-all shadow-md">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Entrenamiento
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow space-y-8">
+      
+      <!-- Sección: Artículos de Entrenamiento y Personalización -->
       <div>
-        <h1>MI <span>PLAN</span></h1>
-        <div class="subtitle">Sin pesas &bull; Solo tu cuerpo</div>
+        <h2 class="text-xl font-black text-stone-800 uppercase tracking-wider border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-dumbbell text-rose-500"></i> ARTICULOS DE ENTRENAMIENTO
+        </h2>
+        <div id="store-items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Rellenado dinámicamente con JS -->
+        </div>
+      </div>
+
+      <!-- Sección: Videojuegos Retro (abren en pestaña nueva y activan contador de 30 min) -->
+      <div>
+        <h2 class="text-xl font-black text-stone-800 uppercase tracking-wider border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-gamepad text-indigo-500"></i> VIDEOJUEGOS RETRO (30 MINUTOS MAX)
+        </h2>
+        <p class="text-xs text-stone-500 mb-4 font-bold uppercase">
+          Al jugar a un juego adquirido, se iniciará un temporizador de 30 minutos. Al terminar el tiempo, serás bloqueado por seguridad.
+        </p>
+        <div id="store-games-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Rellenado dinámicamente con JS -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Alerta de Temporizador de Juego Activo en la pantalla principal -->
+  <div id="game-timer-banner" class="hidden bg-amber-500 text-stone-900 font-extrabold py-3 px-4 text-center text-sm flex items-center justify-center gap-3 shadow-md">
+    <span><i class="fa-solid fa-clock animate-spin"></i> TIEMPO DE JUEGO ACTIVO:</span>
+    <span id="game-countdown-text" class="bg-stone-900 text-amber-400 px-3 py-1 rounded-lg font-mono text-base">30:00</span>
+    <button onclick="terminateGameSession()" class="bg-rose-700 hover:bg-rose-800 text-white text-xs px-3 py-1.5 rounded-lg uppercase tracking-wider font-black">
+      Cerrar Sesion de Juego
+    </button>
+  </div>
+
+  <!-- Bloqueo por Expulsión de Juego (Fin de los 30 Minutos) -->
+  <div id="game-lockout-overlay" class="hidden fixed inset-0 bg-stone-950/95 z-50 flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl">
+      <div class="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-4xl mx-auto animate-bounce">
+        <i class="fa-solid fa-hourglass-end"></i>
+      </div>
+      <h2 class="text-3xl font-black font-bebas text-stone-900">TIEMPO DE JUEGO AGOTADO</h2>
+      <p class="text-stone-600 text-sm font-bold">
+        Has superado el limite diario de 30 minutos de juego. Tu salud es lo primero, ¡es hora de volver al entrenamiento fisico de calistenia!
+      </p>
+      <button onclick="dismissLockout()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
+        Entendido, Volver al Entrenamiento
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal del Ejercicio del Hombrecillo Animado -->
+  <div id="exercise-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
+      
+      <!-- Cabecera del reproductor -->
+      <div class="bg-stone-900 p-5 text-white flex justify-between items-center">
+        <div>
+          <h3 id="modal-exercise-name" class="text-xl font-black font-bebas tracking-wide">EJERCICIO</h3>
+          <p class="text-xs text-rose-500 font-bold uppercase tracking-wider mt-0.5">Instructor Virtual de Calistenia</p>
+        </div>
+        <button onclick="closeExerciseModal()" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center hover:bg-stone-700 transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Área de Visualización del Stickman en Canvas -->
+      <div class="relative bg-stone-100 border-b border-stone-200 flex items-center justify-center p-4">
+        <canvas id="stickman-canvas" width="400" height="260" class="w-full max-w-[400px] h-auto bg-stone-50 rounded-2xl shadow-inner border border-stone-200"></canvas>
+      </div>
+
+      <!-- Métricas y Acción -->
+      <div class="p-6 space-y-4 text-center">
+        <p class="text-stone-600 text-sm">
+          Sigue las repeticiones del instructor virtual con una tecnica excelente para evitar sobrecargas.
+        </p>
+
+        <!-- Objetivo -->
+        <div class="bg-rose-50 border border-rose-100 rounded-2xl py-3 px-5 inline-block">
+          <span id="modal-target-qty" class="text-2xl font-black text-rose-600">10</span>
+          <span id="modal-target-unit" class="text-sm font-bold text-rose-800 ml-1">repeticiones</span>
+        </div>
+
+        <div>
+          <button onclick="markCurrentExerciseDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl transition-all shadow-sm hover:shadow text-sm">
+            <i class="fa-solid fa-square-check"></i> Marcar Ejercicio como Hecho
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL ESPECIAL: CELEBRACIÓN DE SUBIDA DE NIVEL -->
+  <div id="level-up-modal" class="hidden fixed inset-0 bg-stone-950/95 z-[95] flex items-center justify-center p-4">
+    <div class="bg-white border-4 border-amber-400 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl transform scale-100 transition-all">
+      <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto animate-bounce">
+        <i class="fa-solid fa-circle-up"></i>
+      </div>
+      <h2 class="text-4xl font-black font-bebas text-stone-900 tracking-wide">¡NUEVO NIVEL ALCANZADO!</h2>
+      <p class="text-stone-700 text-lg font-bold">
+        Has ascendido al <span class="text-rose-600 text-xl font-black" id="unlocked-level-title">NIVEL X</span>
+      </p>
+      <p class="text-xs text-stone-400 font-bold uppercase">
+        ¡Tu esfuerzo tiene recompensa! A continuacion vas a poder abrir una caja Starr Drop Especial.
+      </p>
+      <button onclick="transitionToStarrDrop()" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black py-4 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
+        Abrir Starr Drop de Regalo <i class="fa-solid fa-gift"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL EXCLUSIVO: APERTURA DE STARR DROPS (SÓLO TRAS SUBIDA DE NIVEL) -->
+  <div id="starr-drop-modal" class="hidden fixed inset-0 bg-stone-950/98 z-[98] flex items-center justify-center p-4">
+    <div class="bg-stone-900 border-4 border-stone-800 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl text-white">
+      
+      <span class="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-bold uppercase tracking-widest">
+        Regalo por Subida de Nivel
+      </span>
+
+      <h3 class="text-3xl font-black font-bebas text-amber-400">STARR DROP EXCLUSIVO</h3>
+      <p class="text-xs text-stone-400 max-w-sm mx-auto">
+        Golpea la caja de regalo para ir aumentando su rareza. ¡Consigue un drop Legendario o Ultralegendario!
+      </p>
+
+      <!-- Panel Interactivo del Starr Drop -->
+      <div class="relative py-8 flex flex-col items-center justify-center">
+        
+        <div id="starr-drop-container" class="cursor-pointer transition-all duration-150 select-none flex flex-col items-center">
+          <div id="starr-drop-body" class="w-32 h-32 rounded-full flex items-center justify-center bg-stone-700 border-4 border-stone-600 shadow-[0_0_20px_rgba(100,116,139,0.3)] relative transition-all duration-150">
+            <i class="fa-solid fa-gift text-white text-5xl"></i>
+          </div>
+          <p id="starr-drop-rarity-label" class="mt-5 font-black text-stone-400 uppercase tracking-widest text-base">
+            ESPECIAL
+          </p>
+          <p class="text-[10px] text-stone-500 mt-1.5 uppercase font-bold tracking-wide">
+            Toca repetidamente para golpear
+          </p>
+        </div>
+
+        <!-- Recompensa final revelada -->
+        <div id="starr-drop-reward-card" class="hidden transform scale-95 opacity-0 transition-all duration-300 bg-stone-800 border-2 border-amber-400 rounded-2xl p-6 w-full max-w-xs text-center">
+          <span id="reward-rarity-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-400 text-stone-950">
+            ESPECIAL
+          </span>
+          <div class="my-6 text-6xl text-amber-400" id="reward-icon-container">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <h4 id="reward-title" class="font-black text-2xl text-white">¡+100 Monedas!</h4>
+          <p id="reward-desc" class="text-sm text-stone-400 mt-2">Se han sumado a tu cuenta de usuario.</p>
+          
+          <button onclick="claimStarrDropReward()" class="mt-6 bg-amber-400 hover:bg-amber-500 text-stone-950 font-black px-5 py-3 rounded-xl text-xs uppercase w-full tracking-wider transition-colors">
+            Reclamar Regalo
+          </button>
+        </div>
+
       </div>
     </div>
-  </header>
+  </div>
 
-  <div class="user-bar">
-    <div class="user-avatar" id="user-avatar">P</div>
-    <div style="flex:1;min-width:0;">
-      <div class="user-name" id="user-name">Paco</div>
-      <div class="user-title" id="user-title"></div>
+  <!-- Modal de Edición de Perfil Detallado -->
+  <div id="profile-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
+      
+      <div class="bg-rose-600 p-5 text-white flex justify-between items-center">
+        <div>
+          <h3 class="text-xl font-black font-bebas tracking-wide">EDITAR TU PERFIL FITNESS</h3>
+          <p class="text-xs text-rose-100 font-bold uppercase">Configura tu identidad deportiva</p>
+        </div>
+        <button onclick="toggleProfileModal()" class="w-8 h-8 rounded-full bg-rose-700 flex items-center justify-center hover:bg-rose-800 transition-colors">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 max-h-[450px] overflow-y-auto">
+        
+        <!-- Foto de Perfil Actual -->
+        <div class="flex flex-col items-center justify-center pb-2 border-b border-stone-100">
+          <div id="modal-avatar-preview" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl text-white font-bold bg-rose-500 shadow-md border-2 border-white overflow-hidden mb-3">
+            U
+          </div>
+          <p class="text-xs text-stone-400 font-extrabold uppercase">Foto de Perfil Activa</p>
+        </div>
+
+        <!-- Cargar Foto desde el ordenador -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Subir Imagen de Perfil</label>
+          <input type="file" id="avatar-image-input" accept="image/*" onchange="uploadProfileImage(event)" class="block w-full text-xs text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 cursor-pointer" />
+        </div>
+
+        <!-- Nombre del deportista -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Nombre</label>
+          <input type="text" id="profile-input-name" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Usuario" />
+        </div>
+
+        <!-- Correo electrónico -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Correo Electronico</label>
+          <input type="email" id="profile-input-email" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="correo@entrenamiento.com" />
+        </div>
+
+        <!-- Rango / Título deportivo -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Titulo Deportivo</label>
+          <input type="text" id="profile-input-title" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Principiante" />
+        </div>
+
+        <!-- Cambiar color de fondo -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Color de Fondo del Avatar</label>
+          <div class="flex gap-2">
+            <button onclick="changeBg('bg-rose-600')" class="w-7 h-7 rounded-full bg-rose-600 border border-white"></button>
+            <button onclick="changeBg('bg-indigo-600')" class="w-7 h-7 rounded-full bg-indigo-600 border border-white"></button>
+            <button onclick="changeBg('bg-emerald-600')" class="w-7 h-7 rounded-full bg-emerald-600 border border-white"></button>
+            <button onclick="changeBg('bg-amber-500')" class="w-7 h-7 rounded-full bg-amber-500 border border-white"></button>
+            <button onclick="changeBg('bg-stone-800')" class="w-7 h-7 rounded-full bg-stone-800 border border-white"></button>
+          </div>
+        </div>
+
+        <!-- Herramientas de testeo adictivas -->
+        <div class="pt-4 border-t border-stone-100">
+          <span class="block text-[10px] font-black text-stone-400 uppercase tracking-wider mb-2">Herramientas de Desarrollador</span>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="simulateStreakLoss()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold p-2 rounded-lg text-[10px] uppercase border border-rose-200">
+              Simular Pérdida de Racha
+            </button>
+            <button onclick="addFreeCoins()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-extrabold p-2 rounded-lg text-[10px] uppercase border border-amber-200">
+              Obtener 500 Monedas Gratis
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bg-stone-50 p-4 border-t border-stone-100 flex justify-end gap-2">
+        <button onclick="clearUploadedImage()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-colors">
+          Quitar Imagen
+        </button>
+        <button onclick="saveDetailedProfile()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-5 py-2 rounded-xl text-xs uppercase transition-colors">
+          Guardar Cambios
+        </button>
+      </div>
+
     </div>
-    <div class="user-coins" onclick="openShop()">🪙 <span id="coins-display">0</span></div>
-    <button class="signout-btn" onclick="doSignOut()">Salir</button>
   </div>
 
-  <div class="streak-card">
-    <div class="streak-fire">🔥</div>
-    <div class="streak-info">
-      <div class="streak-label">Racha actual</div>
-      <div class="streak-num" id="streak-num">0</div>
-      <div class="streak-sub" id="streak-sub">días seguidos</div>
-    </div>
-  </div>
+  <script>
+    // Sintetizador de audio integrado autónomo para evitar dependencias
+    let audioCtx = null;
 
-  <div class="xp-card">
-    <div class="level-badge" onclick="openShop()">NV. <span id="lvl-num">1</span></div>
-    <div class="xp-info">
-      <div class="xp-label">Experiencia (XP)</div>
-      <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar" style="width:0%"></div></div>
-      <div class="xp-text"><span id="xp-cur">0</span> / <span id="xp-max">200</span> XP para subir de nivel</div>
-    </div>
-  </div>
-
-  <div class="achievements-row" id="achievements-row"></div>
-  <div class="days-nav" id="days-nav"></div>
-  <div id="workout-area"></div>
-  <div class="how-section" id="how-section" style="display:none">
-    <div class="how-title">Cómo se hacen</div>
-    <div id="how-list"></div>
-  </div>
-</div>
-
-<script>
-// ═══════════════════════════════════════════════════════
-//  AUTH — sistema propio con localStorage
-// ═══════════════════════════════════════════════════════
-const USERS_KEY = 'fit_users_db';
-const SESSION_KEY = 'fit_session';
-
-function getUsers() {
-  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; } catch(e) { return {}; }
-}
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-function getSession() {
-  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) { return null; }
-}
-function saveSession(email) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify({ email }));
-}
-function clearSession() {
-  localStorage.removeItem(SESSION_KEY);
-}
-
-function switchTab(tab) {
-  const tabs = ['login','register','reset'];
-  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
-  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  ['login-err','reg-err','reset-err','reset-ok'].forEach(id => {
-    const el = document.getElementById(id); if(el){ el.classList.remove('show'); el.textContent=''; }
-  });
-}
-
-function showAuthError(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg; el.classList.add('show');
-}
-function showAuthSuccess(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg; el.classList.add('show');
-}
-
-function doLogin() {
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('login-pass').value;
-  document.getElementById('login-err').classList.remove('show');
-
-  if (!email || !pass) return showAuthError('login-err', 'Por favor rellena el email y la contraseña.');
-  const users = getUsers();
-  if (!users[email]) return showAuthError('login-err', 'No existe una cuenta con ese email. ¿Te registraste?');
-  if (users[email].password !== btoa(pass)) return showAuthError('login-err', 'La contraseña no es correcta.');
-
-  saveSession(email);
-  startApp(email);
-}
-
-function doRegister() {
-  const name  = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('reg-pass').value;
-  const pass2 = document.getElementById('reg-pass2').value;
-  document.getElementById('reg-err').classList.remove('show');
-
-  if (!name)  return showAuthError('reg-err', 'Escribe tu nombre.');
-  if (!email) return showAuthError('reg-err', 'Escribe tu email.');
-  if (!email.includes('@') || !email.includes('.')) return showAuthError('reg-err', 'Ese email no parece válido.');
-  if (!pass)  return showAuthError('reg-err', 'Escribe una contraseña.');
-  if (pass.length < 6) return showAuthError('reg-err', 'La contraseña debe tener al menos 6 caracteres.');
-  if (pass !== pass2) return showAuthError('reg-err', 'Las contraseñas no coinciden. ¡Inténtalo otra vez!');
-
-  const users = getUsers();
-  if (users[email]) return showAuthError('reg-err', 'Ya existe una cuenta con ese email. Inicia sesión.');
-
-  users[email] = { name, email, password: btoa(pass), createdAt: Date.now() };
-  saveUsers(users);
-  saveSession(email);
-  showToast('¡Cuenta creada! Bienvenido, ' + name + ' 🎉', 'ok');
-  startApp(email);
-}
-
-function doReset() {
-  const email = document.getElementById('reset-email').value.trim().toLowerCase();
-  document.getElementById('reset-err').classList.remove('show');
-  document.getElementById('reset-ok').classList.remove('show');
-
-  if (!email) return showAuthError('reset-err', 'Escribe tu email.');
-  const users = getUsers();
-  if (!users[email]) return showAuthError('reset-err', 'No existe ninguna cuenta con ese email.');
-
-  // Mostrar pista de contraseña (ya que es local, no hay email real)
-  const hint = atob(users[email].password);
-  const masked = hint[0] + '*'.repeat(Math.max(hint.length-2,1)) + hint[hint.length-1];
-  showAuthSuccess('reset-ok',
-    '¡Cuenta encontrada! Tu contraseña empieza por "' + hint[0] + '" y tiene ' + hint.length + ' caracteres. ' +
-    'Pídele a un adulto que te ayude si no la recuerdas, o crea una cuenta nueva.');
-}
-
-function doSignOut() {
-  clearSession();
-  currentUserEmail = null;
-  document.getElementById('main-app').style.display = 'none';
-  document.getElementById('auth-screen').classList.remove('hidden');
-  switchTab('login');
-  showToast('Sesión cerrada. ¡Hasta pronto!', 'ok');
-}
-
-// ═══════════════════════════════════════════════════════
-//  START APP
-// ═══════════════════════════════════════════════════════
-let currentUserEmail = null;
-
-function startApp(email) {
-  currentUserEmail = email;
-  document.getElementById('auth-screen').classList.add('hidden');
-  document.getElementById('main-app').style.display = '';
-
-  const users = getUsers();
-  const user = users[email];
-  const name = user ? user.name : email.split('@')[0];
-
-  document.getElementById('user-name').textContent = name;
-  document.getElementById('user-avatar').textContent = name[0].toUpperCase();
-
-  loadState();
-  applyTheme(state.activeTheme);
-  if (state.activeAvatar) document.getElementById('user-avatar').textContent = state.activeAvatar;
-  if (state.activeTitle) document.getElementById('user-title').textContent = '👑 ' + state.activeTitle;
-  render();
-
-  // Comprobar si se perdió la racha mientras no estaba conectado
-  const lostStreak = checkStreakLoss();
-  if (lostStreak) {
-    setTimeout(() => showStreakLostAnimation(), 400);
-    render();
-  }
-}
-
-// Al cargar la página, ver si hay sesión guardada
-window.addEventListener('DOMContentLoaded', () => {
-  const session = getSession();
-  if (session && session.email) {
-    const users = getUsers();
-    if (users[session.email]) {
-      startApp(session.email);
-      return;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
     }
-  }
-  // Mostrar pantalla de login
-});
 
-// ═══════════════════════════════════════════════════════
-//  DATOS DE EJERCICIOS
-// ═══════════════════════════════════════════════════════
-const DAYS = [
-  { id:0, name:"Lun", fullName:"Lunes", duration:"15-20 min", xp:60, coins:25,
-    tip:"Empieza la semana con energía. Haz cada ejercicio despacio al principio.",
-    exercises:[
-      { name:"Calentamiento",         detail:"Salta en el sitio o corre sin moverte",    reps:"2 min",   how:"Da saltitos en el sitio moviendo los brazos. El objetivo es calentar los músculos antes de empezar.",                                           videoId:"iPwEPnYCiL0" },
-      { name:"Sentadillas",           detail:"3 series de 8 repeticiones",               reps:"3 x 8",   how:"Pies separados al ancho de los hombros. Baja como si fueras a sentarte en una silla. Espalda recta siempre.",                                   videoId:"YaXPRqUwItQ" },
-      { name:"Flexiones de rodillas", detail:"3 series de 5 repeticiones",               reps:"3 x 5",   how:"Como las flexiones normales pero con las rodillas en el suelo. Manos al ancho de los hombros, baja el pecho hasta casi tocar el suelo.",       videoId:"_l3ySVKYVJ8" },
-      { name:"Plancha",               detail:"3 series de 20 segundos",                  reps:"3 x 20s", how:"Apoya los codos y las puntas de los pies. Mantén el cuerpo recto como una tabla. No saques el trasero hacia arriba.",                          videoId:"pSHjTRCQxIw" },
-      { name:"Estiramiento",          detail:"Estira piernas y brazos suavemente",       reps:"2 min",   how:"Tira suavemente de cada músculo durante 15-20 segundos. Nunca hagas rebotes al estirar. Respira con calma.",                                  videoId:"sTxC3J3gQEU" }
-    ]
-  },
-  { id:1, name:"Mar", fullName:"Martes", duration:"20-30 min", xp:80, coins:35,
-    tip:"Martes de resistencia. Descansa entre series solo 30-40 segundos.",
-    exercises:[
-      { name:"Calentamiento",       detail:"Jumping jacks",                              reps:"3 min",    how:"Salta abriendo piernas y brazos al mismo tiempo. Aterriza suave doblando un poco las rodillas.",                                        videoId:"iSSAk4XCsRA" },
-      { name:"Zancadas",            detail:"3 series de 8 repeticiones por pierna",      reps:"3 x 8",    how:"Da un gran paso adelante y baja la rodilla de atrás hacia el suelo. Luego vuelve al centro. Alterna piernas.",                          videoId:"QOVaHwm-Q6U" },
-      { name:"Flexiones normales",  detail:"3 series de 5 a 8 repeticiones",             reps:"3 x 5-8",  how:"Cuerpo recto, manos al ancho de hombros. Baja hasta casi tocar el suelo con el pecho. Si no puedes, hazlas de rodillas.",               videoId:"0pkjOk0EiAk" },
-      { name:"Superman",            detail:"3 series de 10 repeticiones",                reps:"3 x 10",   how:"Túmbate boca abajo. Levanta brazos y piernas a la vez como si volaras. Aguanta 2 segundos arriba y baja con control.",                  videoId:"z6PJMT2y8GQ" },
-      { name:"Abdominales",         detail:"3 series de 10 repeticiones",                reps:"3 x 10",   how:"Tumbado boca arriba, rodillas dobladas. Sube solo hasta que los hombros despejen el suelo. No tires del cuello.",                       videoId:"Xyd_fa5zoEU" },
-      { name:"Estiramiento",        detail:"Estiramiento completo",                      reps:"3 min",    how:"Estira cuadriceps, isquiotibiales y hombros. Aguanta cada posición 20 segundos sin rebotes.",                                           videoId:"sTxC3J3gQEU" }
-    ]
-  },
-  { id:2, name:"Mie", fullName:"Miércoles", duration:"15-20 min", xp:60, coins:25,
-    tip:"Mitad de semana. Hoy trabajamos el tronco y la estabilidad.",
-    exercises:[
-      { name:"Calentamiento",        detail:"Movimientos de cuello, hombros y cadera",  reps:"2 min",   how:"Gira el cuello suavemente, haz círculos con los hombros y mueve las caderas en círculo. Todo despacio.",                                  videoId:"iPwEPnYCiL0" },
-      { name:"Plancha lateral",      detail:"2 series de 15 segundos por lado",         reps:"2 x 15s", how:"Apóyate en un codo y el borde del pie. Sube las caderas para que el cuerpo quede recto. No dejes caer la cadera.",                       videoId:"_rdfjFSFKMY" },
-      { name:"Sentadillas sumo",     detail:"3 series de 10 repeticiones",              reps:"3 x 10",  how:"Pies muy separados y puntas hacia fuera. Baja con la espalda recta. Trabaja más el interior de los muslos.",                              videoId:"qJwmGSvtCTU" },
-      { name:"Fondos de tríceps",    detail:"3 series de 8 repeticiones (silla)",       reps:"3 x 8",   how:"Siéntate en el borde de una silla, manos agarradas al borde. Desliza el trasero hacia delante y baja doblando los codos.",               videoId:"0326dy_-CzM" },
-      { name:"Estiramiento lateral", detail:"Estiramiento de costados",                 reps:"2 min",   how:"Estira los costados levantando un brazo y doblando hacia el lado contrario. Aguanta 15 segundos por lado.",                              videoId:"sTxC3J3gQEU" }
-    ]
-  },
-  { id:3, name:"Jue", fullName:"Jueves", duration:"15-20 min", xp:60, coins:25,
-    tip:"¡Casi el fin de semana! Hoy trabajamos las piernas con potencia.",
-    exercises:[
-      { name:"Calentamiento",          detail:"Trotar en el sitio levantando rodillas", reps:"2 min",   how:"Corre sin moverte del sitio levantando las rodillas bien alto. Brazos en movimiento como si corrieras de verdad.",                       videoId:"iPwEPnYCiL0" },
-      { name:"Sentadillas con salto",  detail:"3 series de 6 repeticiones",             reps:"3 x 6",   how:"Haz una sentadilla normal y cuando subas, salta. Aterriza suave doblando las rodillas. Descansa 40 segundos entre series.",             videoId:"Azl5tkCzDcc" },
-      { name:"Montañero",              detail:"3 series de 20 segundos",                reps:"3 x 20s", how:"En posición de flexión, alterna llevar cada rodilla al pecho lo más rápido que puedas. Mantén el cuerpo plano y los brazos rectos.",     videoId:"nmwgirgXLYM" },
-      { name:"Puente de glúteos",      detail:"3 series de 12 repeticiones",            reps:"3 x 12",  how:"Tumbado boca arriba, pies en el suelo cerca del trasero. Sube las caderas hasta que el cuerpo quede recto. Aprieta el trasero arriba.", videoId:"8bbE64NuDTU" },
-      { name:"Estiramiento",           detail:"Cuadriceps, pantorrillas y lumbar",      reps:"2 min",   how:"Para el cuadríceps: de pie, dobla una rodilla y agarra el pie con la mano. Para la pantorrilla: apoya el pie en la pared.",             videoId:"sTxC3J3gQEU" }
-    ]
-  },
-  { id:4, name:"Vie", fullName:"Viernes", duration:"30-35 min", xp:100, coins:50,
-    tip:"¡Viernes! El entrenamiento más completo. Dale todo lo que tienes.",
-    exercises:[
-      { name:"Calentamiento",           detail:"Saltos, carrera y articulaciones",             reps:"3 min",   how:"Combina saltos, carrera en el sitio y giros de todas las articulaciones. Termina con algo de sudor.",                             videoId:"iPwEPnYCiL0" },
-      { name:"Sentadillas",             detail:"4 series de 10 repeticiones",                  reps:"4 x 10",  how:"Baja lento en 2 segundos y sube explosivo. Mantén el peso en los talones.",                                                       videoId:"YaXPRqUwItQ" },
-      { name:"Flexiones",               detail:"4 series de 8 repeticiones",                   reps:"4 x 8",   how:"Si puedes, hazlas normales. Si no, de rodillas. Lo importante es que el pecho llegue cerca del suelo.",                          videoId:"0pkjOk0EiAk" },
-      { name:"Abdominales bicicleta",   detail:"3 series de 15 repeticiones",                  reps:"3 x 15",  how:"Tumbado, lleva el codo derecho a la rodilla izquierda y viceversa, alternando. Lento y controlado.",                              videoId:"9FGilxCbdz8" },
-      { name:"Burpee (versión fácil)",  detail:"3 series de 5 repeticiones",                   reps:"3 x 5",   how:"Sentadilla, manos al suelo, estira las piernas atrás, vuelve y salta. Si es muy difícil, omite el salto final.",                 videoId:"dZgVxmf6jkA" },
-      { name:"Plancha",                 detail:"3 series de 25 segundos",                      reps:"3 x 25s", how:"Intenta aguantar más que la semana pasada. Ese es el progreso real. Respira con ritmo.",                                         videoId:"pSHjTRCQxIw" },
-      { name:"Estiramiento completo",   detail:"Todo el cuerpo",                               reps:"5 min",   how:"Estira cada grupo muscular: piernas, espalda, hombros, brazos. No te saltes esta parte.",                                        videoId:"sTxC3J3gQEU" }
-    ]
-  },
-  { id:5, name:"Sab", fullName:"Sábado", duration:"30-45 min", xp:120, coins:60,
-    tip:"Fin de semana. Puedes tomarlo más tranquilo o ir con todo. Tú decides.",
-    exercises:[
-      { name:"Calentamiento libre",       detail:"Baile, saltos, lo que quieras",             reps:"4 min",    how:"El objetivo es calentar y pasarlo bien. Corre, salta, baila.",                                                                    videoId:"iPwEPnYCiL0" },
-      { name:"Sentadillas lentas",        detail:"4 series de 12 repeticiones",               reps:"4 x 12",   how:"Baja muy lento en 4 segundos. El músculo trabaja más con este ritmo.",                                                            videoId:"YaXPRqUwItQ" },
-      { name:"Flexiones diamante",        detail:"3 series de 5 repeticiones",                reps:"3 x 5",    how:"Junta las manos formando un triángulo bajo el pecho. Trabaja más el tríceps.",                                                    videoId:"J0DXDOwuFp8" },
-      { name:"Saltos a una altura baja",  detail:"3 series de 8 repeticiones (escalón)",     reps:"3 x 8",    how:"Salta encima de algo bajo como un escalón. Aterriza con las dos piernas doblando las rodillas. Con cuidado.",                     videoId:"Azl5tkCzDcc" },
-      { name:"Abdominales V",             detail:"3 series de 8 repeticiones",                reps:"3 x 8",    how:"Siéntate, levanta las piernas y el tronco al mismo tiempo formando una V. Aguanta 2 segundos.",                                   videoId:"7UgUPN4TKgk" },
-      { name:"Caminar tranquilo",         detail:"Paseo de recuperación",                     reps:"5 min",    how:"Da una vuelta por casa o el barrio. Deja que la respiración vuelva a la normalidad.",                                            videoId:"sTxC3J3gQEU" },
-      { name:"Estiramiento completo",     detail:"Todo el cuerpo con calma",                  reps:"5-8 min",  how:"Estira todo el cuerpo despacio. Usa este tiempo para relajarte.",                                                                 videoId:"sTxC3J3gQEU" }
-    ]
-  },
-  { id:6, name:"Dom", fullName:"Domingo", duration:"Descanso", xp:0, coins:0, isRest:true,
-    tip:"El descanso es parte del entrenamiento. Los músculos crecen cuando descansas.",
-    exercises:[]
-  }
-];
+    function playSynthSound(type) {
+      initAudio();
+      if (!audioCtx) return;
 
-const SHOP_ITEMS = [
-  { id:"shield",     icon:"🛡️", name:"Escudo de Racha",   desc:"Protege tu racha si fallas un día",    price:80,  category:"power" },
-  { id:"double_xp",  icon:"⚡",  name:"XP Doble",          desc:"El doble de XP en tu próximo entreno", price:120, category:"power" },
-  { id:"theme_dark", icon:"🌙",  name:"Tema Oscuro",        desc:"Modo oscuro para la web",              price:150, category:"theme" },
-  { id:"theme_blue", icon:"🌊",  name:"Tema Azul",          desc:"Tema azul océano",                     price:100, category:"theme" },
-  { id:"avatar_fire",icon:"🔥",  name:"Avatar Llama",       desc:"Muestra que eres fuego puro",          price:60,  category:"avatar" },
-  { id:"avatar_star",icon:"⭐",  name:"Avatar Estrella",    desc:"Brilla entre todos",                   price:60,  category:"avatar" },
-  { id:"avatar_bolt",icon:"⚡",  name:"Avatar Rayo",        desc:"Velocidad y potencia",                 price:60,  category:"avatar" },
-  { id:"title_beast",icon:"🦁",  name:'Título "La Bestia"', desc:"Aparece junto a tu nombre",            price:200, category:"title" },
-  { id:"title_champ",icon:"🏆",  name:'Título "Campeón"',   desc:"Aparece junto a tu nombre",            price:200, category:"title" },
-];
+      const now = audioCtx.currentTime;
 
-const ACHIEVEMENTS = [
-  { id:"first_day",  icon:"🌟", name:"Primer día",     cond: s => Object.keys(s.completedDays).length >= 1 },
-  { id:"three_days", icon:"🔥", name:"3 días",          cond: s => Object.keys(s.completedDays).length >= 3 },
-  { id:"full_week",  icon:"🏆", name:"Semana completa", cond: s => Object.keys(s.completedDays).length >= 6 },
-  { id:"level5",     icon:"⚡", name:"Nivel 5",         cond: s => s.level >= 5 },
-  { id:"streak3",    icon:"🎯", name:"Racha de 3",      cond: s => (s.streak||0) >= 3 },
-  { id:"coins100",   icon:"💰", name:"100 monedas",     cond: s => (s.coins||0) >= 100 },
-];
+      if (type === 'click') {
+        // Un beep seco de retroalimentación
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(600, now);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
 
-// Videojuegos que se compran con GEMAS. Una vez comprados, quedan
-// desbloqueados para siempre (a no ser que se pierda la racha).
-const GAMES = [
-  { id:"fruit_ninja", icon:"🍉", name:"Fruit Ninja",   desc:"Corta fruta a toda velocidad",      price:40, url:"https://sergiodenda-bot.github.io/FruitNinja/" },
-  { id:"block_blast",  icon:"🧱", name:"Block Blast",   desc:"Encaja bloques y haz combos",       price:35, url:"https://sergiodenda-bot.github.io/BlockBlast/Index.html" },
-  { id:"block_dash",   icon:"🟦", name:"Block Dash",    desc:"Corre y esquiva obstáculos",        price:30, url:"https://dendasamuel7-boop.github.io/Block_Dash/" },
-  { id:"retro_runner", icon:"🏃", name:"Retro Runner",  desc:"Carrera estilo retro sin parar",    price:30, url:"https://retro-runner--sussyserg.replit.app/" },
-];
+      } else if (type === 'success') {
+        // Tono doble ascendente
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.setValueAtTime(554, now + 0.1);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
 
-const GAME_MINUTES = 30; // minutos que se puede jugar tras completar el entreno
-const GEMS_PER_LEVEL_BONUS = 0; // las gemas no se ganan por nivel, solo entrenando o en tienda
-const GEMS_PER_DAY = 5; // gemas base que da cada día completado
+      } else if (type === 'hit') {
+        // Golpe metálico para el Starr Drop
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
 
-// ═══════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════
-const DEFAULT_STATE = {
-  currentDay:0, completedExercises:{}, completedDays:{},
-  xp:0, level:1, coins:0, gems:0, ownedItems:[], activeAvatar:"", activeTitle:"", activeTheme:"",
-  streak:0, lastTrainDate:null, unlockedAchievements:[],
-  ownedGames:[], gameUnlockedUntil:null, lastLevel:1
-};
-let state = { ...DEFAULT_STATE };
+      } else if (type === 'upgrade') {
+        // Sweep de subida de rareza de Starr Drop
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.4);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
 
-function stateKey() { return 'fit_v4_' + (currentUserEmail || 'guest'); }
+      } else if (type === 'level_up') {
+        // Fanfarria gloriosa de subida de nivel
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // C4, E4, G4, C5, E5
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "square";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          gain.gain.setValueAtTime(0.04, now + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.1);
+          osc.stop(now + idx * 0.1 + 0.4);
+        });
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(stateKey());
-    if (raw) { state = { ...DEFAULT_STATE, ...JSON.parse(raw) }; return; }
-  } catch(e) {}
-  state = { ...DEFAULT_STATE };
-  const jsDay = new Date().getDay();
-  state.currentDay = jsDay === 0 ? 6 : jsDay - 1;
-}
+      } else if (type === 'racha_lost') {
+        // Melodía triste y descendente de racha perdida
+        const notes = [392.00, 349.23, 311.13, 261.63]; // G4, F4, Eb4, C4
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.15);
+          gain.gain.setValueAtTime(0.06, now + idx * 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.15);
+          osc.stop(now + idx * 0.15 + 0.3);
+        });
+      }
+    }
 
-function saveState() {
-  localStorage.setItem(stateKey(), JSON.stringify(state));
-}
+    let gameActive = false;
+    let gameWindowRef = null;
+    let gameTimerInterval = null;
+    let gameSecondsRemaining = 1800; // 30 minutos = 1800 segundos
 
-// ═══════════════════════════════════════════════════════
-//  XP / LEVEL / COINS
-// ═══════════════════════════════════════════════════════
-function xpForLevel(lvl) { return Math.floor(100 + (lvl-1)*50 + Math.pow(lvl-1,1.4)*20); }
-function coinsForLevelUp(lvl) { return lvl * 30; }
+    // Variables del Canvas Stickman
+    let canvas, ctx;
+    let animationId = null;
+    let animFrame = 0;
+    let currentAnimType = "warmup";
+    let activeExerciseId = null;
 
-function addXP(amount) {
-  if (amount <= 0) return;
-  if ((state.ownedItems||[]).includes('double_xp_active')) {
-    amount *= 2;
-    state.ownedItems = state.ownedItems.filter(i => i !== 'double_xp_active');
-  }
-  state.xp += amount;
-  let lvlsGained = 0;
-  let cap = xpForLevel(state.level);
-  while (state.xp >= cap) {
-    state.xp -= cap;
-    state.level++;
-    lvlsGained++;
-    state.coins = (state.coins||0) + coinsForLevelUp(state.level);
-    cap = xpForLevel(state.level);
-  }
-  updateXPBar();
-  saveState();
-  if (lvlsGained > 0) showLevelUp(state.level, coinsForLevelUp(state.level));
-}
+    // Control de Starr Drops al subir de nivel
+    let dropTaps = 0;
+    const maxDropTaps = 5;
+    let currentRarityIndex = 0;
+    const RARITIES = [
+      { name: "ESPECIAL", color: "bg-emerald-500", border: "border-emerald-400", text: "text-emerald-400", shadow: "shadow-[0_0_20px_rgba(16,185,129,0.5)]" },
+      { name: "SUPERESPECIAL", color: "bg-blue-600", border: "border-blue-400", text: "text-blue-400", shadow: "shadow-[0_0_20px_rgba(37,99,235,0.5)]" },
+      { name: "EPICO", color: "bg-purple-600", border: "border-purple-400", text: "text-purple-400", shadow: "shadow-[0_0_20px_rgba(147,51,234,0.5)]" },
+      { name: "MITICO", color: "bg-rose-600", border: "border-rose-400", text: "text-rose-400", shadow: "shadow-[0_0_20px_rgba(225,29,72,0.5)]" },
+      { name: "LEGENDARIO", color: "bg-amber-500", border: "border-amber-400", text: "text-amber-400", shadow: "shadow-[0_0_20px_rgba(245,158,11,0.5)]" },
+      { name: "ULTRALEGENDARIO", color: "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500", border: "border-white", text: "text-rose-300", shadow: "shadow-[0_0_25px_rgba(244,63,94,0.8)]" }
+    ];
 
-function updateXPBar() {
-  const cap = xpForLevel(state.level);
-  const pct = Math.min(100, Math.round((state.xp / cap) * 100));
-  document.getElementById('xp-bar').style.width = pct + '%';
-  document.getElementById('xp-cur').textContent = state.xp;
-  document.getElementById('xp-max').textContent = cap;
-  document.getElementById('lvl-num').textContent = state.level;
-  document.getElementById('coins-display').textContent = state.coins || 0;
-  const scd = document.getElementById('shop-coins-display');
-  if (scd) scd.textContent = state.coins || 0;
-}
+    // Carga de la aplicación
+    window.onload = function() {
+      // Intentar restaurar estado previo guardado en el navegador
+      const saved = localStorage.getItem("power_state_v5");
+      if (saved) {
+        try {
+          userState = JSON.parse(saved);
+        } catch (e) {
+          console.error("Error al cargar estado previo, restaurando por defecto");
+        }
+      } else {
+        userState.racha = 0;
+      }
+      
+      checkRachaLoss();
+      updateUserUI();
+      triggerHistoricalIntro();
+    };
 
-// ═══════════════════════════════════════════════════════
-//  STREAK
-// ═══════════════════════════════════════════════════════
-function updateStreak() {
-  const today = new Date().toDateString();
-  if (state.lastTrainDate === today) return;
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
-  state.streak = state.lastTrainDate === yesterday ? (state.streak||0) + 1 : 1;
-  state.lastTrainDate = today;
-}
+    function saveState() {
+      localStorage.setItem("power_state_v5", JSON.stringify(userState));
+    }
 
-// Se llama al iniciar la app: si el jugador dejó pasar un día sin
-// entrenar, se rompe la racha y se pierden los videojuegos comprados
-// (pero el nivel y el XP de entrenamiento NO se pierden nunca).
-function checkStreakLoss() {
-  if (!state.lastTrainDate) return false; // primera vez, nada que perder
-  const today = new Date().toDateString();
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
-  if (state.lastTrainDate === today || state.lastTrainDate === yesterday) return false;
+    // Comprobar si el usuario ha perdido su racha
+    function checkRachaLoss() {
+      if (!userState.lastWorkoutDate) return;
 
-  // Ha pasado más de un día sin entrenar → se rompe la racha
-  if ((state.streak||0) > 0) {
-    // Si tiene un escudo activo, lo consume y salva la racha una vez
-    if ((state.ownedItems||[]).includes('shield')) {
-      state.ownedItems = state.ownedItems.filter(i => i !== 'shield');
-      state.streak = 0; // el escudo evita perder los juegos, pero la racha se reinicia igual
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const lastWorkout = new Date(userState.lastWorkoutDate);
+      lastWorkout.setHours(0,0,0,0);
+
+      // Calcular diferencia en milisegundos y pasar a días
+      const diffTime = today - lastWorkout;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      // Si ha pasado más de 1 día completo sin entrenar (es decir, diffDays >= 2)
+      if (diffDays >= 2 && userState.racha > 0) {
+        // Guardar la racha perdida para mostrar en la interfaz
+        const lostRachaValue = userState.racha;
+        userState.racha = 0;
+        saveState();
+
+        // Mostrar el modal del Huevo Triste
+        document.getElementById("lost-racha-value").innerText = lostRachaValue;
+        document.getElementById("racha-lost-modal").classList.remove("hidden");
+        
+        // Reproducir sonido de fracaso triste
+        setTimeout(() => {
+          playSynthSound('racha_lost');
+        }, 1000);
+      }
+    }
+
+    function dismissRachaLostModal() {
+      playSynthSound('click');
+      document.getElementById("racha-lost-modal").classList.add("hidden");
+    }
+
+    function simulateStreakLoss() {
+      // Acción para simular la pérdida de racha y comprobar el huevo triste
+      userState.racha = 5; // Ponemos racha ficticia
+      // Forzamos que la última fecha de entrenamiento sea hace 3 días
+      const oldDate = new Date();
+      oldDate.setDate(oldDate.getDate() - 3);
+      userState.lastWorkoutDate = oldDate.toISOString();
+      
       saveState();
-      showToast('🛡️ Tu escudo te salvó de perder los juegos, ¡pero la racha se reinició!', 'ok');
-      return false;
+      toggleProfileModal();
+      checkRachaLoss();
+      updateUserUI();
     }
-    state.streak = 0;
-    state.ownedGames = [];
-    state.gameUnlockedUntil = null;
-    saveState();
-    return true; // sí hubo pérdida de racha con juegos
-  }
-  return false;
-}
 
-function renderStreak() {
-  const s = state.streak || 0;
-  document.getElementById('streak-num').textContent = s;
-  document.getElementById('streak-sub').textContent = s === 1 ? 'día seguido' : 'días seguidos';
-}
-
-// ═══════════════════════════════════════════════════════
-//  ACHIEVEMENTS
-// ═══════════════════════════════════════════════════════
-function checkAchievements() {
-  ACHIEVEMENTS.forEach((a, i) => {
-    if (!state.unlockedAchievements.includes(a.id) && a.cond(state)) {
-      state.unlockedAchievements.push(a.id);
-      setTimeout(() => showToast('🏅 Logro desbloqueado: ' + a.name, 'ok'), i * 1000);
+    function addFreeCoins() {
+      playSynthSound('success');
+      userState.coins += 500;
+      saveState();
+      updateUserUI();
+      showToast("¡Has recibido 500 Monedas gratis!", "success");
     }
-  });
-  saveState();
-}
 
-function renderAchievements() {
-  document.getElementById('achievements-row').innerHTML = ACHIEVEMENTS.map(a => {
-    const u = state.unlockedAchievements.includes(a.id);
-    return `<div class="achievement-badge${u?' unlocked':''}">
-      <span class="ach-icon">${a.icon}</span>
-      <span class="ach-name">${a.name}</span>
-    </div>`;
-  }).join('');
-}
-
-// ═══════════════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════════════
-function todayIndex() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
-
-function renderDays() {
-  const nav = document.getElementById('days-nav');
-  nav.innerHTML = '';
-  const today = todayIndex();
-  DAYS.forEach((d,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'day-btn';
-    if (state.currentDay === i) btn.classList.add('active');
-    if (today === i && state.currentDay !== i) btn.classList.add('today');
-    if (state.completedDays[i] && state.currentDay !== i) btn.classList.add('done');
-    if (d.isRest) btn.classList.add('rest');
-    btn.innerHTML = `<span class="day-abbr">${d.name}</span><span class="day-dot"></span>`;
-    btn.title = d.fullName;
-    btn.onclick = () => { state.currentDay = i; render(); };
-    nav.appendChild(btn);
-  });
-}
-
-function renderWorkout() {
-  const area = document.getElementById('workout-area');
-  const howSection = document.getElementById('how-section');
-  const d = DAYS[state.currentDay];
-
-  if (d.isRest) {
-    area.innerHTML = `<div class="rest-day">
-      <h2>DÍA DE DESCANSO 😴</h2>
-      <p>Tu cuerpo necesita descansar para crecer y hacerse más fuerte.</p>
-      <p>Hoy toca recargar energías y dormir bien.</p>
-      <p class="rest-tip">${d.tip}</p>
-    </div>`;
-    howSection.style.display = 'none';
-    return;
-  }
-
-  const total = d.exercises.length;
-  const doneCount = d.exercises.filter((_,i) => !!state.completedExercises[`${d.id}-${i}`]).length;
-  const pct = total > 0 ? Math.round((doneCount/total)*100) : 0;
-  const allDone = doneCount === total && total > 0;
-  const dayDone = !!state.completedDays[d.id];
-
-  const exHtml = d.exercises.map((ex,idx) => {
-    const key = `${d.id}-${idx}`;
-    const isComp = !!state.completedExercises[key];
-    return `<div class="exercise-item${isComp?' completed':''}${dayDone?' locked':''}"
-      onclick="toggleEx(${d.id},${idx})"
-      role="checkbox" aria-checked="${isComp}" tabindex="0"
-      onkeydown="if(event.key==='Enter'||event.key===' ')toggleEx(${d.id},${idx})">
-      <div class="ex-check">${isComp?'&#10003;':''}</div>
-      <div class="ex-info">
-        <div class="ex-name">${ex.name}</div>
-        <div class="ex-detail">${ex.detail}</div>
-      </div>
-      <div class="ex-reps">${ex.reps}</div>
-      <button class="ex-video-btn" onclick="event.stopPropagation();openVideo(${d.id},${idx})" title="Ver cómo se hace">▶</button>
-    </div>`;
-  }).join('');
-
-  let btnClass = 'complete-btn', btnDis = '', btnTxt = 'COMPLETAR ENTRENAMIENTO';
-  if (dayDone) { btnClass += ' day-done'; btnTxt = '✓ DÍA COMPLETADO'; btnDis = 'disabled'; }
-  else if (!allDone) { btnDis = 'disabled'; }
-
-  area.innerHTML = `
-    <div class="tip-card">
-      <div class="tip-label">💡 Consejo del día</div>
-      <div class="tip-text">${d.tip}</div>
-    </div>
-    <div class="workout-card">
-      <div class="workout-header">
-        <div class="workout-title">${d.fullName.toUpperCase()}</div>
-        <div class="workout-meta">Duración: <strong>${d.duration}</strong> &nbsp;·&nbsp; <strong>+${d.xp} XP</strong> &nbsp;·&nbsp; <strong>🪙 +${d.coins}</strong></div>
-      </div>
-      <div class="progress-wrap">
-        <div class="progress-label">${doneCount} de ${total} ejercicios — ${pct}%</div>
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-      </div>
-      <div class="exercises">${exHtml}</div>
-      <button class="${btnClass}" onclick="completeDay()" ${btnDis}>${btnTxt}</button>
-    </div>`;
-
-  howSection.style.display = '';
-  document.getElementById('how-list').innerHTML = d.exercises.map(ex =>
-    `<div class="how-item">
-      <div class="how-name">${ex.name} — ${ex.reps}</div>
-      <div class="how-desc">${ex.how}</div>
-    </div>`).join('');
-}
-
-function render() {
-  renderDays();
-  renderWorkout();
-  updateXPBar();
-  renderStreak();
-  renderAchievements();
-}
-
-// ═══════════════════════════════════════════════════════
-//  ACTIONS
-// ═══════════════════════════════════════════════════════
-function toggleEx(dayId, exIdx) {
-  if (state.completedDays[dayId]) return;
-  if (DAYS[state.currentDay].id !== dayId) return;
-  const key = `${dayId}-${exIdx}`;
-  if (state.completedExercises[key]) delete state.completedExercises[key];
-  else state.completedExercises[key] = true;
-  saveState();
-  renderWorkout();
-}
-
-function completeDay() {
-  const d = DAYS[state.currentDay];
-  if (d.isRest || state.completedDays[d.id]) return;
-  if (!d.exercises.every((_,i) => !!state.completedExercises[`${d.id}-${i}`])) return;
-  state.completedDays[d.id] = true;
-  state.coins = (state.coins||0) + d.coins;
-  updateStreak();
-  saveState();
-  checkAchievements();
-  addXP(d.xp);
-  showCelebration(d.xp, d.coins);
-  render();
-}
-
-// ═══════════════════════════════════════════════════════
-//  VIDEO
-// ═══════════════════════════════════════════════════════
-function openVideo(dayId, exIdx) {
-  const d = DAYS.find(x => x.id === dayId);
-  const ex = d.exercises[exIdx];
-  document.getElementById('video-title-text').textContent = ex.name;
-  document.getElementById('video-how').textContent = ex.how;
-
-  const searchQuery = encodeURIComponent('como hacer ' + ex.name + ' ejercicio en casa');
-  const ytSearchUrl = 'https://www.youtube.com/results?search_query=' + searchQuery;
-
-  const content = document.getElementById('video-content');
-  content.innerHTML = `
-    <div class="video-wrap" id="video-iframe-wrap">
-      <iframe id="video-iframe"
-        src="https://www.youtube.com/embed/${ex.videoId}?rel=0&modestbranding=1"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen></iframe>
-    </div>
-    <div class="video-fallback" id="video-fallback" style="display:none">
-      <div class="video-fallback-icon">🏋️</div>
-      <p class="video-fallback-text">Aquí tienes el mejor resultado para este ejercicio:</p>
-      <a class="video-fallback-btn" href="${ytSearchUrl}" target="_blank" rel="noopener">▶ Ver "${ex.name}" en YouTube</a>
-    </div>`;
-
-  const fallbackTimer = setTimeout(() => {
-    const wrap = document.getElementById('video-iframe-wrap');
-    const fb = document.getElementById('video-fallback');
-    if (wrap && fb && !wrap.dataset.loaded) {
-      wrap.style.display = 'none';
-      fb.style.display = 'block';
+    function resetProgress() {
+      playSynthSound('click');
+      if (confirm("¿Estas seguro de que quieres restablecer todo tu progreso deportivo?")) {
+        localStorage.removeItem("power_state_v5");
+        // Limpiar estados de ejercicios del almacenamiento local
+        const todayIndex = new Date().getDay();
+        const routine = WEEKLY_ROUTINES[todayIndex];
+        if (routine) {
+          routine.exercises.forEach(ex => {
+            localStorage.removeItem(`done_${ex.id}`);
+          });
+        }
+        showToast("Progreso deportivo restablecido", "info");
+        setTimeout(() => {
+          location.reload();
+        }, 600);
+      }
     }
-  }, 3500);
 
-  const iframe = document.getElementById('video-iframe');
-  if (iframe) {
-    iframe.addEventListener('load', () => {
-      const wrap = document.getElementById('video-iframe-wrap');
-      if (wrap) wrap.dataset.loaded = '1';
-      clearTimeout(fallbackTimer);
+    function triggerHistoricalIntro() {
+      const today = new Date();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const dateKey = `${day}-${month}`; // Formato exacto 20-06
+
+      let historicalFact = HISTORICAL_EVENTS[dateKey];
+      if (!historicalFact) {
+        historicalFact = `UN DIA COMO HOY EN EL DEPORTE: Un ${day}/${month}, un atleta legendario rompio las marcas mundiales, inspirando a millones a superarse de forma natural en calistenia. ¡Hoy es tu dia de gloria!`;
+      }
+
+      document.getElementById("intro-title").innerText = `SUCEDIO HOY (${day}/${month})`;
+      document.getElementById("intro-description").innerText = historicalFact;
+
+      const intro = document.getElementById("intro-screen");
+      intro.classList.remove("pointer-events-none");
+      intro.classList.remove("opacity-0");
+      intro.querySelector("div").classList.remove("scale-95");
+    }
+
+    function dismissIntro() {
+      playSynthSound('click');
+      const intro = document.getElementById("intro-screen");
+      intro.classList.add("opacity-0");
+      intro.classList.add("pointer-events-none");
+      intro.querySelector("div").classList.add("scale-95");
+    }
+
+    function updateUserUI() {
+      document.getElementById("user-display-name").innerText = userState.username;
+      document.getElementById("user-display-title").innerText = userState.userTitle;
+      document.getElementById("user-coins-display").innerText = userState.coins;
+      document.getElementById("store-coins-display").innerText = userState.coins;
+      document.getElementById("user-racha-display").innerText = userState.racha;
+      document.getElementById("user-level-badge").innerText = `NV. ${userState.level}`;
+
+      // Calcular barra de experiencia
+      const progressPercent = Math.min(100, Math.max(0, (userState.xp / userState.xpNeeded) * 100));
+      document.getElementById("user-xp-bar").style.width = `${progressPercent}%`;
+      document.getElementById("user-xp-text").innerText = `${userState.xp} / ${userState.xpNeeded} XP para subir de nivel`;
+
+      // Renderizar el Avatar
+      const avatarBox = document.getElementById("user-avatar-display");
+      if (userState.avatarImage) {
+        avatarBox.innerHTML = `<img src="${userState.avatarImage}" class="w-full h-full object-cover" />`;
+      } else {
+        avatarBox.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl text-white font-bold ${userState.avatarBg}`;
+        avatarBox.innerText = userState.username.substring(0, 1).toUpperCase();
+      }
+
+      renderWeekCalendar();
+      renderCurrentRoutine();
+    }
+
+    function renderWeekCalendar() {
+      const grid = document.getElementById("week-calendar-grid");
+      grid.innerHTML = "";
+
+      const daysShort = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
+      const todayIndex = new Date().getDay(); // 0 (Domingo) a 6 (Sábado)
+
+      // Empezar calendario por LUNES (1, 2, 3, 4, 5, 6, 0)
+      const orderedDays = [1, 2, 3, 4, 5, 6, 0];
+
+      orderedDays.forEach(dayIndex => {
+        const isToday = (dayIndex === todayIndex);
+        const dayName = daysShort[dayIndex];
+
+        const btn = document.createElement("button");
+        btn.className = `day-pill p-3 rounded-2xl border text-center font-bold text-xs uppercase flex flex-col items-center justify-center h-14 ${
+          isToday
+            ? "bg-rose-500 border-rose-500 text-white font-black shadow-sm"
+            : "bg-white border-stone-200 text-stone-500 hover:border-stone-300"
+        }`;
+
+        btn.onclick = () => {
+          playSynthSound('click');
+          if (!isToday) {
+            showToast(`Hoy es ${daysShort[todayIndex]}. Solo puedes registrar la rutina de hoy.`, "error");
+          } else {
+            showToast("Estas en el entrenamiento de hoy. ¡A por todas!", "success");
+          }
+        };
+
+        // Añadir el puntito que sale en la imagen "LUN •"
+        btn.innerHTML = `
+          <span>${dayName}</span>
+          ${isToday ? `<span class="text-white text-xs leading-none mt-1">•</span>` : ""}
+        `;
+
+        grid.appendChild(btn);
+      });
+    }
+
+    function renderCurrentRoutine() {
+      const container = document.getElementById("exercises-list-container");
+      container.innerHTML = "";
+
+      const todayIndex = new Date().getDay();
+      const currentRoutine = WEEKLY_ROUTINES[todayIndex];
+
+      if (!currentRoutine) return;
+
+      document.getElementById("current-routine-title").innerText = currentRoutine.name;
+
+      // Escalabilidad de dificultad por Nivel (+8% repeticiones/tiempo por nivel)
+      const levelMultiplier = 1 + (userState.level - 1) * 0.08;
+      const multiplierPercentage = Math.round((userState.level - 1) * 8);
+
+      document.getElementById("current-routine-meta").innerHTML = `
+        Duracion: <span class="text-rose-600 font-extrabold">${currentRoutine.duration}</span> • 
+        <span class="text-indigo-600 font-extrabold">+${currentRoutine.xp} XP</span> • 
+        <span class="text-amber-600 font-extrabold">MONEDAS +${currentRoutine.coins}</span> 
+        <span class="text-[10px] text-stone-400 font-extrabold block sm:inline sm:ml-2">(Dificultad Nivel ${userState.level}: +${multiplierPercentage}% repeticiones)</span>
+      `;
+
+      let completedCount = 0;
+
+      currentRoutine.exercises.forEach((ex, idx) => {
+        const isDone = localStorage.getItem(`done_${ex.id}`) === "true";
+        if (isDone) completedCount++;
+
+        // Cantidad escalada
+        const scaledQty = Math.ceil(ex.baseQty * levelMultiplier);
+
+        const card = document.createElement("div");
+        card.className = `exercise-card cursor-pointer flex items-center justify-between p-5 rounded-2xl border transition-all ${
+          isDone ? "bg-emerald-50/50 border-emerald-300" : "bg-white border-stone-200 hover:border-rose-400"
+        }`;
+
+        // Al hacer clic en cualquier parte de la tarjeta sensible, abrimos el modal animado
+        card.onclick = (e) => {
+          // Si pulsan específicamente sobre el botón de checkbox, solo hacemos el toggle
+          if (e.target.closest('.check-toggle')) {
+            e.stopPropagation();
+            toggleExerciseStatus(ex.id);
+            return;
+          }
+          playSynthSound('click');
+          openExerciseModal(ex.id, ex.name, scaledQty, ex.unit, ex.type);
+        };
+
+        card.innerHTML = `
+          <div class="flex items-center gap-4">
+            <!-- Botón de check interactivo -->
+            <button class="check-toggle w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
+              isDone ? "bg-emerald-500 border-emerald-500 text-white animate-pulse" : "border-stone-300 bg-white hover:border-emerald-400"
+            }">
+              ${isDone ? '<i class="fa-solid fa-check text-sm"></i>' : ""}
+            </button>
+            <div class="text-left">
+              <h4 class="font-extrabold text-stone-900 text-base leading-tight">${ex.name}</h4>
+              <p class="text-xs text-stone-400 font-bold mt-0.5">${ex.desc}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-black text-rose-500 uppercase tracking-widest bg-rose-50 px-3 py-1.5 rounded-xl">
+              ${scaledQty} ${ex.unit === "vueltas" ? "vta" : "rep"}
+            </span>
+            <!-- Botón de Play estético -->
+            <button class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center transition-all shadow-sm">
+              <i class="fa-solid fa-play text-sm pl-0.5 animate-pulse"></i>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Actualizar Barra de Progreso de la rutina
+      const totalExercises = currentRoutine.exercises.length;
+      const percent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
+
+      document.getElementById("exercises-progress-text").innerText = `${completedCount} de ${totalExercises} Ejercicios`;
+      document.getElementById("exercises-progress-percent").innerText = `${percent}%`;
+      document.getElementById("exercises-progress-bar").style.width = `${percent}%`;
+    }
+
+    function toggleExerciseStatus(exId) {
+      playSynthSound('success');
+      const isDone = localStorage.getItem(`done_${exId}`) === "true";
+      localStorage.setItem(`done_${exId}`, (!isDone).toString());
+      renderCurrentRoutine();
+    }
+
+    function openExerciseModal(id, name, qty, unit, type) {
+      activeExerciseId = id;
+      currentAnimType = type;
+      animFrame = 0;
+
+      document.getElementById("modal-exercise-name").innerText = name.toUpperCase();
+      document.getElementById("modal-target-qty").innerText = qty;
+      document.getElementById("modal-target-unit").innerText = unit;
+
+      const modal = document.getElementById("exercise-modal");
+      modal.classList.remove("pointer-events-none", "opacity-0");
+      modal.querySelector("div").classList.remove("scale-95");
+
+      // Iniciar bucle Canvas
+      canvas = document.getElementById("stickman-canvas");
+      ctx = canvas.getContext("2d");
+
+      if (animationId) cancelAnimationFrame(animationId);
+      tickStickmanAnimation();
+    }
+
+    function tickStickmanAnimation() {
+      animFrame++;
+      drawStickman(currentAnimType, animFrame, ctx, canvas.width, canvas.height);
+      animationId = requestAnimationFrame(tickStickmanAnimation);
+    }
+
+    function closeExerciseModal() {
+      playSynthSound('click');
+      const modal = document.getElementById("exercise-modal");
+      modal.classList.add("pointer-events-none", "opacity-0");
+      modal.querySelector("div").classList.add("scale-95");
+
+      if (animationId) cancelAnimationFrame(animationId);
+    }
+
+    function markCurrentExerciseDone() {
+      if (activeExerciseId) {
+        localStorage.setItem(`done_${activeExerciseId}`, "true");
+        showToast("¡Ejercicio completado con exito!", "success");
+        closeExerciseModal();
+        renderCurrentRoutine();
+      }
+    }
+
+    function drawStickman(type, frame, context, width, height) {
+      context.clearRect(0, 0, width, height);
+
+      // Cuadrícula de entrenamiento ligera
+      context.strokeStyle = "#e8e7e1";
+      context.lineWidth = 1;
+      for (let x = 0; x < width; x += 40) {
+        context.beginPath(); context.moveTo(x, 0); context.lineTo(x, height); context.stroke();
+      }
+      for (let y = 0; y < height; y += 40) {
+        context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke();
+      }
+
+      const cx = width / 2;
+      const cy = height / 2 + 20;
+
+      context.strokeStyle = "#292524"; 
+      context.lineWidth = 8;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+
+      const drawFloor = (floorY) => {
+        context.strokeStyle = "#a8a29e";
+        context.lineWidth = 4;
+        context.beginPath();
+        context.moveTo(20, floorY);
+        context.lineTo(width - 20, floorY);
+        context.stroke();
+      };
+
+      if (type === "squat") {
+        const speed = (frame % 100) / 100;
+        const squatDepth = Math.sin(speed * Math.PI * 2) * 0.5 + 0.5;
+
+        const headY = cy - 90 + (squatDepth * 40);
+        const hipY = cy - 30 + (squatDepth * 45);
+        const kneeX = cx - 20 - (squatDepth * 15);
+        const kneeY = cy + 10;
+        const footX = cx - 10;
+        const footY = cy + 50;
+
+        context.beginPath();
+        context.arc(cx, headY, 14, 0, Math.PI * 2);
+        context.fillStyle = "#292524";
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(cx, headY + 14);
+        context.lineTo(cx, hipY);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(cx, headY + 25);
+        context.lineTo(cx + 40, headY + 25);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(cx, hipY);
+        context.lineTo(kneeX, kneeY);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(kneeX, kneeY);
+        context.lineTo(footX, footY);
+        context.stroke();
+
+        drawFloor(footY);
+
+      } else if (type === "pushup") {
+        const speed = (frame % 80) / 80;
+        const depth = Math.sin(speed * Math.PI * 2) * 0.5 + 0.5;
+
+        const feetX = cx - 70;
+        const feetY = cy + 30;
+        const shoulderX = cx + 50;
+        const shoulderY = cy + 10 + (depth * 25);
+        const headX = shoulderX + 20;
+        const headY = shoulderY - 5;
+
+        drawFloor(cy + 30);
+
+        context.beginPath();
+        context.arc(headX, headY, 14, 0, Math.PI * 2);
+        context.fillStyle = "#292524";
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(feetX, feetY);
+        context.lineTo(shoulderX, shoulderY);
+        context.stroke();
+
+        const elbowX = shoulderX - 15 + (depth * 10);
+        const elbowY = cy + 30 - (depth * 20);
+        context.beginPath();
+        context.moveTo(shoulderX, shoulderY);
+        context.lineTo(elbowX, elbowY);
+        context.lineTo(shoulderX, cy + 30);
+        context.stroke();
+
+      } else if (type === "plank") {
+        const shakeX = (Math.random() - 0.5) * 1.5;
+        const shakeY = (Math.random() - 0.5) * 1.5;
+
+        const feetX = cx - 80 + shakeX;
+        const feetY = cy + 25 + shakeY;
+        const shoulderX = cx + 40 + shakeX;
+        const shoulderY = cy + 15 + shakeY;
+        const headX = shoulderX + 20;
+        const headY = shoulderY - 5;
+
+        drawFloor(cy + 25);
+
+        context.beginPath();
+        context.arc(headX, headY, 14, 0, Math.PI * 2);
+        context.fillStyle = "#292524";
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(feetX, feetY);
+        context.lineTo(shoulderX, shoulderY);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(shoulderX, shoulderY);
+        context.lineTo(shoulderX, cy + 25);
+        context.lineTo(shoulderX + 15, cy + 25);
+        context.stroke();
+
+        if (frame % 40 < 20) {
+          context.fillStyle = "#38bdf8";
+          context.beginPath();
+          context.arc(shoulderX - 10, shoulderY + 10 + (frame % 20), 3, 0, Math.PI * 2);
+          context.fill();
+        }
+
+      } else if (type === "warmup") {
+        const speed = (frame % 50) / 50;
+        const amplitude = Math.sin(speed * Math.PI * 2) * 0.5 + 0.5;
+
+        const headY = cy - 70;
+        const armLX = cx - 20 - (amplitude * 30);
+        const armLY = cy - 50 - (amplitude * 30);
+        const armRX = cx + 20 + (amplitude * 30);
+        const armRY = cy - 50 - (amplitude * 30);
+
+        const footLX = cx - 10 - (amplitude * 20);
+        const footRX = cx + 10 + (amplitude * 20);
+        const footY = cy + 40;
+
+        context.beginPath();
+        context.arc(cx, headY, 14, 0, Math.PI * 2);
+        context.fillStyle = "#292524";
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(cx, headY + 14);
+        context.lineTo(cx, cy);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(cx, headY + 20);
+        context.lineTo(armLX, armLY);
+        context.moveTo(cx, headY + 20);
+        context.lineTo(armRX, armRY);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(cx, cy);
+        context.lineTo(footLX, footY);
+        context.moveTo(cx, cy);
+        context.lineTo(footRX, footY);
+        context.stroke();
+
+        drawFloor(footY);
+
+      } else {
+        const speed = (frame % 120) / 120;
+        const bend = Math.sin(speed * Math.PI * 2) * 20;
+
+        const headX = cx + bend;
+        const headY = cy - 70;
+        const footY = cy + 40;
+
+        context.beginPath();
+        context.arc(headX, headY, 14, 0, Math.PI * 2);
+        context.fillStyle = "#292524";
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(headX, headY + 14);
+        context.lineTo(cx, cy);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(headX, headY + 20);
+        context.lineTo(headX - 15 - bend * 0.3, headY - 25);
+        context.moveTo(headX, headY + 20);
+        context.lineTo(headX + 15 - bend * 0.3, headY - 25);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(cx, cy);
+        context.lineTo(cx - 20, footY);
+        context.moveTo(cx, cy);
+        context.lineTo(cx + 20, footY);
+        context.stroke();
+
+        drawFloor(footY);
+      }
+    }
+
+    function finishRoutineAndGetDrop() {
+      const todayIndex = new Date().getDay();
+      const currentRoutine = WEEKLY_ROUTINES[todayIndex];
+
+      if (!currentRoutine) return;
+
+      // Comprobar que todos estén marcados
+      let allDone = true;
+      currentRoutine.exercises.forEach(ex => {
+        const isDone = localStorage.getItem(`done_${ex.id}`) === "true";
+        if (!isDone) allDone = false;
+      });
+
+      if (!allDone) {
+        showToast("¡Registra todos los ejercicios de hoy como hechos para finalizar!", "error");
+        return;
+      }
+
+      // Ganar XP y monedas
+      userState.xp += currentRoutine.xp;
+      userState.coins += currentRoutine.coins;
+      userState.completedToday = true;
+      userState.racha += 1; // Aumentar racha actual
+      userState.lastWorkoutDate = new Date().toISOString(); // Guardar fecha de hoy
+
+      showToast(`Rutina del dia completada. +${currentRoutine.xp} XP y +${currentRoutine.coins} Monedas ganadas.`, "success");
+      playSynthSound('success');
+
+      // Comprobar si sube de nivel para disparar el Starr Drop interactivo
+      if (userState.xp >= userState.xpNeeded) {
+        userState.xp -= userState.xpNeeded;
+        userState.level += 1;
+        userState.xpNeeded = Math.round(userState.xpNeeded * 1.3);
+
+        saveState();
+        updateUserUI();
+
+        // Disparar cinemática e ir directamente a Starr Drop
+        triggerLevelUpFlow();
+      } else {
+        saveState();
+        updateUserUI();
+      }
+    }
+
+    function triggerLevelUpFlow() {
+      // Detener música o sonidos previos
+      playSynthSound('level_up');
+
+      // Mostrar confeti de celebración
+      confetti({
+        particleCount: 200,
+        spread: 120,
+        colors: ['#f59e0b', '#e11d48', '#3b82f6']
+      });
+
+      // Configurar y mostrar modal de subida de nivel
+      document.getElementById("unlocked-level-title").innerText = `NIVEL ${userState.level}`;
+      document.getElementById("level-up-modal").classList.remove("hidden");
+    }
+
+    function transitionToStarrDrop() {
+      playSynthSound('click');
+      // Ocultar modal de subida de nivel
+      document.getElementById("level-up-modal").classList.add("hidden");
+
+      // Abrir modal de Starr Drop directamente
+      document.getElementById("starr-drop-modal").classList.remove("hidden");
+      
+      // Reiniciar parámetros del Drop
+      dropTaps = 0;
+      currentRarityIndex = 0;
+      updateStarrDropVisuals();
+    }
+
+    // Lógica interactiva del Starr Drop exclusivo tras subir de nivel
+    const dropBody = document.getElementById("starr-drop-body");
+    const dropContainer = document.getElementById("starr-drop-container");
+    const dropRarityLabel = document.getElementById("starr-drop-rarity-label");
+    const dropRewardCard = document.getElementById("starr-drop-reward-card");
+
+    dropContainer.addEventListener("click", () => {
+      dropBody.classList.add("starr-drop-bounce");
+      
+      // Sonido de golpe dinámico y ascendente
+      playSynthSound('hit');
+
+      setTimeout(() => {
+        dropBody.classList.remove("starr-drop-bounce");
+        dropTaps++;
+
+        // Aumentar la probabilidad de rarezas altas a base de golpes
+        const chance = Math.random();
+        if (chance > 0.35 && currentRarityIndex < RARITIES.length - 1) {
+          currentRarityIndex++;
+          updateStarrDropVisuals();
+          playSynthSound('upgrade');
+          showToast(`¡STARR DROP MEJORADO A ${RARITIES[currentRarityIndex].name}!`, "success");
+        }
+
+        if (dropTaps >= maxDropTaps) {
+          triggerStarrDropReveal();
+        }
+      }, 150);
     });
-  }
 
-  document.getElementById('video-modal').classList.add('show');
-}
+    function updateStarrDropVisuals() {
+      const rarity = RARITIES[currentRarityIndex];
+      dropBody.className = `w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-all duration-150 ${rarity.color} ${rarity.shadow} border-4 ${rarity.border}`;
+      dropRarityLabel.innerText = rarity.name;
+      dropRarityLabel.className = `mt-5 font-black ${rarity.text} uppercase tracking-widest text-lg animate-pulse`;
+    }
 
-function closeVideo() {
-  document.getElementById('video-modal').classList.remove('show');
-  document.getElementById('video-content').innerHTML = '';
-}
+    function triggerStarrDropReveal() {
+      dropContainer.classList.add("hidden");
+      dropRewardCard.classList.remove("hidden");
 
-// ═══════════════════════════════════════════════════════
-//  SHOP
-// ═══════════════════════════════════════════════════════
-function openShop() {
-  document.getElementById('shop-coins-display').textContent = state.coins || 0;
-  const cats = { power:"⚔️ Poderes", theme:"🎨 Temas", avatar:"🧑 Avatares", title:"👑 Títulos" };
-  let html = '';
-  Object.keys(cats).forEach(cat => {
-    html += `<div class="shop-section-title">${cats[cat]}</div><div class="shop-grid">`;
-    SHOP_ITEMS.filter(i => i.category===cat).forEach(item => {
-      const owned = (state.ownedItems||[]).includes(item.id);
-      const cantBuy = !owned && (state.coins||0) < item.price;
-      html += `<div class="shop-item${owned?' owned':''}${cantBuy?' cant-buy':''}" onclick="buyItem('${item.id}')">
-        ${owned?'<div class="shop-owned-badge">✓ TUYO</div>':''}
-        <span class="shop-item-icon">${item.icon}</span>
-        <div class="shop-item-name">${item.name}</div>
-        <div class="shop-item-desc">${item.desc}</div>
-        <div class="shop-item-price">${owned?'✓ Comprado':'🪙 '+item.price}</div>
-      </div>`;
-    });
-    html += '</div>';
-  });
-  document.getElementById('shop-content').innerHTML = html;
-  document.getElementById('shop-overlay').classList.add('show');
-}
-function closeShop() { document.getElementById('shop-overlay').classList.remove('show'); }
+      setTimeout(() => {
+        dropRewardCard.classList.remove("scale-95", "opacity-0");
+      }, 50);
 
-function buyItem(itemId) {
-  const item = SHOP_ITEMS.find(i => i.id===itemId);
-  if (!item) return;
-  if ((state.ownedItems||[]).includes(itemId)) return showToast('¡Ya tienes esto!', 'err');
-  if ((state.coins||0) < item.price) return showToast('No tienes suficientes monedas 🪙', 'err');
-  state.coins -= item.price;
-  state.ownedItems = [...(state.ownedItems||[]), itemId];
-  if (item.category==='theme') { state.activeTheme = itemId.replace('theme_',''); applyTheme(state.activeTheme); }
-  if (item.category==='avatar') { state.activeAvatar = item.icon; document.getElementById('user-avatar').textContent = item.icon; }
-  if (item.category==='title') {
-    const m = item.name.match(/"([^"]+)"/);
-    state.activeTitle = m ? m[1] : '';
-    document.getElementById('user-title').textContent = state.activeTitle ? '👑 '+state.activeTitle : '';
-  }
-  if (itemId==='double_xp') state.ownedItems.push('double_xp_active');
-  saveState(); updateXPBar();
-  showToast('✅ ' + item.name + ' comprado!', 'ok');
-  openShop();
-}
+      // Botín centrado únicamente en Monedas de oro u objetos de gimnasio virtual
+      let earnedCoins = 50 * (currentRarityIndex + 1);
+      let prizeTitle = `¡+${earnedCoins} Monedas!`;
+      let prizeIconClass = "fa-coins text-amber-500";
+      let prizeDesc = "Sumadas de manera directa a tu cuenta deportiva.";
 
-// ═══════════════════════════════════════════════════════
-//  THEME
-// ═══════════════════════════════════════════════════════
-function applyTheme(theme) {
-  document.body.className = theme === 'dark' ? 'dark' : theme === 'blue' ? 'blue' : '';
-}
+      if (currentRarityIndex >= 2 && Math.random() > 0.5) {
+        const gymItems = [
+          "Cinta de sudor de camuflaje",
+          "Mancuerna retro de plastico",
+          "Camiseta fitness holografica",
+          "Banda elastica ultra resistente"
+        ];
+        const randomItem = gymItems[Math.floor(Math.random() * gymItems.length)];
+        prizeTitle = `¡${randomItem}!`;
+        prizeIconClass = "fa-dumbbell text-indigo-500";
+        prizeDesc = "Un nuevo equipamiento exclusivo añadido a tu inventario.";
+        
+        userState.inventory.push(randomItem);
+      }
 
-// ═══════════════════════════════════════════════════════
-//  OVERLAYS
-// ═══════════════════════════════════════════════════════
-const CEL_MSGS = [
-  "¡Cada día que entrenas eres más fuerte!",
-  "El esfuerzo de hoy es el resultado de mañana.",
-  "¡Lo has conseguido! Sigue así campeón.",
-  "Un día más, un día mejor. ¡Orgullo total!",
-  "¡Bien hecho! Tu cuerpo te lo agradece."
-];
-function showCelebration(xp, coins) {
-  document.getElementById('cel-sub').textContent = CEL_MSGS[Math.floor(Math.random()*CEL_MSGS.length)];
-  document.getElementById('cel-xp').textContent = '+' + xp + ' XP GANADOS';
-  document.getElementById('cel-coins').textContent = '🪙 +' + coins + ' monedas';
-  document.getElementById('celebration').classList.add('show');
-  spawnConfetti(false);
-}
-function closeCelebration() { document.getElementById('celebration').classList.remove('show'); }
+      document.getElementById("reward-rarity-badge").innerText = RARITIES[currentRarityIndex].name;
+      document.getElementById("reward-icon-container").innerHTML = `<i class="fa-solid ${prizeIconClass} text-6xl animate-bounce"></i>`;
+      document.getElementById("reward-title").innerText = prizeTitle;
+      document.getElementById("reward-desc").innerText = prizeDesc;
 
-const LVL_MSGS = ["¡Imparable! Cada semana más fuerte.","¡Un nuevo nivel! El esfuerzo paga.","¡Subiste de nivel! Eres una máquina.","¡No te detienes! Así se hace."];
-function showLevelUp(lvl, coins) {
-  document.getElementById('lvlup-num').textContent = lvl;
-  document.getElementById('lvlup-sub').textContent = LVL_MSGS[Math.floor(Math.random()*LVL_MSGS.length)];
-  document.getElementById('lvlup-coins').textContent = '🪙 +' + coins + ' monedas de recompensa';
-  document.getElementById('levelup-overlay').classList.add('show');
-  spawnConfetti(true);
-}
-function closeLevelUp() { document.getElementById('levelup-overlay').classList.remove('show'); }
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
 
-function spawnConfetti(gold) {
-  const colors = gold
-    ? ['#f4a261','#e07c2e','#ffd700','#fff','#e63946']
-    : ['#e63946','#1a1a1a','#2d6a4f','#c1121f','#457b9d'];
-  for (let i=0;i<60;i++) {
-    setTimeout(()=>{
-      const c = document.createElement('div');
-      c.className = 'confetti-piece';
-      c.style.cssText = `left:${Math.random()*100}vw;background:${colors[~~(Math.random()*colors.length)]};animation-duration:${1.4+Math.random()*2}s;animation-delay:${Math.random()*.3}s;width:${5+Math.random()*8}px;height:${5+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'}`;
-      document.body.appendChild(c);
-      setTimeout(()=>{ if(c.parentNode) c.parentNode.removeChild(c); }, 4000);
-    }, i*30);
-  }
-}
+      playSynthSound('success');
+      userState.coins += earnedCoins;
+      saveState();
+    }
 
-// ═══════════════════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════════════════
-let toastTimer;
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show' + (type ? ' '+type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{ t.className=''; }, 2800);
-}
+    function claimStarrDropReward() {
+      playSynthSound('click');
+      // Ocultar modal completo y retornar a la interfaz limpia
+      document.getElementById("starr-drop-modal").classList.add("hidden");
+      
+      // Limpiar estados del renderizador para el siguiente nivel
+      dropRewardCard.classList.add("scale-95", "opacity-0");
+      dropRewardCard.classList.add("hidden");
+      dropContainer.classList.remove("hidden");
 
-// ESC cierra modales
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { closeVideo(); closeShop(); closeLevelUp(); closeCelebration(); }
-});
-</script>
+      updateUserUI();
+    }
+
+    function toggleProfileModal() {
+      playSynthSound('click');
+      const modal = document.getElementById("profile-modal");
+      modal.classList.toggle("pointer-events-none");
+      modal.classList.toggle("opacity-0");
+      modal.querySelector("div").classList.toggle("scale-95");
+
+      if (!modal.classList.contains("opacity-0")) {
+        document.getElementById("profile-input-name").value = userState.username;
+        document.getElementById("profile-input-email").value = userState.email;
+        document.getElementById("profile-input-title").value = userState.userTitle;
+        updateModalAvatarPreview();
+      }
+    }
+
+    function updateModalAvatarPreview() {
+      const preview = document.getElementById("modal-avatar-preview");
+      if (userState.avatarImage) {
+        preview.innerHTML = `<img src="${userState.avatarImage}" class="w-full h-full object-cover" />`;
+      } else {
+        preview.className = `w-20 h-20 rounded-full flex items-center justify-center text-4xl text-white font-bold mb-3 ${userState.avatarBg}`;
+        preview.innerText = userState.username.substring(0, 1).toUpperCase();
+      }
+    }
+
+    function uploadProfileImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          userState.avatarImage = e.target.result;
+          updateModalAvatarPreview();
+          showToast("Imagen de perfil lista para guardar", "info");
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearUploadedImage() {
+      playSynthSound('click');
+      userState.avatarImage = null;
+      document.getElementById("avatar-image-input").value = "";
+      updateModalAvatarPreview();
+      showToast("Se ha quitado la foto de perfil", "info");
+    }
+
+    function changeBg(bgClass) {
+      playSynthSound('click');
+      userState.avatarBg = bgClass;
+      updateModalAvatarPreview();
+      showToast("Color del avatar actualizado", "success");
+    }
+
+    function saveDetailedProfile() {
+      playSynthSound('success');
+      const newName = document.getElementById("profile-input-name").value.trim();
+      const newEmail = document.getElementById("profile-input-email").value.trim();
+      const newTitle = document.getElementById("profile-input-title").value.trim();
+
+      if (newName) userState.username = newName;
+      if (newEmail) userState.email = newEmail;
+      if (newTitle) userState.userTitle = newTitle;
+
+      saveState();
+      updateUserUI();
+      toggleProfileModal();
+      showToast("¡Tu perfil se ha guardado correctamente!", "success");
+    }
+
+    function openFullpageStore() {
+      playSynthSound('click');
+      document.getElementById("workout-view-container").classList.add("hidden");
+      document.getElementById("store-fullpage-view").classList.remove("hidden");
+      renderFullpageStore();
+    }
+
+    function closeFullpageStore() {
+      playSynthSound('click');
+      document.getElementById("store-fullpage-view").classList.add("hidden");
+      document.getElementById("workout-view-container").classList.remove("hidden");
+    }
+
+    function renderFullpageStore() {
+      document.getElementById("store-coins-display").innerText = userState.coins;
+
+      const itemsContainer = document.getElementById("store-items-grid");
+      const gamesContainer = document.getElementById("store-games-grid");
+
+      itemsContainer.innerHTML = "";
+      gamesContainer.innerHTML = "";
+
+      STORE_ITEMS.forEach(item => {
+        const ownsItem = userState.inventory.includes(item.name);
+        const canAfford = userState.coins >= item.cost;
+
+        const card = document.createElement("div");
+        
+        if (!ownsItem && !canAfford) {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-stone-100 opacity-60 grayscale gap-4";
+        } else {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-white shadow-sm hover:border-indigo-400 hover:shadow-md transition-all gap-4";
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-xl">
+              <i class="fa-solid ${item.icon}"></i>
+            </div>
+            <div class="flex-grow">
+              <span class="text-[10px] font-black uppercase text-indigo-500 tracking-wider bg-indigo-50 px-2 py-0.5 rounded">${item.category}</span>
+              <h4 class="font-black text-stone-800 text-base mt-1">${item.name}</h4>
+              <p class="text-xs text-stone-500 mt-0.5">${item.desc}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 justify-end sm:justify-center">
+            <span class="font-black text-amber-600 text-sm flex items-center gap-1">
+              <i class="fa-solid fa-coins"></i> ${item.cost}
+            </span>
+            <button onclick="buyStoreItem('${item.name}', ${item.cost})" 
+              class="font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm ${
+                ownsItem 
+                  ? "bg-stone-200 text-stone-400 cursor-not-allowed" 
+                  : canAfford 
+                    ? "bg-indigo-600 hover:bg-indigo-700 text-white" 
+                    : "bg-stone-300 text-stone-500 cursor-not-allowed"
+              }" ${ownsItem ? "disabled" : ""}>
+              ${ownsItem ? "ADQUIRIDO" : "COMPRAR"}
+            </button>
+          </div>
+        `;
+        itemsContainer.appendChild(card);
+      });
+
+      STORE_GAMES.forEach(game => {
+        const ownsItem = userState.inventory.includes(game.name);
+        const canAfford = userState.coins >= game.cost;
+
+        const card = document.createElement("div");
+
+        if (!ownsItem && !canAfford) {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-stone-100 opacity-60 grayscale gap-4";
+        } else {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-white shadow-sm hover:border-emerald-400 hover:shadow-md transition-all gap-4";
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-xl">
+              <i class="fa-solid ${game.icon}"></i>
+            </div>
+            <div class="flex-grow">
+              <span class="text-[10px] font-black uppercase text-emerald-500 tracking-wider bg-emerald-50 px-2 py-0.5 rounded">${game.category}</span>
+              <h4 class="font-black text-stone-800 text-base mt-1">${game.name}</h4>
+              <p class="text-xs text-stone-500 mt-0.5">${game.desc}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 justify-end sm:justify-center">
+            ${ownsItem 
+              ? `<button onclick="launchGame('${game.url}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm">
+                  JUGAR (30 MIN)
+                 </button>`
+              : `
+                <span class="font-black text-amber-600 text-sm flex items-center gap-1">
+                  <i class="fa-solid fa-coins"></i> ${game.cost}
+                </span>
+                <button onclick="buyStoreItem('${game.name}', ${game.cost})" 
+                  class="font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm ${
+                    canAfford ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-stone-300 text-stone-500 cursor-not-allowed"
+                  }">
+                  COMPRAR
+                </button>
+              `
+            }
+          </div>
+        `;
+        gamesContainer.appendChild(card);
+      });
+    }
+
+    function buyStoreItem(name, cost) {
+      if (userState.coins < cost) {
+        showToast("No tienes suficientes monedas. ¡Completa mas entrenamientos!", "error");
+        return;
+      }
+
+      playSynthSound('success');
+      userState.coins -= cost;
+      userState.inventory.push(name);
+      
+      if (name.includes("Gladiador")) {
+        userState.userTitle = "Gladiador";
+      }
+
+      showToast(`¡Has adquirido ${name} con exito!`, "success");
+      saveState();
+      updateUserUI();
+      renderFullpageStore();
+    }
+
+    function launchGame(gameUrl) {
+      if (gameActive) {
+        showToast("Ya tienes un juego activo. Espera a que termine tu sesion.", "error");
+        return;
+      }
+
+      playSynthSound('success');
+      showToast("Abriendo juego en una nueva pestaña externa...", "info");
+      
+      gameWindowRef = window.open(gameUrl, '_blank');
+      
+      gameActive = true;
+      gameSecondsRemaining = 1800; // 30 minutos
+      
+      closeFullpageStore();
+      
+      document.getElementById("game-timer-banner").classList.remove("hidden");
+
+      gameTimerInterval = setInterval(() => {
+        gameSecondsRemaining--;
+        updateGameTimerDisplay();
+
+        if (gameSecondsRemaining <= 0) {
+          triggerGameLockout();
+        }
+      }, 1000);
+    }
+
+    function updateGameTimerDisplay() {
+      const mins = Math.floor(gameSecondsRemaining / 60);
+      const secs = gameSecondsRemaining % 60;
+      const formattedTime = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      document.getElementById("game-countdown-text").innerText = formattedTime;
+    }
+
+    function terminateGameSession() {
+      playSynthSound('click');
+      if (gameWindowRef && !gameWindowRef.closed) {
+        gameWindowRef.close();
+      }
+
+      clearInterval(gameTimerInterval);
+      gameActive = false;
+      document.getElementById("game-timer-banner").classList.add("hidden");
+      showToast("Sesion de juego cerrada.", "info");
+    }
+
+    function triggerGameLockout() {
+      terminateGameSession();
+      document.getElementById("game-lockout-overlay").classList.remove("hidden");
+    }
+
+    function dismissLockout() {
+      playSynthSound('click');
+      document.getElementById("game-lockout-overlay").classList.add("hidden");
+    }
+
+    // Toasts informativos
+    function showToast(msg, type = "info") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = "p-4 rounded-2xl shadow-lg border text-sm font-black flex items-center gap-3 transition-all duration-300 transform translate-x-12 opacity-0 bg-white pointer-events-auto max-w-sm";
+
+      let icon = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
+      if (type === "success") {
+        icon = '<i class="fa-solid fa-circle-check text-emerald-500"></i>';
+        toast.classList.add("border-emerald-100", "bg-emerald-50", "text-emerald-900");
+      } else if (type === "error") {
+        icon = '<i class="fa-solid fa-triangle-exclamation text-rose-500"></i>';
+        toast.classList.add("border-rose-100", "bg-rose-50", "text-rose-900");
+      } else {
+        toast.classList.add("border-stone-100", "bg-stone-50", "text-stone-900");
+      }
+
+      toast.innerHTML = `${icon} <span>${msg}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove("translate-x-12", "opacity-0");
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add("translate-x-12", "opacity-0");
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+
 </body>
 </html>
