@@ -58,14 +58,6 @@
     }
   </style>
 </head>
-  <!-- Modal de Inicio de Sesión -->
-<div id="login-modal" class="hidden fixed inset-0 bg-stone-950/95 z-[100] flex items-center justify-center p-4">
-  <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
-    <h2 class="text-2xl font-black font-bebas text-stone-900 mb-4">BIENVENIDO, ATLETA</h2>
-    <input type="text" id="input-username" placeholder="Tu nombre" class="w-full p-3 mb-4 border-2 border-stone-200 rounded-xl font-bold">
-    <button onclick="saveUser()" class="w-full bg-rose-600 text-white font-black py-3 rounded-xl uppercase">Comenzar</button>
-  </div>
-</div>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased">
 
   <script>
@@ -208,30 +200,7 @@
       "default": "UN DIA COMO HOY EN EL DEPORTE: Un dia memorable en el futbol historico donde atletas legendarios demostraron que el esfuerzo constante rompe limites. ¡Hoy es tu turno de brillar!"
     };
   </script>
-  ...
-241: body.blue{--accent:#457b9d;--accent-dark:#1d3557;--accent-light:#a8dadc40;--bg:#e8f4f8;}
-242: </style>
-243: </head>
-    
-<script>
-    // Tu motor de persistencia y variables aquí
-    let userState = { /* ... tus datos ... */ };
-    
-    function saveAppState() {
-        localStorage.setItem('fitnessAppState', JSON.stringify(userState));
-    }
-    
-    function loadAppState() {
-        const saved = localStorage.getItem('fitnessAppState');
-        if (saved) {
-            userState = JSON.parse(saved);
-        }
-    }
-    window.onload = loadAppState;
-</script>
 
-244: <body>
-...
   <!-- Contenedor para notificaciones flotantes (Toasts) sin emojis -->
   <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
