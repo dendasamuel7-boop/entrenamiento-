@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <!-- FontAwesome para iconos de alta calidad sin usar emojis -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Canvas Confetti para la explosión visual del Starr Drop -->
+  <!-- Canvas Confetti para la explosión del Starr Drop -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -61,7 +61,7 @@
 <body class="text-slate-800 min-h-screen flex flex-col antialiased">
 
   <script>
-    // Estado inicial persistido en LocalStorage
+    // Estado inicial de copia local que se sincronizará con Firestore
     let userState = {
       username: "Usuario",
       email: "correo@entrenamiento.com",
@@ -79,7 +79,7 @@
       inventory: []
     };
 
-    // Rutinas Semanales Adaptadas para Calistenia
+    // Rutinas Semanales Adaptadas para Calistenia (Vueltas en vez de segundos)
     const WEEKLY_ROUTINES = {
       1: {
         name: "LUNES",
@@ -201,8 +201,198 @@
     };
   </script>
 
-  <!-- Contenedor para notificaciones flotantes (Toasts) sin emojis -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Configuración global proporcionada por el entorno o fallback local
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'mi-plan-entrenamiento-v5';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' 
+      ? JSON.parse(__firebase_config) 
+      : { apiKey: "dummy-api-key", authDomain: "dummy-auth-domain", projectId: "dummy-proj" };
+
+    let db, auth;
+
+    // Inicialización del motor Firebase
+    async function startFirebase() {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Control de autenticación prioritario (Regla 3 de Firebase)
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            // Cargar datos del usuario desde Firestore (Regla 1 de Rutas Estrictas)
+            const userDocPath = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'state');
+            const docSnap = await getDoc(userDocPath);
+            
+            if (docSnap.exists()) {
+              userState = docSnap.data();
+              // Ocultar pantallas de login/nombre y mostrar dashboard
+              document.getElementById("login-screen-container").classList.add("hidden");
+              document.getElementById("name-prompt-container").classList.add("hidden");
+              document.getElementById("workout-view-container").classList.remove("hidden");
+              
+              checkRachaLoss();
+              updateUserUI();
+              triggerHistoricalIntro();
+            } else {
+              // El usuario es nuevo, ocultamos pantalla de login y pedimos su nombre
+              document.getElementById("login-screen-container").classList.add("hidden");
+              document.getElementById("name-prompt-container").classList.remove("hidden");
+              document.getElementById("workout-view-container").classList.add("hidden");
+            }
+          } else {
+            // Mostrar login si no hay sesión iniciada
+            document.getElementById("login-screen-container").classList.remove("hidden");
+            document.getElementById("name-prompt-container").classList.add("hidden");
+            document.getElementById("workout-view-container").classList.add("hidden");
+          }
+        });
+      } catch (err) {
+        console.error("Error al arrancar los servicios de almacenamiento:", err);
+      }
+    }
+
+    // Guardado persistente en la nube (Firestore)
+    async function syncStateToCloud() {
+      if (auth && auth.currentUser) {
+        try {
+          const userDocPath = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'profile', 'state');
+          await setDoc(userDocPath, userState);
+        } catch (err) {
+          console.error("Error al sincronizar datos:", err);
+        }
+      }
+    }
+
+    // Enlazar funciones al ámbito global para poder llamarlas desde HTML clásico
+    window.syncStateToCloud = syncStateToCloud;
+    window.logOutUser = async function() {
+      playSynthSound('click');
+      if (auth) {
+        await signOut(auth);
+      }
+    };
+
+    window.processLoginStep = async function() {
+      playSynthSound('success');
+      const emailInput = document.getElementById("login-email-field").value.trim();
+      if (!emailInput) {
+        showToast("Introduce un correo electronico valido para acceder", "error");
+        return;
+      }
+      
+      // Iniciamos sesión de forma segura y anónima para guardar sus datos ligados a su UID
+      try {
+        if (auth) {
+          await signInAnonymously(auth);
+          // Almacenamos el email en local temporalmente por si es nuevo
+          userState.email = emailInput;
+        }
+      } catch (err) {
+        showToast("Error al iniciar sesion", "error");
+      }
+    };
+
+    window.submitNewUserName = async function() {
+      playSynthSound('success');
+      const nameInput = document.getElementById("new-user-name-field").value.trim();
+      if (!nameInput) {
+        showToast("Introduce tu nombre para continuar", "error");
+        return;
+      }
+
+      userState.username = nameInput;
+      userState.avatarLetter = nameInput.substring(0, 1).toUpperCase();
+      
+      // Sincronizar el estado por primera vez con el nombre de pila
+      if (auth && auth.currentUser) {
+        const userDocPath = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'profile', 'state');
+        await setDoc(userDocPath, userState);
+      }
+
+      document.getElementById("name-prompt-container").classList.add("hidden");
+      document.getElementById("workout-view-container").classList.remove("hidden");
+
+      checkRachaLoss();
+      updateUserUI();
+      triggerHistoricalIntro();
+    };
+
+    window.onload = function() {
+      startFirebase();
+    };
+  </script>
+
+  <!-- CONTENEDOR PARA NOTIFICACIONES FLOTANTES (TOASTS) -->
   <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- PANTALLA DE INICIO DE SESIÓN OFICIAL ESTILO GOOGLE (image_9f8427.png) -->
+  <div id="login-screen-container" class="hidden min-h-screen bg-slate-100 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-4xl w-full shadow-lg border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[420px]">
+      
+      <!-- Columna Izquierda: Identidad corporativa de la captura -->
+      <div class="space-y-4 text-left md:pr-6 md:border-r border-slate-100">
+        <!-- Logotipo clásico de Google en vectores limpios -->
+        <svg viewBox="0 0 24 24" class="w-10 h-10">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.08H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.92l2.85-2.22.81-.6z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.08l3.66 2.84c.87-2.6 3.3-4.54 6.16-4.54z" fill="#EA4335"/>
+        </svg>
+        <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">Inicia sesion</h1>
+        <p class="text-sm text-slate-500">Utiliza tu cuenta de Mi Plan para almacenar todo tu historial deportivo en la nube de forma permanente.</p>
+      </div>
+
+      <!-- Columna Derecha: Formulario exacto de la captura -->
+      <div class="space-y-6">
+        <div class="relative">
+          <input type="email" id="login-email-field" required class="peer w-full px-4 py-4 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Correo electronico o telefono" />
+          <label for="login-email-field" class="absolute left-4 top-1.5 text-slate-400 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-blue-600 font-bold">Correo electronico o telefono</label>
+        </div>
+
+        <div class="text-left">
+          <a href="#" class="text-xs text-blue-600 font-extrabold hover:underline">¿Has olvidado tu correo electronico?</a>
+        </div>
+
+        <p class="text-xs text-slate-500 text-left leading-relaxed">
+          ¿No es tu ordenador? Usa el modo Invitado para iniciar sesion de forma privada. <a href="#" class="text-blue-600 font-extrabold hover:underline">Mas informacion sobre como usar el modo Invitado</a>
+        </p>
+
+        <div class="flex items-center justify-between pt-4">
+          <button onclick="processLoginStep()" class="text-sm text-blue-600 font-black hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors">Crear cuenta</button>
+          <button onclick="processLoginStep()" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl text-sm transition-all shadow-md">Siguiente</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANTALLA EXCLUSIVA PARA NUEVOS USUARIOS: PETICIÓN DE NOMBRE -->
+  <div id="name-prompt-container" class="hidden min-h-screen bg-slate-100 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-lg border border-slate-200 text-center space-y-6">
+      <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto">
+        <i class="fa-solid fa-user-plus"></i>
+      </div>
+      <h2 class="text-3xl font-black font-bebas text-slate-800">¿COMO TE LLAMAS?</h2>
+      <p class="text-sm text-slate-500">Eres nuevo en Mi Plan. Escribe tu nombre para que podamos personalizar tu rutina y recordar tu progreso.</p>
+      
+      <div class="relative">
+        <input type="text" id="new-user-name-field" required class="w-full px-4 py-4 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent" placeholder="Tu nombre" />
+      </div>
+
+      <button onclick="submitNewUserName()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-xl text-sm transition-all shadow-md uppercase tracking-wider">
+        Empezar a Entrenar
+      </button>
+    </div>
+  </div>
 
   <!-- PANTALLA INTRODUCCIÓN CINEMÁTICA DE BIENVENIDA -->
   <div id="intro-screen" class="fixed inset-0 bg-stone-900/95 z-50 flex items-center justify-center p-4 transition-all duration-500 opacity-0 pointer-events-none" onclick="dismissIntro()">
@@ -226,7 +416,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE EXCLUSIÓN / NOTIFICACIÓN DEL HUEVO DE RACHA PERDIDA -->
+  <!-- MODAL DEL HUEVO DE RACHA PERDIDA -->
   <div id="racha-lost-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[90] flex items-center justify-center p-4">
     <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl transform scale-100 transition-all">
       
@@ -248,9 +438,9 @@
         </svg>
       </div>
 
-      <h2 class="text-3xl font-black font-bebas text-stone-900">¡EL HUEVO DE LA RACHA ESTA TRISTE!</h2>
+      <h2 class="text-3xl font-black font-bebas text-stone-900">EL HUEVO DE LA RACHA ESTA TRISTE</h2>
       <p class="text-stone-600 text-sm font-bold leading-relaxed">
-        No has entrenado ayer y has perdido tu racha de dias seguidos... ¡Tu compañero huevo se ha agrietado de la tristeza!
+        No has entrenado ayer y has perdido tu racha de dias seguidos... Tu compañero huevo se ha agrietado de la tristeza.
       </p>
       
       <div class="bg-rose-50 border border-rose-100 rounded-xl p-3 text-rose-700 text-xs font-black uppercase">
@@ -258,13 +448,13 @@
       </div>
 
       <button onclick="dismissRachaLostModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
-        ¡Entrenare duro hoy para arreglarlo!
+        Entrenare duro hoy para arreglarlo
       </button>
     </div>
   </div>
 
   <!-- CONTENEDOR GENERAL DE LA ENTRENAMIENTO (Vista Principal) -->
-  <div id="workout-view-container" class="w-full flex-grow flex flex-col">
+  <div id="workout-view-container" class="hidden w-full flex-grow flex flex-col">
     
     <header class="max-w-3xl mx-auto px-4 pt-8 pb-4 w-full">
       <!-- Logotipo principal estilo image_af8849.png sin emojis -->
@@ -303,8 +493,8 @@
             <i class="fa-solid fa-store"></i> Tienda
           </button>
 
-          <!-- Botón de Salir (Reset Progress) -->
-          <button onclick="resetProgress()" class="border border-stone-300 hover:bg-stone-100 text-stone-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors">
+          <!-- Botón de Salir (Reset Progress / Logout) -->
+          <button onclick="logOutUser()" class="border border-stone-300 hover:bg-stone-100 text-stone-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors">
             Salir
           </button>
         </div>
@@ -506,7 +696,7 @@
         <!-- Objetivo -->
         <div class="bg-rose-50 border border-rose-100 rounded-2xl py-3 px-5 inline-block">
           <span id="modal-target-qty" class="text-2xl font-black text-rose-600">10</span>
-          <span id="modal-target-unit" class="text-sm font-bold text-rose-800 ml-1">repeticiones</span>
+          <span id="modal-target-unit" class="text-sm font-bold text-rose-800 ml-1">vueltas</span>
         </div>
 
         <div>
@@ -525,12 +715,12 @@
       <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto animate-bounce">
         <i class="fa-solid fa-circle-up"></i>
       </div>
-      <h2 class="text-4xl font-black font-bebas text-stone-900 tracking-wide">¡NUEVO NIVEL ALCANZADO!</h2>
+      <h2 class="text-4xl font-black font-bebas text-stone-900 tracking-wide">NUEVO NIVEL ALCANZADO</h2>
       <p class="text-stone-700 text-lg font-bold">
         Has ascendido al <span class="text-rose-600 text-xl font-black" id="unlocked-level-title">NIVEL X</span>
       </p>
       <p class="text-xs text-stone-400 font-bold uppercase">
-        ¡Tu esfuerzo tiene recompensa! A continuacion vas a poder abrir una caja Starr Drop Especial.
+        Tu esfuerzo tiene recompensa. A continuacion vas a poder abrir una caja Starr Drop Especial.
       </p>
       <button onclick="transitionToStarrDrop()" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black py-4 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
         Abrir Starr Drop de Regalo <i class="fa-solid fa-gift"></i>
@@ -538,7 +728,7 @@
     </div>
   </div>
 
-  <!-- MODAL EXCLUSIVO: APERTURA DE STARR DROPS (SÓLO TRAS SUBIDA DE NIVEL) -->
+  <!-- MODAL EXCLUSIVO: APERTURA DE STARR DROPS -->
   <div id="starr-drop-modal" class="hidden fixed inset-0 bg-stone-950/98 z-[98] flex items-center justify-center p-4">
     <div class="bg-stone-900 border-4 border-stone-800 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl text-white">
       
@@ -548,7 +738,7 @@
 
       <h3 class="text-3xl font-black font-bebas text-amber-400">STARR DROP EXCLUSIVO</h3>
       <p class="text-xs text-stone-400 max-w-sm mx-auto">
-        Golpea la caja de regalo para ir aumentando su rareza. ¡Consigue un drop Legendario o Ultralegendario!
+        Golpea la caja de regalo para ir aumentando su rareza. Consigue un drop Legendario o Ultralegendario.
       </p>
 
       <!-- Panel Interactivo del Starr Drop -->
@@ -574,7 +764,7 @@
           <div class="my-6 text-6xl text-amber-400" id="reward-icon-container">
             <i class="fa-solid fa-coins"></i>
           </div>
-          <h4 id="reward-title" class="font-black text-2xl text-white">¡+100 Monedas!</h4>
+          <h4 id="reward-title" class="font-black text-2xl text-white">+100 Monedas</h4>
           <p id="reward-desc" class="text-sm text-stone-400 mt-2">Se han sumado a tu cuenta de usuario.</p>
           
           <button onclick="claimStarrDropReward()" class="mt-6 bg-amber-400 hover:bg-amber-500 text-stone-950 font-black px-5 py-3 rounded-xl text-xs uppercase w-full tracking-wider transition-colors">
@@ -650,10 +840,8 @@
         <div class="pt-4 border-t border-stone-100">
           <span class="block text-[10px] font-black text-stone-400 uppercase tracking-wider mb-2">Herramientas de Desarrollador</span>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="simulateStreakLoss()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold p-2 rounded-lg text-[10px] uppercase border border-rose-200">
-              Simular Pérdida de Racha
-            </button>
-            <button onclick="addFreeCoins()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-extrabold p-2 rounded-lg text-[10px] uppercase border border-amber-200">
+            <!-- Botón de simulación de racha perdida removido como se especificó -->
+            <button onclick="addFreeCoins()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-extrabold p-2 rounded-lg text-[10px] uppercase border border-amber-200 col-span-2">
               Obtener 500 Monedas Gratis
             </button>
           </div>
@@ -690,7 +878,6 @@
       const now = audioCtx.currentTime;
 
       if (type === 'click') {
-        // Un beep seco de retroalimentación
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sine";
@@ -703,7 +890,6 @@
         osc.stop(now + 0.1);
 
       } else if (type === 'success') {
-        // Tono doble ascendente
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "triangle";
@@ -717,7 +903,6 @@
         osc.stop(now + 0.3);
 
       } else if (type === 'hit') {
-        // Golpe metálico para el Starr Drop
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sawtooth";
@@ -731,7 +916,6 @@
         osc.stop(now + 0.15);
 
       } else if (type === 'upgrade') {
-        // Sweep de subida de rareza de Starr Drop
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sine";
@@ -745,7 +929,6 @@
         osc.stop(now + 0.4);
 
       } else if (type === 'level_up') {
-        // Fanfarria gloriosa de subida de nivel
         const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // C4, E4, G4, C5, E5
         notes.forEach((freq, idx) => {
           const osc = audioCtx.createOscillator();
@@ -761,7 +944,6 @@
         });
 
       } else if (type === 'racha_lost') {
-        // Melodía triste y descendente de racha perdida
         const notes = [392.00, 349.23, 311.13, 261.63]; // G4, F4, Eb4, C4
         notes.forEach((freq, idx) => {
           const osc = audioCtx.createOscillator();
@@ -781,7 +963,7 @@
     let gameActive = false;
     let gameWindowRef = null;
     let gameTimerInterval = null;
-    let gameSecondsRemaining = 1800; // 30 minutos = 1800 segundos
+    let gameSecondsRemaining = 1800; // 30 minutos
 
     // Variables del Canvas Stickman
     let canvas, ctx;
@@ -803,29 +985,6 @@
       { name: "ULTRALEGENDARIO", color: "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500", border: "border-white", text: "text-rose-300", shadow: "shadow-[0_0_25px_rgba(244,63,94,0.8)]" }
     ];
 
-    // Carga de la aplicación
-    window.onload = function() {
-      // Intentar restaurar estado previo guardado en el navegador
-      const saved = localStorage.getItem("power_state_v5");
-      if (saved) {
-        try {
-          userState = JSON.parse(saved);
-        } catch (e) {
-          console.error("Error al cargar estado previo, restaurando por defecto");
-        }
-      } else {
-        userState.racha = 0;
-      }
-      
-      checkRachaLoss();
-      updateUserUI();
-      triggerHistoricalIntro();
-    };
-
-    function saveState() {
-      localStorage.setItem("power_state_v5", JSON.stringify(userState));
-    }
-
     // Comprobar si el usuario ha perdido su racha
     function checkRachaLoss() {
       if (!userState.lastWorkoutDate) return;
@@ -845,7 +1004,7 @@
         // Guardar la racha perdida para mostrar en la interfaz
         const lostRachaValue = userState.racha;
         userState.racha = 0;
-        saveState();
+        syncStateToCloud();
 
         // Mostrar el modal del Huevo Triste
         document.getElementById("lost-racha-value").innerText = lostRachaValue;
@@ -863,52 +1022,19 @@
       document.getElementById("racha-lost-modal").classList.add("hidden");
     }
 
-    function simulateStreakLoss() {
-      // Acción para simular la pérdida de racha y comprobar el huevo triste
-      userState.racha = 5; // Ponemos racha ficticia
-      // Forzamos que la última fecha de entrenamiento sea hace 3 días
-      const oldDate = new Date();
-      oldDate.setDate(oldDate.getDate() - 3);
-      userState.lastWorkoutDate = oldDate.toISOString();
-      
-      saveState();
-      toggleProfileModal();
-      checkRachaLoss();
-      updateUserUI();
-    }
-
     function addFreeCoins() {
       playSynthSound('success');
       userState.coins += 500;
-      saveState();
+      syncStateToCloud();
       updateUserUI();
-      showToast("¡Has recibido 500 Monedas gratis!", "success");
-    }
-
-    function resetProgress() {
-      playSynthSound('click');
-      if (confirm("¿Estas seguro de que quieres restablecer todo tu progreso deportivo?")) {
-        localStorage.removeItem("power_state_v5");
-        // Limpiar estados de ejercicios del almacenamiento local
-        const todayIndex = new Date().getDay();
-        const routine = WEEKLY_ROUTINES[todayIndex];
-        if (routine) {
-          routine.exercises.forEach(ex => {
-            localStorage.removeItem(`done_${ex.id}`);
-          });
-        }
-        showToast("Progreso deportivo restablecido", "info");
-        setTimeout(() => {
-          location.reload();
-        }, 600);
-      }
+      showToast("Has recibido 500 Monedas gratis", "success");
     }
 
     function triggerHistoricalIntro() {
       const today = new Date();
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
-      const dateKey = `${day}-${month}`; // Formato exacto 20-06
+      const dateKey = `${day}-${month}`; 
 
       let historicalFact = HISTORICAL_EVENTS[dateKey];
       if (!historicalFact) {
@@ -963,9 +1089,8 @@
       grid.innerHTML = "";
 
       const daysShort = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
-      const todayIndex = new Date().getDay(); // 0 (Domingo) a 6 (Sábado)
+      const todayIndex = new Date().getDay(); 
 
-      // Empezar calendario por LUNES (1, 2, 3, 4, 5, 6, 0)
       const orderedDays = [1, 2, 3, 4, 5, 6, 0];
 
       orderedDays.forEach(dayIndex => {
@@ -988,7 +1113,6 @@
           }
         };
 
-        // Añadir el puntito que sale en la imagen "LUN •"
         btn.innerHTML = `
           <span>${dayName}</span>
           ${isToday ? `<span class="text-white text-xs leading-none mt-1">•</span>` : ""}
@@ -1034,9 +1158,7 @@
           isDone ? "bg-emerald-50/50 border-emerald-300" : "bg-white border-stone-200 hover:border-rose-400"
         }`;
 
-        // Al hacer clic en cualquier parte de la tarjeta sensible, abrimos el modal animado
         card.onclick = (e) => {
-          // Si pulsan específicamente sobre el botón de checkbox, solo hacemos el toggle
           if (e.target.closest('.check-toggle')) {
             e.stopPropagation();
             toggleExerciseStatus(ex.id);
@@ -1048,7 +1170,6 @@
 
         card.innerHTML = `
           <div class="flex items-center gap-4">
-            <!-- Botón de check interactivo -->
             <button class="check-toggle w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
               isDone ? "bg-emerald-500 border-emerald-500 text-white animate-pulse" : "border-stone-300 bg-white hover:border-emerald-400"
             }">
@@ -1063,7 +1184,6 @@
             <span class="text-xs font-black text-rose-500 uppercase tracking-widest bg-rose-50 px-3 py-1.5 rounded-xl">
               ${scaledQty} ${ex.unit === "vueltas" ? "vta" : "rep"}
             </span>
-            <!-- Botón de Play estético -->
             <button class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center transition-all shadow-sm">
               <i class="fa-solid fa-play text-sm pl-0.5 animate-pulse"></i>
             </button>
@@ -1073,7 +1193,6 @@
         container.appendChild(card);
       });
 
-      // Actualizar Barra de Progreso de la rutina
       const totalExercises = currentRoutine.exercises.length;
       const percent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
 
@@ -1102,7 +1221,6 @@
       modal.classList.remove("pointer-events-none", "opacity-0");
       modal.querySelector("div").classList.remove("scale-95");
 
-      // Iniciar bucle Canvas
       canvas = document.getElementById("stickman-canvas");
       ctx = canvas.getContext("2d");
 
@@ -1128,16 +1246,17 @@
     function markCurrentExerciseDone() {
       if (activeExerciseId) {
         localStorage.setItem(`done_${activeExerciseId}`, "true");
-        showToast("¡Ejercicio completado con exito!", "success");
+        showToast("Ejercicio completado con exito", "success");
         closeExerciseModal();
         renderCurrentRoutine();
       }
     }
 
+    // Motor de Dibujo 2D Vectorial para los Ejercicios de Calistenia
     function drawStickman(type, frame, context, width, height) {
       context.clearRect(0, 0, width, height);
 
-      // Cuadrícula de entrenamiento ligera
+      // Cuadrícula ligera de fondo
       context.strokeStyle = "#e8e7e1";
       context.lineWidth = 1;
       for (let x = 0; x < width; x += 40) {
@@ -1262,13 +1381,6 @@
         context.lineTo(shoulderX + 15, cy + 25);
         context.stroke();
 
-        if (frame % 40 < 20) {
-          context.fillStyle = "#38bdf8";
-          context.beginPath();
-          context.arc(shoulderX - 10, shoulderY + 10 + (frame % 20), 3, 0, Math.PI * 2);
-          context.fill();
-        }
-
       } else if (type === "warmup") {
         const speed = (frame % 50) / 50;
         const amplitude = Math.sin(speed * Math.PI * 2) * 0.5 + 0.5;
@@ -1351,7 +1463,6 @@
 
       if (!currentRoutine) return;
 
-      // Comprobar que todos estén marcados
       let allDone = true;
       currentRoutine.exercises.forEach(ex => {
         const isDone = localStorage.getItem(`done_${ex.id}`) === "true";
@@ -1359,68 +1470,58 @@
       });
 
       if (!allDone) {
-        showToast("¡Registra todos los ejercicios de hoy como hechos para finalizar!", "error");
+        showToast("Registra todos los ejercicios de hoy como hechos para finalizar", "error");
         return;
       }
 
-      // Ganar XP y monedas
       userState.xp += currentRoutine.xp;
       userState.coins += currentRoutine.coins;
       userState.completedToday = true;
-      userState.racha += 1; // Aumentar racha actual
-      userState.lastWorkoutDate = new Date().toISOString(); // Guardar fecha de hoy
+      userState.racha += 1; 
+      userState.lastWorkoutDate = new Date().toISOString(); 
 
-      showToast(`Rutina del dia completada. +${currentRoutine.xp} XP y +${currentRoutine.coins} Monedas ganadas.`, "success");
+      showToast(`Rutina completada. +${currentRoutine.xp} XP y +${currentRoutine.coins} Monedas`, "success");
       playSynthSound('success');
 
-      // Comprobar si sube de nivel para disparar el Starr Drop interactivo
+      // Comprobar subida de nivel
       if (userState.xp >= userState.xpNeeded) {
         userState.xp -= userState.xpNeeded;
         userState.level += 1;
         userState.xpNeeded = Math.round(userState.xpNeeded * 1.3);
 
-        saveState();
+        syncStateToCloud();
         updateUserUI();
 
-        // Disparar cinemática e ir directamente a Starr Drop
         triggerLevelUpFlow();
       } else {
-        saveState();
+        syncStateToCloud();
         updateUserUI();
       }
     }
 
     function triggerLevelUpFlow() {
-      // Detener música o sonidos previos
       playSynthSound('level_up');
 
-      // Mostrar confeti de celebración
       confetti({
         particleCount: 200,
         spread: 120,
         colors: ['#f59e0b', '#e11d48', '#3b82f6']
       });
 
-      // Configurar y mostrar modal de subida de nivel
       document.getElementById("unlocked-level-title").innerText = `NIVEL ${userState.level}`;
       document.getElementById("level-up-modal").classList.remove("hidden");
     }
 
     function transitionToStarrDrop() {
       playSynthSound('click');
-      // Ocultar modal de subida de nivel
       document.getElementById("level-up-modal").classList.add("hidden");
-
-      // Abrir modal de Starr Drop directamente
       document.getElementById("starr-drop-modal").classList.remove("hidden");
       
-      // Reiniciar parámetros del Drop
       dropTaps = 0;
       currentRarityIndex = 0;
       updateStarrDropVisuals();
     }
 
-    // Lógica interactiva del Starr Drop exclusivo tras subir de nivel
     const dropBody = document.getElementById("starr-drop-body");
     const dropContainer = document.getElementById("starr-drop-container");
     const dropRarityLabel = document.getElementById("starr-drop-rarity-label");
@@ -1428,21 +1529,18 @@
 
     dropContainer.addEventListener("click", () => {
       dropBody.classList.add("starr-drop-bounce");
-      
-      // Sonido de golpe dinámico y ascendente
       playSynthSound('hit');
 
       setTimeout(() => {
         dropBody.classList.remove("starr-drop-bounce");
         dropTaps++;
 
-        // Aumentar la probabilidad de rarezas altas a base de golpes
         const chance = Math.random();
         if (chance > 0.35 && currentRarityIndex < RARITIES.length - 1) {
           currentRarityIndex++;
           updateStarrDropVisuals();
           playSynthSound('upgrade');
-          showToast(`¡STARR DROP MEJORADO A ${RARITIES[currentRarityIndex].name}!`, "success");
+          showToast(`STARR DROP MEJORADO A ${RARITIES[currentRarityIndex].name}`, "success");
         }
 
         if (dropTaps >= maxDropTaps) {
@@ -1466,9 +1564,9 @@
         dropRewardCard.classList.remove("scale-95", "opacity-0");
       }, 50);
 
-      // Botín centrado únicamente en Monedas de oro u objetos de gimnasio virtual
+      // Recompensas exclusivas de monedas y cosméticos sin XP ni escudos de racha
       let earnedCoins = 50 * (currentRarityIndex + 1);
-      let prizeTitle = `¡+${earnedCoins} Monedas!`;
+      let prizeTitle = `+${earnedCoins} Monedas`;
       let prizeIconClass = "fa-coins text-amber-500";
       let prizeDesc = "Sumadas de manera directa a tu cuenta deportiva.";
 
@@ -1480,7 +1578,7 @@
           "Banda elastica ultra resistente"
         ];
         const randomItem = gymItems[Math.floor(Math.random() * gymItems.length)];
-        prizeTitle = `¡${randomItem}!`;
+        prizeTitle = randomItem;
         prizeIconClass = "fa-dumbbell text-indigo-500";
         prizeDesc = "Un nuevo equipamiento exclusivo añadido a tu inventario.";
         
@@ -1500,15 +1598,13 @@
 
       playSynthSound('success');
       userState.coins += earnedCoins;
-      saveState();
+      syncStateToCloud();
     }
 
     function claimStarrDropReward() {
       playSynthSound('click');
-      // Ocultar modal completo y retornar a la interfaz limpia
       document.getElementById("starr-drop-modal").classList.add("hidden");
       
-      // Limpiar estados del renderizador para el siguiente nivel
       dropRewardCard.classList.add("scale-95", "opacity-0");
       dropRewardCard.classList.add("hidden");
       dropContainer.classList.remove("hidden");
@@ -1579,10 +1675,10 @@
       if (newEmail) userState.email = newEmail;
       if (newTitle) userState.userTitle = newTitle;
 
-      saveState();
+      syncStateToCloud();
       updateUserUI();
       toggleProfileModal();
-      showToast("¡Tu perfil se ha guardado correctamente!", "success");
+      showToast("Tu perfil se ha guardado correctamente", "success");
     }
 
     function openFullpageStore() {
@@ -1697,7 +1793,7 @@
 
     function buyStoreItem(name, cost) {
       if (userState.coins < cost) {
-        showToast("No tienes suficientes monedas. ¡Completa mas entrenamientos!", "error");
+        showToast("No tienes suficientes monedas. Completa mas entrenamientos", "error");
         return;
       }
 
@@ -1709,8 +1805,8 @@
         userState.userTitle = "Gladiador";
       }
 
-      showToast(`¡Has adquirido ${name} con exito!`, "success");
-      saveState();
+      showToast(`Has adquirido ${name} con exito`, "success");
+      syncStateToCloud();
       updateUserUI();
       renderFullpageStore();
     }
