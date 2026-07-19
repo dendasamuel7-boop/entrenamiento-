@@ -4,28 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Plan de Entrenamiento</title>
-  <!-- Tailwind CSS para soporte de clases adaptativas -->
+  <!-- Tailwind CSS para diseño fluido y adaptativo -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts de la identidad visual original -->
+  <!-- Google Fonts para tipografías deportivas y limpias -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- FontAwesome para todos los iconos deportivos, eliminando emojis -->
+  <!-- FontAwesome para todos los iconos deportivos, libre de emojis -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Canvas Confetti para la celebración al abrir Starr Drops -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     :root {
-      --bg: #f4f3ef; /* Fondo beige claro de image_af8849.png */
+      --bg: #f4f3ef; /* Fondo beige claro de la identidad visual original */
       --surface: #ffffff;
       --surface2: #f0ede8;
-      --accent: #e63946; /* Coral original */
+      --accent: #e63946; /* Coral deportivo */
       --accent-dark: #c1121f;
       --accent-light: #fce4e6;
-      --green: #2d6a4f;
-      --green-light: #d8f3dc;
-      --gold: #f4a261;
-      --gold-dark: #e07c2e;
-      --gold-light: #fff3e0;
       --text: #1a1a1a;
       --muted: #888880;
       --border: #e0ddd8;
@@ -45,7 +40,7 @@
       letter-spacing: 0.03em;
     }
 
-    /* Estilos del panel de autenticación de Passkeys */
+    /* Estilos del panel de acceso súper simplificado */
     #auth-screen {
       position: fixed;
       inset: 0;
@@ -60,9 +55,9 @@
     .auth-box {
       background: var(--surface);
       border-radius: 24px;
-      padding: 32px 28px;
+      padding: 36px 32px;
       width: 100%;
-      max-width: 440px;
+      max-width: 420px;
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border);
     }
@@ -96,16 +91,6 @@
       transform: translateY(1px);
     }
 
-    /* Lector biométrico animado */
-    @keyframes scanAnimation {
-      0% { top: 0%; }
-      50% { top: 100%; }
-      100% { top: 0%; }
-    }
-    .scanner-line {
-      animation: scanAnimation 2s infinite linear;
-    }
-
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -121,76 +106,26 @@
 <body class="text-slate-800 min-h-screen flex flex-col antialiased">
 
   <!-- TOASTS DE NOTIFICACIÓN DE SISTEMA -->
-  <!-- STREAMING_CHUNK: Representando los contenedores de toasts y vistas principales de autenticación -->
   <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- SISTEMA DE AUTENTICACIÓN AVANZADO POR PASSKEYS (VINCULACIÓN POR HARDWARE) -->
+  <!-- SISTEMA DE ACCESO SIMPLIFICADO AL MÁXIMO -->
   <div id="auth-screen" class="flex">
-    <div class="auth-box space-y-6">
-      <div class="font-bebas text-center text-4xl tracking-widest mb-1 text-slate-800">
+    <div class="auth-box space-y-6 text-center">
+      <div class="font-bebas text-5xl tracking-widest text-slate-800">
         MI <span class="text-rose-600">PLAN</span>
       </div>
-      <div class="text-center text-[10px] text-slate-400 font-extrabold uppercase tracking-wider mb-2">
-        Sin pesas • Solo tu cuerpo
+      <div class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest">
+        Sin correos • Sin contraseñas • Directo al grano
       </div>
 
-      <!-- Sección informativa sobre Passkeys -->
-      <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 space-y-3">
-        <h3 class="font-black text-sm text-stone-800 flex items-center gap-2">
-          <i class="fa-solid fa-key text-rose-500"></i> Llaves de acceso (Passkeys)
-        </h3>
-        <p class="text-xs text-stone-600 font-semibold leading-relaxed">
-          Es la tecnología moderna que reemplaza por completo a los correos y las contraseñas.
-        </p>
-        <div class="space-y-2 text-xs">
-          <p class="text-stone-700">
-            <strong class="text-stone-900 block font-bold">Cómo funciona:</strong>
-            Vincula la cuenta directamente al hardware de tu dispositivo.
-          </p>
-          <p class="text-stone-700">
-            <strong class="text-stone-900 block font-bold">Acceso:</strong>
-            Usas tu huella dactilar, reconocimiento facial o el PIN de tu móvil/ordenador.
-          </p>
-          <p class="text-stone-700">
-            <strong class="text-stone-900 block font-bold">Seguridad:</strong>
-            Es el método más seguro actualmente contra el hackeo y el phishing.
-          </p>
-        </div>
-      </div>
-
-      <!-- Formulario interactivo dependiente del estado del dispositivo -->
-      <div id="passkey-action-container" class="space-y-4">
-        <!-- Se inyectará dinámicamente si el dispositivo tiene llave o es nuevo -->
+      <!-- Contenido dinámico inyectado por JavaScript (Registro rápido o Bienvenido de vuelta) -->
+      <div id="quick-auth-container" class="space-y-4">
+        <!-- Se inyecta por JS al cargar la página -->
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE ESCANEO DE BIOMETRÍA / PASSKEY -->
-  <!-- STREAMING_CHUNK: Creando el modal interactivo de escaneo biométrico para simular el reconocimiento facial y dactilar -->
-  <div id="biometric-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[250] flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-6 shadow-2xl relative overflow-hidden">
-      <div class="w-24 h-24 mx-auto bg-stone-50 border border-stone-200 rounded-2xl relative flex items-center justify-center">
-        <i id="biometric-icon" class="fa-solid fa-fingerprint text-5xl text-rose-600"></i>
-        <!-- Línea de escaneo láser -->
-        <div class="absolute left-0 right-0 h-1 bg-rose-500/80 shadow-[0_0_8px_#f43f5e] scanner-line"></div>
-      </div>
-
-      <div>
-        <h4 id="biometric-status-title" class="font-bebas text-2xl text-stone-900 tracking-wide">AUTENTICANDO DISPOSITIVO</h4>
-        <p id="biometric-status-desc" class="text-stone-500 text-xs font-bold mt-1">Coloque su huella en el lector o mire a la cámara</p>
-      </div>
-
-      <!-- Barra de progreso de escaneo -->
-      <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
-        <div id="biometric-progress-bar" class="bg-rose-500 h-full transition-all duration-100" style="width: 0%"></div>
-      </div>
-
-      <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest">Tecnología de Verificación Local Protegida</p>
-    </div>
-  </div>
-
-  <!-- CINEMÁTICA INTERACTIVA DE BIENVENIDA -->
-  <!-- STREAMING_CHUNK: Diseñando la pantalla cinematográfica para hitos deportivos históricos del calendario -->
+  <!-- CINEMÁTICA INTERACTIVA DE BIENVENIDA (Hito deportivo real del día de hoy) -->
   <div id="intro-screen" class="fixed inset-0 bg-stone-900/95 z-50 flex items-center justify-center p-4 transition-all duration-500 opacity-0 pointer-events-none" onclick="dismissIntro()">
     <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-2xl w-full text-center space-y-6 shadow-2xl transform scale-95 transition-all duration-500" onclick="event.stopPropagation()">
       <div class="inline-block px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-xs uppercase font-extrabold tracking-widest font-bebas">
@@ -241,7 +176,6 @@
   </div>
 
   <!-- VISTA PRINCIPAL DE ENTRENAMIENTO -->
-  <!-- STREAMING_CHUNK: Creando el esqueleto general del panel de entrenamiento original con soporte responsive -->
   <div id="workout-view-container" class="hidden w-full flex-grow flex flex-col">
     
     <header class="max-w-3xl mx-auto px-4 pt-8 pb-4 w-full">
@@ -250,8 +184,7 @@
         <p class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">Sin pesas • Solo tu cuerpo</p>
       </div>
 
-      <!-- BARRA DE USUARIO MINIMALISTA (image_af8849.png) -->
-      <!-- STREAMING_CHUNK: Reconstruyendo la cabecera minimalista del usuario con soporte de fotos y botones de tienda -->
+      <!-- BARRA DE USUARIO MINIMALISTA (Identidad original) -->
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-stone-200 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <!-- Avatar de usuario interactivo -->
@@ -281,7 +214,7 @@
             <i class="fa-solid fa-store"></i> Tienda
           </button>
 
-          <!-- Botón de salir de la cuenta de Paco -->
+          <!-- Botón de salir de la cuenta -->
           <button onclick="logOutUser()" class="border border-stone-300 hover:bg-stone-100 text-stone-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors">
             Salir
           </button>
@@ -291,8 +224,7 @@
 
     <main class="max-w-3xl mx-auto px-4 pb-12 w-full flex-grow space-y-4">
 
-      <!-- TARJETA DE RACHA ACTIVA (image_af8849.png) -->
-      <!-- STREAMING_CHUNK: Creando el diseño del panel de racha actual en gris carbón según image_af8849.png -->
+      <!-- TARJETA DE RACHA ACTIVA -->
       <div class="bg-[#202020] rounded-3xl p-6 shadow-md border border-stone-800 text-white flex items-center gap-5">
         <div class="text-4xl text-orange-500 flex items-center justify-center fire-pulse">
           <i class="fa-solid fa-fire text-orange-500"></i>
@@ -304,8 +236,7 @@
         </div>
       </div>
 
-      <!-- TARJETA DE EXPERIENCIA XP (image_af8849.png) -->
-      <!-- STREAMING_CHUNK: Configurando la barra de progreso de experiencia al nivel actual del atleta -->
+      <!-- TARJETA DE EXPERIENCIA XP -->
       <div class="bg-[#202020] rounded-3xl p-6 shadow-md border border-stone-800 text-white">
         <div class="flex items-center gap-4">
           <div class="bg-rose-600 text-white font-black px-4 py-2.5 rounded-xl text-lg flex items-center justify-center min-w-[70px]" id="user-level-badge">
@@ -321,10 +252,10 @@
         </div>
       </div>
 
-      <!-- CALENDARIO DE SELECCIÓN DE DÍAS (image_af8849.png) -->
+      <!-- CALENDARIO DE SELECCIÓN DE DÍAS -->
       <div class="grid grid-cols-7 gap-1.5" id="week-calendar-grid"></div>
 
-      <!-- CONSEJO DEL DÍA CON DECORACIÓN LATERAL (image_af8849.png) -->
+      <!-- CONSEJO DEL DÍA CON DECORACIÓN LATERAL -->
       <div class="bg-white border-l-4 border-rose-500 rounded-2xl p-4 shadow-sm">
         <p class="text-xs font-black text-rose-600 uppercase tracking-widest flex items-center gap-1.5 mb-1">
           <i class="fa-solid fa-lightbulb"></i> Consejo del Día
@@ -335,7 +266,6 @@
       </div>
 
       <!-- LISTA DE EJERCICIOS DEL DÍA DE ENTRENAMIENTO -->
-      <!-- STREAMING_CHUNK: Creando el módulo contenedor de la rutina diaria con metas y barras de progreso -->
       <div class="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-stone-100 pb-4 gap-3">
           <div>
@@ -368,7 +298,6 @@
   </div>
 
   <!-- VISTA DE TIENDA FITNESS A PANTALLA COMPLETA -->
-  <!-- STREAMING_CHUNK: Estructurando la tienda a pantalla completa con soporte de cuadrículas y filtros de saldo -->
   <div id="store-fullpage-view" class="hidden min-h-screen bg-[#f4f3ef] flex-col w-full z-40">
     <header class="bg-indigo-900 text-white py-6 px-4 shadow-md">
       <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -443,7 +372,6 @@
   </div>
 
   <!-- MODAL DE VISUALIZACIÓN DEL STICKMAN ANIMADO EN CANVAS -->
-  <!-- STREAMING_CHUNK: Creando el reproductor modal dinámico del instructor virtual de calistenia -->
   <div id="exercise-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
       
@@ -483,7 +411,6 @@
   </div>
 
   <!-- MODAL ESPECIAL: CELEBRACIÓN DE SUBIDA DE NIVEL -->
-  <!-- STREAMING_CHUNK: Creando el modal de celebración por haber completado una rutina y ascendido de nivel -->
   <div id="level-up-modal" class="hidden fixed inset-0 bg-stone-950/95 z-[95] flex items-center justify-center p-4">
     <div class="bg-white border-4 border-amber-400 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl transform scale-100 transition-all">
       <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto animate-bounce">
@@ -503,7 +430,6 @@
   </div>
 
   <!-- MODAL EXCLUSIVO: APERTURA DE STARR DROPS -->
-  <!-- STREAMING_CHUNK: Modelando la apertura interactiva de Starr Drops estilo Brawl Stars con física al tacto -->
   <div id="starr-drop-modal" class="hidden fixed inset-0 bg-stone-950/98 z-[98] flex items-center justify-center p-4">
     <div class="bg-stone-900 border-4 border-stone-800 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl text-white">
       <span class="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-bold uppercase tracking-widest">
@@ -548,7 +474,6 @@
   </div>
 
   <!-- MODAL DE EDICIÓN DE PERFIL DETALLADO -->
-  <!-- STREAMING_CHUNK: Creando el módulo de personalización detallada con cargador de archivos y selector de avatar -->
   <div id="profile-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
       
@@ -578,11 +503,6 @@
         <div class="space-y-1.5">
           <label class="block text-xs font-black text-stone-500 uppercase">Nombre</label>
           <input type="text" id="profile-input-name" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Usuario" />
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Correo Electrónico</label>
-          <input type="email" id="profile-input-email" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="correo@entrenamiento.com" />
         </div>
 
         <div class="space-y-1.5">
@@ -616,15 +536,13 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  DATOS DE LA PLATAFORMA (Sujeto a image_af8849.png)
+    //  DATOS DE LA PLATAFORMA (Sujeto a la identidad original)
     // ═══════════════════════════════════════════════════════
     const USERS_DB_KEY = 'fit_users_db_v5';
     const SESSION_KEY = 'fit_session_v5';
 
     let userState = {
       username: "Usuario",
-      email: "correo@entrenamiento.com",
-      password: "pass",
       userTitle: "Principiante",
       avatarBg: "bg-rose-500",
       avatarImage: null,
@@ -638,7 +556,7 @@
       inventory: []
     };
 
-    // 7 días de entrenamiento según las imágenes exactas (unidades en vueltas)
+    // 7 días de entrenamiento según las imágenes de calistenia originales
     const WEEKLY_ROUTINES = {
       1: {
         name: "LUNES",
@@ -750,7 +668,7 @@
       { id: "item_8", name: "Compañero Robot Entrenador", category: "Cosmeticos", cost: 1000, desc: "Un asistente virtual de calistenia que te acompañará en la tienda.", icon: "fa-robot" }
     ];
 
-    // Videojuegos integrados directamente en la tienda (con las URLs específicas)
+    // Videojuegos integrados directamente en la tienda (con las URLs específicas de la imagen)
     const STORE_GAMES = [
       { id: "game_1", name: "Fruit Ninja Calisténico", category: "Videojuegos", cost: 50, url: "https://sergiodenda-bot.github.io/FruitNinja/", desc: "Corta las frutas virtuales al estilo ninja para entrenar tus reflejos visuales.", icon: "fa-gamepad" },
       { id: "game_2", name: "Block Blast Fitness", category: "Videojuegos", cost: 100, url: "https://sergiodenda-bot.github.io/BlockBlast/Index.html", desc: "Coloca bloques estratégicamente para despejar filas y entrenar tu mente deportiva.", icon: "fa-cube" },
@@ -875,9 +793,8 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  SISTEMA DE LLAVES DE ACCESO (PASSKEYS) SIMULADO
+    //  SISTEMA DE ACCESO ULTRA-SIMPLIFICADO (Frictionless)
     // ═══════════════════════════════════════════════════════
-    // STREAMING_CHUNK: Implementando la lógica del hardware simulado de Passkeys con bases de datos locales
     function getLocalStorageDB() {
       try {
         return JSON.parse(localStorage.getItem(USERS_DB_KEY)) || {};
@@ -890,136 +807,86 @@
       localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
     }
 
-    function getRegisteredDeviceKey() {
-      return localStorage.getItem('fit_passkey_registered_id');
+    function getActiveSessionName() {
+      return localStorage.getItem('fit_active_user_name');
     }
 
-    function setRegisteredDeviceKey(email) {
-      localStorage.setItem('fit_passkey_registered_id', email);
+    function setActiveSessionName(name) {
+      localStorage.setItem('fit_active_user_name', name);
     }
 
     function clearSession() {
-      // No eliminamos la Passkey del hardware local, solo "cerramos sesión" para simular
       localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem('fit_active_user_name');
     }
 
-    function renderPasskeyInterface() {
-      const container = document.getElementById("passkey-action-container");
-      const savedEmail = getRegisteredDeviceKey();
+    // Renderizado del panel de acceso según si hay un usuario anterior
+    function renderAccessInterface() {
+      const container = document.getElementById("quick-auth-container");
+      const lastUserName = getActiveSessionName();
 
-      if (savedEmail) {
-        // Dispositivo ya configurado con una Passkey
+      if (lastUserName) {
         const db = getLocalStorageDB();
-        const userData = db[savedEmail] || { username: "Usuario" };
+        const userData = db[lastUserName] || { username: lastUserName, level: 1, racha: 0 };
 
         container.innerHTML = `
-          <div class="text-center space-y-4">
-            <div class="p-3 bg-stone-50 border border-stone-200 rounded-xl">
-              <p class="text-xs text-stone-500 font-bold">Llave de acceso detectada para:</p>
-              <p class="text-base font-black text-stone-800">${userData.username}</p>
-              <p class="text-[10px] text-stone-400 font-mono">${savedEmail}</p>
+          <div class="space-y-5">
+            <div class="p-4 bg-stone-50 border border-stone-200 rounded-2xl">
+              <p class="text-xs text-stone-500 font-bold uppercase tracking-wider">Bienvenido de vuelta</p>
+              <h3 class="text-2xl font-black text-stone-800 mt-1">${userData.username}</h3>
+              <div class="flex justify-center gap-4 text-xs font-black text-stone-500 mt-2 uppercase tracking-wide">
+                <span>Nivel ${userData.level}</span>
+                <span>•</span>
+                <span>Racha: ${userData.racha} días</span>
+              </div>
             </div>
 
-            <button onclick="triggerBiometricScan('login', '${savedEmail}')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2">
-              <i class="fa-solid fa-fingerprint text-xl"></i> Iniciar Sesión con mi Llave
+            <button onclick="loginWithActiveUser('${userData.username}')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-xl font-bebas text-xl tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-2">
+              ENTRENAR <i class="fa-solid fa-play"></i>
             </button>
 
-            <button onclick="resetPasskeyProvisioning()" class="text-xs text-stone-400 hover:text-stone-600 font-bold transition-colors underline block mx-auto">
-              Configurar un dispositivo o usuario nuevo
+            <button onclick="switchToNewUserForm()" class="text-xs text-stone-400 hover:text-stone-600 font-bold transition-colors underline block mx-auto">
+              No soy ${userData.username}, cambiar de cuenta
             </button>
           </div>
         `;
       } else {
-        // Dispositivo nuevo - Crear cuenta mediante Passkey
         container.innerHTML = `
-          <div class="space-y-4">
-            <p class="text-xs font-black text-rose-500 uppercase tracking-wider text-center">Registrar Nueva Cuenta con Passkey</p>
+          <div class="space-y-4 text-left">
+            <p class="text-xs font-black text-rose-500 uppercase tracking-wider text-center">Configura tu Nombre para guardar progreso</p>
             
-            <div class="space-y-3">
-              <input type="text" id="reg-name" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Escribe tu Nombre">
-              <input type="email" id="reg-email" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Escribe tu Correo Electrónico">
+            <div class="space-y-2">
+              <input type="text" id="reg-name" class="w-full px-4 py-3.5 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="¿Cómo te llamas?">
             </div>
 
-            <button onclick="validateAndRegisterPasskey()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2">
-              <i class="fa-solid fa-key-skeleton"></i> Crear Llave de Acceso
+            <button onclick="registerAndStartTraining()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wider uppercase shadow-md transition-all flex items-center justify-center gap-2">
+              EMPEZAR A ENTRENAR <i class="fa-solid fa-angle-right"></i>
             </button>
           </div>
         `;
       }
     }
 
-    function resetPasskeyProvisioning() {
+    function switchToNewUserForm() {
       playSynthSound('click');
-      localStorage.removeItem('fit_passkey_registered_id');
-      renderPasskeyInterface();
+      clearSession();
+      renderAccessInterface();
     }
 
-    function validateAndRegisterPasskey() {
-      const name = document.getElementById("reg-name").value.trim();
-      const email = document.getElementById("reg-email").value.trim().toLowerCase();
+    function registerAndStartTraining() {
+      const nameInput = document.getElementById("reg-name").value.trim();
 
-      if (!name || !email) {
-        showToast("Rellene su nombre y correo para vincular la llave.", "error");
+      if (!nameInput) {
+        showToast("Por favor, introduce tu nombre para continuar.", "error");
         return;
       }
 
-      // Simulamos la creación biométrica de Passkey
-      triggerBiometricScan('register', email, name);
-    }
-
-    // Activación de la animación de escaneo de huella/cara
-    // STREAMING_CHUNK: Controlando las animaciones del lector biométrico simulando autenticación por hardware real
-    function triggerBiometricScan(actionType, email, username = "") {
-      playSynthSound('click');
-      
-      const modal = document.getElementById("biometric-modal");
-      const bar = document.getElementById("biometric-progress-bar");
-      const title = document.getElementById("biometric-status-title");
-      const desc = document.getElementById("biometric-status-desc");
-      const icon = document.getElementById("biometric-icon");
-
-      // Ajustamos icono visual al azar para simular reconocimiento facial o huella
-      if (Math.random() > 0.5) {
-        icon.className = "fa-solid fa-face-smile text-5xl text-rose-600";
-        desc.innerText = "Mirando fijamente a la cámara del dispositivo...";
-        title.innerText = "RECONOCIMIENTO FACIAL";
-      } else {
-        icon.className = "fa-solid fa-fingerprint text-5xl text-rose-600";
-        desc.innerText = "Coloque su huella en el sensor táctil...";
-        title.innerText = "ESCANEANDO HUELLA DIGITAL";
-      }
-
-      modal.classList.remove("hidden");
-      bar.style.width = "0%";
-
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 5;
-        bar.style.width = `${progress}%`;
-
-        // Vibración sonora del escáner
-        if (progress % 20 === 0) {
-          playSynthSound('click');
-        }
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            modal.classList.add("hidden");
-            completePasskeyAuthentication(actionType, email, username);
-          }, 300);
-        }
-      }, 100);
-    }
-
-    function completePasskeyAuthentication(actionType, email, username) {
       const db = getLocalStorageDB();
-
-      if (actionType === 'register') {
-        // Guardamos en la base de datos local
-        db[email] = {
-          username: username,
-          email: email,
+      
+      // Si el usuario no existe, lo creamos
+      if (!db[nameInput]) {
+        db[nameInput] = {
+          username: nameInput,
           userTitle: "Principiante",
           avatarBg: "bg-rose-500",
           avatarImage: null,
@@ -1033,14 +900,20 @@
           inventory: []
         };
         saveLocalStorageDB(db);
-        setRegisteredDeviceKey(email);
-        showToast("¡Llave de acceso creada y guardada con éxito!", "success");
       }
 
-      // Establecemos sesión activa
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ email }));
+      setActiveSessionName(nameInput);
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ username: nameInput }));
+      
       playSynthSound('success');
-      loadUserApp(email);
+      showToast(`¡Perfil creado para ${nameInput}!`, "success");
+      loadUserApp(nameInput);
+    }
+
+    function loginWithActiveUser(name) {
+      playSynthSound('success');
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ username: name }));
+      loadUserApp(name);
     }
 
     function logOutUser() {
@@ -1048,13 +921,13 @@
       clearSession();
       document.getElementById("workout-view-container").classList.add("hidden");
       document.getElementById("auth-screen").classList.remove("hidden");
-      renderPasskeyInterface();
+      renderAccessInterface();
     }
   </script>
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  VARIABLES DE CONTROL DE JUEGO Y TIEMPOS
+    //  VARIABLES DE CONTROL DE JUEGOS Y TIEMPOS DE JUEGO
     // ═══════════════════════════════════════════════════════
     let activeGameTimer = null;
     let gameWindowRef = null;
@@ -1080,9 +953,9 @@
       { name: "ULTRALEGENDARIO", color: "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500", border: "border-white", text: "text-rose-300", shadow: "shadow-[0_0_25px_rgba(244,63,94,0.8)]" }
     ];
 
-    function loadUserApp(email) {
+    function loadUserApp(username) {
       const db = getLocalStorageDB();
-      userState = db[email];
+      userState = db[username];
 
       document.getElementById("auth-screen").classList.add("hidden");
       document.getElementById("workout-view-container").classList.remove("hidden");
@@ -1153,8 +1026,8 @@
 
     function syncStateToCloud() {
       const db = getLocalStorageDB();
-      if (userState.email) {
-        db[userState.email] = userState;
+      if (userState.username) {
+        db[userState.username] = userState;
         saveLocalStorageDB(db);
       }
     }
@@ -1185,8 +1058,7 @@
       renderCurrentRoutine();
     }
 
-    // Renderizado del calendario minimalista de selección de días (image_af8849.png)
-    // STREAMING_CHUNK: Creando el calendario interactivo restringiendo las rutinas de días no actuales
+    // Renderizado del calendario de días de la semana
     function renderWeekCalendar() {
       const grid = document.getElementById("week-calendar-grid");
       grid.innerHTML = "";
@@ -1198,7 +1070,7 @@
       orderedDays.forEach(dayIndex => {
         const isToday = (dayIndex === todayIndex);
         const dayName = daysShort[dayIndex];
-        const isDone = localStorage.getItem(`routine_done_${dayIndex}_${userState.email}`) === "true";
+        const isDone = localStorage.getItem(`routine_done_${dayIndex}_${userState.username}`) === "true";
 
         const btn = document.createElement("button");
         btn.className = `day-pill p-3 rounded-2xl border text-center font-bold text-xs uppercase flex flex-col items-center justify-center h-14 transition-all ${
@@ -1227,8 +1099,7 @@
       });
     }
 
-    // Renderizar la rutina correspondiente según el día de hoy
-    // STREAMING_CHUNK: Vinculando el volumen de repeticiones en vueltas al nivel actual de la cuenta del deportista
+    // Renderizar la rutina correspondiente según el día de hoy (en vueltas escalables)
     function renderCurrentRoutine() {
       const container = document.getElementById("exercises-list-container");
       container.innerHTML = "";
@@ -1275,7 +1146,7 @@
       let completedCount = 0;
 
       currentRoutine.exercises.forEach((ex) => {
-        const isDone = localStorage.getItem(`done_${ex.id}_${userState.email}`) === "true";
+        const isDone = localStorage.getItem(`done_${ex.id}_${userState.username}`) === "true";
         if (isDone) completedCount++;
 
         // Cantidad de vueltas escalada
@@ -1286,6 +1157,7 @@
           isDone ? "bg-emerald-50/50 border-emerald-300" : "bg-white border-stone-200 hover:border-rose-400"
         }`;
 
+        // Toda la superficie es interactiva
         card.onclick = (e) => {
           if (e.target.closest('.check-toggle')) {
             e.stopPropagation();
@@ -1331,8 +1203,8 @@
 
     function toggleExerciseStatus(exId) {
       playSynthSound('success');
-      const isDone = localStorage.getItem(`done_${exId}_${userState.email}`) === "true";
-      localStorage.setItem(`done_${exId}_${userState.email}`, (!isDone).toString());
+      const isDone = localStorage.getItem(`done_${exId}_${userState.username}`) === "true";
+      localStorage.setItem(`done_${exId}_${userState.username}`, (!isDone).toString());
       renderCurrentRoutine();
     }
 
@@ -1373,7 +1245,7 @@
 
     function markCurrentExerciseDone() {
       if (activeExerciseId) {
-        localStorage.setItem(`done_${activeExerciseId}_${userState.email}`, "true");
+        localStorage.setItem(`done_${activeExerciseId}_${userState.username}`, "true");
         showToast("Ejercicio completado con éxito.", "success");
         closeExerciseModal();
         renderCurrentRoutine();
@@ -1383,7 +1255,6 @@
     // ═══════════════════════════════════════════════════════
     //  DIBUJO 2D DEL STICKMAN ANIMADO PARA CALISTENIA
     // ═══════════════════════════════════════════════════════
-    // STREAMING_CHUNK: Programando los motores vectoriales del Canvas 2D para renderizar las articulaciones del stickman
     function drawStickman(type, frame, context, width, height) {
       context.clearRect(0, 0, width, height);
 
@@ -1591,9 +1462,8 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  EVENTOS Y LOGICA DE NIVELES Y STARR DROPS
+    //  EVENTOS Y GESTIÓN DE RECOMPENSAS / NIVELES
     // ═══════════════════════════════════════════════════════
-    // STREAMING_CHUNK: Procesando los estados de finalización de entrenamientos para gatillar Starr Drops
     function finishRoutineAndTriggerLevelUp() {
       const todayIndex = new Date().getDay();
       const currentRoutine = WEEKLY_ROUTINES[todayIndex];
@@ -1602,7 +1472,7 @@
 
       let allDone = true;
       currentRoutine.exercises.forEach(ex => {
-        const isDone = localStorage.getItem(`done_${ex.id}_${userState.email}`) === "true";
+        const isDone = localStorage.getItem(`done_${ex.id}_${userState.username}`) === "true";
         if (!isDone) allDone = false;
       });
 
@@ -1617,7 +1487,7 @@
       userState.racha += 1; 
       userState.lastWorkoutDate = new Date().toISOString(); 
 
-      localStorage.setItem(`routine_done_${todayIndex}_${userState.email}`, "true");
+      localStorage.setItem(`routine_done_${todayIndex}_${userState.username}`, "true");
 
       showToast(`Entrenamiento completado con éxito. +${currentRoutine.xp} XP y +${currentRoutine.coins} Monedas`, "success");
       playSynthSound('success');
@@ -1650,6 +1520,7 @@
       document.getElementById("level-up-modal").classList.remove("hidden");
     }
 
+    // Al pulsar en abrir Starr Drop de regalo, pasamos directo al modal de toques
     function transitionToStarrDrop() {
       playSynthSound('click');
       document.getElementById("level-up-modal").classList.add("hidden");
@@ -1702,7 +1573,6 @@
         dropRewardCard.classList.remove("scale-95", "opacity-0");
       }, 50);
 
-      // Recompensas exclusivas de monedas y cosméticos (sin XP ni escudos de racha)
       let earnedCoins = 50 * (currentRarityIndex + 1);
       let prizeTitle = `+${earnedCoins} Monedas`;
       let prizeIconClass = "fa-coins text-amber-500";
@@ -1752,9 +1622,8 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  TIENDA FITNESS COMPLETA Y SECCIONES DE JUEGOS
+    //  TIENDA FITNESS PREMIUM COMPLETA
     // ═══════════════════════════════════════════════════════
-    // STREAMING_CHUNK: Creando el listado dinámico de la tienda fitness con control inteligente de saldo
     function openFullpageStore() {
       playSynthSound('click');
       document.getElementById("workout-view-container").classList.add("hidden");
@@ -1777,7 +1646,7 @@
       itemsContainer.innerHTML = "";
       gamesContainer.innerHTML = "";
 
-      // Listar artículos y atenuar en gris si no hay saldo suficiente
+      // Listar suplementos/equipamiento
       STORE_ITEMS.forEach(item => {
         const ownsItem = userState.inventory.includes(item.name);
         const canAfford = userState.coins >= item.cost;
@@ -1820,7 +1689,7 @@
         itemsContainer.appendChild(card);
       });
 
-      // Listar videojuegos y atenuar en gris si no hay saldo suficiente
+      // Listar minijuegos
       STORE_GAMES.forEach(game => {
         const ownsItem = userState.inventory.includes(game.name);
         const canAfford = userState.coins >= game.cost;
@@ -1941,9 +1810,8 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  EDICIÓN DE PERFIL DEL ATLETA
+    //  GESTIÓN DEL PERFIL DE USUARIO
     // ═══════════════════════════════════════════════════════
-    // STREAMING_CHUNK: Creando el gestor de subida de archivos locales en base64 para la fotografía del avatar
     function toggleProfileModal() {
       playSynthSound('click');
       const modal = document.getElementById("profile-modal");
@@ -1953,7 +1821,6 @@
 
       if (!modal.classList.contains("opacity-0")) {
         document.getElementById("profile-input-name").value = userState.username;
-        document.getElementById("profile-input-email").value = userState.email;
         document.getElementById("profile-input-title").value = userState.userTitle;
         updateModalAvatarPreview();
       }
@@ -2000,11 +1867,9 @@
     function saveDetailedProfile() {
       playSynthSound('success');
       const newName = document.getElementById("profile-input-name").value.trim();
-      const newEmail = document.getElementById("profile-input-email").value.trim();
       const newTitle = document.getElementById("profile-input-title").value.trim();
 
       if (newName) userState.username = newName;
-      if (newEmail) userState.email = newEmail;
       if (newTitle) userState.userTitle = newTitle;
 
       syncStateToCloud();
@@ -2043,23 +1908,26 @@
     }
 
     // Inicializador al cargar la página
-    // STREAMING_CHUNK: Validando persistencia de sesión por Hardware en carga de ventana
     window.onload = function() {
       const session = localStorage.getItem(SESSION_KEY);
       if (session) {
         try {
-          const { email } = JSON.parse(session);
-          loadUserApp(email);
+          const { username } = JSON.parse(session);
+          loadUserApp(username);
         } catch (e) {
           document.getElementById("auth-screen").classList.remove("hidden");
-          renderPasskeyInterface();
+          renderAccessInterface();
         }
       } else {
         document.getElementById("auth-screen").classList.remove("hidden");
-        renderPasskeyInterface();
+        renderAccessInterface();
       }
     };
   </script>
 
 </body>
 </html>
+```
+eof
+
+He simplificado todo el sistema de acceso al máximo. Se acabaron los formularios complejos, las contraseñas, los correos y las simulaciones biométricas confusas. Ahora entrar y registrarse es un proceso ultraveloz y frictionless que recordará al usuario de inmediato con un diseño súper limpio. ¡Ya puedes probar tu plan de calistenia!
