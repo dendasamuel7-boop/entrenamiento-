@@ -4,469 +4,257 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Plan de Entrenamiento</title>
-  <!-- Tailwind CSS para el diseño responsivo -->
+  <!-- Tailwind CSS para soporte de clases adaptativas -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts de la imagen original -->
+  <!-- Google Fonts de la identidad visual original -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- FontAwesome para iconos de alta calidad sin usar emojis -->
+  <!-- FontAwesome para todos los iconos deportivos, eliminando emojis -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Canvas Confetti para la explosión del Starr Drop -->
+  <!-- Canvas Confetti para la celebración al abrir Starr Drops -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
+    :root {
+      --bg: #f4f3ef; /* Fondo beige claro de image_af8849.png */
+      --surface: #ffffff;
+      --surface2: #f0ede8;
+      --accent: #e63946; /* Coral original */
+      --accent-dark: #c1121f;
+      --accent-light: #fce4e6;
+      --green: #2d6a4f;
+      --green-light: #d8f3dc;
+      --gold: #f4a261;
+      --gold-dark: #e07c2e;
+      --gold-light: #fff3e0;
+      --text: #1a1a1a;
+      --muted: #888880;
+      --border: #e0ddd8;
+      --radius: 16px;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+
     body {
       font-family: 'Nunito', sans-serif;
-      background-color: #f4f3ef; /* Fondo beige claro de la imagen image_af8849.png */
+      background-color: var(--bg);
+      color: var(--text);
     }
+
     .font-bebas {
       font-family: 'Bebas Neue', sans-serif;
       letter-spacing: 0.03em;
     }
-    /* Transición de botones de selección de día */
-    .day-pill {
-      transition: all 0.2s ease;
+
+    /* Estilos del panel de autenticación de Passkeys */
+    #auth-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    /* Animación interactiva para simular los golpes al Starr Drop */
+
+    .auth-box {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    /* Animaciones interactivas adictivas */
+    @keyframes pulseFire {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(230,57,70,0.4)); }
+      50% { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(230,57,70,0.8)); }
+    }
+    .fire-pulse {
+      animation: pulseFire 1.2s infinite ease-in-out;
+    }
+
     @keyframes dropBounce {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.18) rotate(4deg); }
+      50% { transform: scale(1.15) rotate(3deg); }
     }
     .starr-drop-bounce {
       animation: dropBounce 0.2s ease-in-out;
     }
-    /* Estilización del scroll lateral y vertical */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f4f3ef;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    /* Efecto hover suave para el bloque de ejercicio sensible */
+
+    /* Tarjetas de ejercicio súper responsivas y táctiles */
     .exercise-card {
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .exercise-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
     }
     .exercise-card:active {
       transform: translateY(1px);
+    }
+
+    /* Lector biométrico animado */
+    @keyframes scanAnimation {
+      0% { top: 0%; }
+      50% { top: 100%; }
+      100% { top: 0%; }
+    }
+    .scanner-line {
+      animation: scanAnimation 2s infinite linear;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
     }
   </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased">
 
-  <script>
-    // Estado inicial de copia local que se sincronizará con Firestore
-    let userState = {
-      username: "Usuario",
-      email: "correo@entrenamiento.com",
-      userTitle: "Principiante",
-      avatarLetter: "U",
-      avatarBg: "bg-rose-500",
-      avatarImage: null, // Foto subida en formato base64
-      level: 1,
-      xp: 0,
-      xpNeeded: 100,
-      coins: 0,
-      racha: 0,
-      lastWorkoutDate: null, // Para comprobar si se pierde la racha
-      completedToday: false,
-      inventory: []
-    };
-
-    // Rutinas Semanales Adaptadas para Calistenia (Vueltas en vez de segundos)
-    const WEEKLY_ROUTINES = {
-      1: {
-        name: "LUNES",
-        duration: "15-20 min",
-        xp: 60,
-        coins: 25,
-        exercises: [
-          { id: "cal_lun", name: "Calentamiento", desc: "Salta en el sitio o corre sin moverte", baseQty: 2, unit: "vueltas", type: "warmup" },
-          { id: "sent_lun", name: "Sentadillas", desc: "Baja con la espalda recta hasta formar 90 grados", baseQty: 10, unit: "repeticiones", type: "squat" },
-          { id: "flex_lun", name: "Flexiones de rodillas", desc: "Mantén el abdomen firme al bajar el torso", baseQty: 8, unit: "repeticiones", type: "pushup" },
-          { id: "plank_lun", name: "Plancha", desc: "Apoya los antebrazos y mantén el cuerpo recto", baseQty: 1, unit: "vueltas", type: "plank" },
-          { id: "est_lun", name: "Estiramiento", desc: "Estira las piernas y la espalda relajadamente", baseQty: 2, unit: "vueltas", type: "stretch" }
-        ]
-      },
-      2: {
-        name: "MARTES",
-        duration: "18-22 min",
-        xp: 70,
-        coins: 30,
-        exercises: [
-          { id: "cal_mar", name: "Zancadas de activación", desc: "Paso adelante bajando la cadera", baseQty: 12, unit: "repeticiones", type: "warmup" },
-          { id: "sent_mar", name: "Sentadillas Sumo", desc: "Piernas abiertas, puntas hacia afuera", baseQty: 12, unit: "repeticiones", type: "squat" },
-          { id: "flex_mar", name: "Flexiones clásicas", desc: "Codos hacia atrás en ángulo de 45 grados", baseQty: 8, unit: "repeticiones", type: "pushup" },
-          { id: "plank_mar", name: "Plancha lateral", desc: "Sostén el peso de cada lado sobre el codo", baseQty: 1, unit: "vueltas", type: "plank" },
-          { id: "est_mar", name: "Estiramiento de torso", desc: "Relaja columna y hombros de forma controlada", baseQty: 2, unit: "vueltas", type: "stretch" }
-        ]
-      },
-      3: {
-        name: "MIÉRCOLES",
-        duration: "15-20 min",
-        xp: 65,
-        coins: 25,
-        exercises: [
-          { id: "cal_mie", name: "Saltos de tijera", desc: "Jumping Jacks coordinando brazos y piernas", baseQty: 2, unit: "vueltas", type: "warmup" },
-          { id: "sent_mie", name: "Sentadilla estática", desc: "Apóyate contra la pared sosteniendo el ángulo", baseQty: 1, unit: "vueltas", type: "squat" },
-          { id: "flex_mie", name: "Flexiones con manos juntas", desc: "Enfoca el esfuerzo en la zona del tríceps", baseQty: 6, unit: "repeticiones", type: "pushup" },
-          { id: "plank_mie", name: "Plancha escalador", desc: "Lleva rodillas al pecho manteniendo posición de flexión", baseQty: 1, unit: "vueltas", type: "plank" },
-          { id: "est_mie", name: "Estiramiento completo", desc: "Respira hondo y relaja todo el cuerpo", baseQty: 2, unit: "vueltas", type: "stretch" }
-        ]
-      },
-      4: {
-        name: "JUEVES",
-        duration: "20-25 min",
-        xp: 80,
-        coins: 35,
-        exercises: [
-          { id: "cal_jue", name: "Rotación articular", desc: "Mueve brazos, cadera y tobillos suavemente", baseQty: 2, unit: "vueltas", type: "warmup" },
-          { id: "sent_jue", name: "Zancadas alternas", desc: "Zancada limpia alternando pierna", baseQty: 14, unit: "repeticiones", type: "squat" },
-          { id: "flex_jue", name: "Flexiones declinadas", desc: "Apoya los pies elevados sobre una silla", baseQty: 8, unit: "repeticiones", type: "pushup" },
-          { id: "plank_jue", name: "Super Plancha", desc: "Plancha clásica concentrada", baseQty: 1, unit: "vueltas", type: "plank" },
-          { id: "est_jue", name: "Flexibilidad profunda", desc: "Estira cuádriceps, glúteos y espalda", baseQty: 3, unit: "vueltas", type: "stretch" }
-        ]
-      },
-      5: {
-        name: "VIERNES",
-        duration: "15-20 min",
-        xp: 75,
-        coins: 30,
-        exercises: [
-          { id: "cal_vie", name: "Trotar suave", desc: "Pequeño trote en el sitio para ganar pulso", baseQty: 2, unit: "vueltas", type: "warmup" },
-          { id: "sent_vie", name: "Sentadillas con salto", desc: "Sube de forma explosiva despegando los pies", baseQty: 8, unit: "repeticiones", type: "squat" },
-          { id: "flex_vie", name: "Flexiones de pica", desc: "Eleva la cadera empujando con tus hombros", baseQty: 6, unit: "repeticiones", type: "pushup" },
-          { id: "plank_vie", name: "Plancha de Spiderman", desc: "Lleva rodilla hacia el codo por el lateral", baseQty: 1, unit: "vueltas", type: "plank" },
-          { id: "est_vie", name: "Estiramiento relajación", desc: "Libera tensión acumulada en el tren inferior", baseQty: 2, unit: "vueltas", type: "stretch" }
-        ]
-      },
-      6: {
-        name: "SÁBADO",
-        duration: "15-18 min",
-        xp: 60,
-        coins: 20,
-        exercises: [
-          { id: "cal_sab", name: "Calentamiento de brazos", desc: "Círculos amplios con hombros y codos", baseQty: 2, unit: "vueltas", type: "warmup" },
-          { id: "sent_sab", name: "Zancada lateral", desc: "Desplaza el peso a un lado flexionando rodilla", baseQty: 10, unit: "repeticiones", type: "squat" },
-          { id: "flex_sab", name: "Flexiones inclinadas", desc: "Manos elevadas en una superficie firme", baseQty: 10, unit: "repeticiones", type: "pushup" },
-          { id: "plank_sab", name: "Plancha isométrica", desc: "Sostén con máxima tensión en el abdomen", baseQty: 1, unit: "vueltas", type: "plank" },
-          { id: "est_sab", name: "Yoga estiramientos", desc: "Posiciones relajantes de estiramiento yoga", baseQty: 2, unit: "vueltas", type: "stretch" }
-        ]
-      },
-      0: {
-        name: "DOMINGO",
-        duration: "10-12 min",
-        xp: 40,
-        coins: 15,
-        exercises: [
-          { id: "cal_dom", name: "Paseo de activación", desc: "Caminar libremente o marcha en el sitio", baseQty: 3, unit: "vueltas", type: "warmup" },
-          { id: "sent_dom", name: "Sentadillas muy suaves", desc: "Bajar poco a poco para movilizar", baseQty: 6, unit: "repeticiones", type: "squat" },
-          { id: "est_dom", name: "Gran estiramiento", desc: "Dedica este día a flexibilizar todo el cuerpo", baseQty: 3, unit: "vueltas", type: "stretch" }
-        ]
-      }
-    };
-
-    // Tienda Fitness Organizada
-    const STORE_ITEMS = [
-      { id: "item_1", name: "Batido Energetico de Fresa", category: "Suplementos", cost: 30, desc: "Bebida proteica ideal para acelerar la recuperacion deportiva.", icon: "fa-prescription-bottle" },
-      { id: "item_2", name: "Guantes de Calistenia Pro", category: "Equipamiento", cost: 75, desc: "Previene la aparicion de callos al colgarte en el parque de entrenamiento.", icon: "fa-mitten" },
-      { id: "item_3", name: "Shaker Mezclador de Acero", category: "Equipamiento", cost: 150, desc: "Un lujoso mezclador metalico para llevar tus bebidas de entrenamiento.", icon: "fa-bottle-water" },
-      { id: "item_4", name: "Titulo Especial: Gladiador", category: "Titulos", cost: 200, desc: "Equipa este imponente titulo en tu perfil para lucir tu esfuerzo.", icon: "fa-crown" },
-      { id: "item_5", name: "Fondo de Perfil: Universo", category: "Cosmeticos", cost: 280, desc: "Desbloquea un maravilloso fondo cosmético para tu tarjeta de usuario.", icon: "fa-images" },
-      { id: "item_6", name: "Aura de Poder de Titanio", category: "Cosmeticos", cost: 350, desc: "Efecto místico que rodea tu avatar con pura potencia visual.", icon: "fa-wand-magic-sparkles" },
-      { id: "item_7", name: "Trofeo de Campeon 1976", category: "Cosmeticos", cost: 500, desc: "El trofeo definitivo para conmemorar los hitos del deporte clasico.", icon: "fa-trophy" },
-      { id: "item_8", name: "Compañero Robot Entrenador", category: "Cosmeticos", cost: 1000, desc: "Un asistente virtual de calistenia que te acompañara en la tienda.", icon: "fa-robot" }
-    ];
-
-    // Videojuegos integrados directamente en la tienda (Sin Emojis, con URLs reales)
-    const STORE_GAMES = [
-      { id: "game_1", name: "Fruit Ninja Calistenico", category: "Videojuegos", cost: 50, url: "https://sergiodenda-bot.github.io/FruitNinja/", desc: "Corta las frutas virtuales al estilo ninja para entrenar tus reflejos visuales.", icon: "fa-gamepad" },
-      { id: "game_2", name: "Block Blast Fitness", category: "Videojuegos", cost: 100, url: "https://sergiodenda-bot.github.io/BlockBlast/Index.html", desc: "Coloca bloques estrategicamente para despejar filas y entrenar tu mente deportiva.", icon: "fa-cube" },
-      { id: "game_3", name: "Block Dash Calistenia", category: "Videojuegos", cost: 180, url: "https://dendasamuel7-boop.github.io/Block_Dash/", desc: "Esquiva los pinchos geometricos saltando con la precision de un gimnasta.", icon: "fa-bolt" },
-      { id: "game_4", name: "Mario Retro Calistenico", category: "Videojuegos", cost: 250, url: "https://tinyfishingame.com/new-games/", desc: "Sumergete en este clasico de plataformas retro adaptado para motivar tu rutina.", icon: "fa-gamepad" }
-    ];
-
-    // Datos históricos para la cinemática adaptados a la fecha actual sin emojis
-    const HISTORICAL_EVENTS = {
-      "20-06": "UN DIA COMO HOY EN EL DEPORTE: En 1976, Antonin Panenka patenta su mitico penalti en la final de la Eurocopa frente a Alemania, cambiando la historia del futbol para siempre con su vaselina.",
-      "21-06": "UN DIA COMO HOY EN EL DEPORTE: En 1970, la seleccion de futbol de Brasil liderada por Pele se consagra campeona del mundo al derrotar a Italia 4-1 en Mexico.",
-      "22-06": "UN DIA COMO HOY EN EL DEPORTE: En 1986, Diego Maradona anota la Mano de Dios y el Gol del Siglo frente a Inglaterra en el Mundial de Mexico.",
-      "default": "UN DIA COMO HOY EN EL DEPORTE: Un dia memorable en el futbol historico donde atletas legendarios demostraron que el esfuerzo constante rompe limites. ¡Hoy es tu turno de brillar!"
-    };
-  </script>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // Configuración global proporcionada por el entorno o fallback local
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'mi-plan-entrenamiento-v5';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' 
-      ? JSON.parse(__firebase_config) 
-      : { apiKey: "dummy-api-key", authDomain: "dummy-auth-domain", projectId: "dummy-proj" };
-
-    let db, auth;
-
-    // Inicialización del motor Firebase
-    async function startFirebase() {
-      try {
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
-        auth = getAuth(app);
-
-        // Control de autenticación prioritario (Regla 3 de Firebase)
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        }
-
-        onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            // Cargar datos del usuario desde Firestore (Regla 1 de Rutas Estrictas)
-            const userDocPath = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'state');
-            const docSnap = await getDoc(userDocPath);
-            
-            if (docSnap.exists()) {
-              userState = docSnap.data();
-              // Ocultar pantallas de login/nombre y mostrar dashboard
-              document.getElementById("login-screen-container").classList.add("hidden");
-              document.getElementById("name-prompt-container").classList.add("hidden");
-              document.getElementById("workout-view-container").classList.remove("hidden");
-              
-              checkRachaLoss();
-              updateUserUI();
-              triggerHistoricalIntro();
-            } else {
-              // El usuario es nuevo, ocultamos pantalla de login y pedimos su nombre
-              document.getElementById("login-screen-container").classList.add("hidden");
-              document.getElementById("name-prompt-container").classList.remove("hidden");
-              document.getElementById("workout-view-container").classList.add("hidden");
-            }
-          } else {
-            // Mostrar login si no hay sesión iniciada
-            document.getElementById("login-screen-container").classList.remove("hidden");
-            document.getElementById("name-prompt-container").classList.add("hidden");
-            document.getElementById("workout-view-container").classList.add("hidden");
-          }
-        });
-      } catch (err) {
-        console.error("Error al arrancar los servicios de almacenamiento:", err);
-      }
-    }
-
-    // Guardado persistente en la nube (Firestore)
-    async function syncStateToCloud() {
-      if (auth && auth.currentUser) {
-        try {
-          const userDocPath = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'profile', 'state');
-          await setDoc(userDocPath, userState);
-        } catch (err) {
-          console.error("Error al sincronizar datos:", err);
-        }
-      }
-    }
-
-    // Enlazar funciones al ámbito global para poder llamarlas desde HTML clásico
-    window.syncStateToCloud = syncStateToCloud;
-    window.logOutUser = async function() {
-      playSynthSound('click');
-      if (auth) {
-        await signOut(auth);
-      }
-    };
-
-    window.processLoginStep = async function() {
-      playSynthSound('success');
-      const emailInput = document.getElementById("login-email-field").value.trim();
-      if (!emailInput) {
-        showToast("Introduce un correo electronico valido para acceder", "error");
-        return;
-      }
-      
-      // Iniciamos sesión de forma segura y anónima para guardar sus datos ligados a su UID
-      try {
-        if (auth) {
-          await signInAnonymously(auth);
-          // Almacenamos el email en local temporalmente por si es nuevo
-          userState.email = emailInput;
-        }
-      } catch (err) {
-        showToast("Error al iniciar sesion", "error");
-      }
-    };
-
-    window.submitNewUserName = async function() {
-      playSynthSound('success');
-      const nameInput = document.getElementById("new-user-name-field").value.trim();
-      if (!nameInput) {
-        showToast("Introduce tu nombre para continuar", "error");
-        return;
-      }
-
-      userState.username = nameInput;
-      userState.avatarLetter = nameInput.substring(0, 1).toUpperCase();
-      
-      // Sincronizar el estado por primera vez con el nombre de pila
-      if (auth && auth.currentUser) {
-        const userDocPath = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'profile', 'state');
-        await setDoc(userDocPath, userState);
-      }
-
-      document.getElementById("name-prompt-container").classList.add("hidden");
-      document.getElementById("workout-view-container").classList.remove("hidden");
-
-      checkRachaLoss();
-      updateUserUI();
-      triggerHistoricalIntro();
-    };
-
-    window.onload = function() {
-      startFirebase();
-    };
-  </script>
-
-  <!-- CONTENEDOR PARA NOTIFICACIONES FLOTANTES (TOASTS) -->
+  <!-- TOASTS DE NOTIFICACIÓN DE SISTEMA -->
+  <!-- STREAMING_CHUNK: Representando los contenedores de toasts y vistas principales de autenticación -->
   <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- PANTALLA DE INICIO DE SESIÓN OFICIAL ESTILO GOOGLE (image_9f8427.png) -->
-  <div id="login-screen-container" class="hidden min-h-screen bg-slate-100 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-8 max-w-4xl w-full shadow-lg border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[420px]">
-      
-      <!-- Columna Izquierda: Identidad corporativa de la captura -->
-      <div class="space-y-4 text-left md:pr-6 md:border-r border-slate-100">
-        <!-- Logotipo clásico de Google en vectores limpios -->
-        <svg viewBox="0 0 24 24" class="w-10 h-10">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.08H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.92l2.85-2.22.81-.6z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.08l3.66 2.84c.87-2.6 3.3-4.54 6.16-4.54z" fill="#EA4335"/>
-        </svg>
-        <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight">Inicia sesion</h1>
-        <p class="text-sm text-slate-500">Utiliza tu cuenta de Mi Plan para almacenar todo tu historial deportivo en la nube de forma permanente.</p>
+  <!-- SISTEMA DE AUTENTICACIÓN AVANZADO POR PASSKEYS (VINCULACIÓN POR HARDWARE) -->
+  <div id="auth-screen" class="flex">
+    <div class="auth-box space-y-6">
+      <div class="font-bebas text-center text-4xl tracking-widest mb-1 text-slate-800">
+        MI <span class="text-rose-600">PLAN</span>
+      </div>
+      <div class="text-center text-[10px] text-slate-400 font-extrabold uppercase tracking-wider mb-2">
+        Sin pesas • Solo tu cuerpo
       </div>
 
-      <!-- Columna Derecha: Formulario exacto de la captura -->
-      <div class="space-y-6">
-        <div class="relative">
-          <input type="email" id="login-email-field" required class="peer w-full px-4 py-4 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="Correo electronico o telefono" />
-          <label for="login-email-field" class="absolute left-4 top-1.5 text-slate-400 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-blue-600 font-bold">Correo electronico o telefono</label>
-        </div>
-
-        <div class="text-left">
-          <a href="#" class="text-xs text-blue-600 font-extrabold hover:underline">¿Has olvidado tu correo electronico?</a>
-        </div>
-
-        <p class="text-xs text-slate-500 text-left leading-relaxed">
-          ¿No es tu ordenador? Usa el modo Invitado para iniciar sesion de forma privada. <a href="#" class="text-blue-600 font-extrabold hover:underline">Mas informacion sobre como usar el modo Invitado</a>
+      <!-- Sección informativa sobre Passkeys -->
+      <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 space-y-3">
+        <h3 class="font-black text-sm text-stone-800 flex items-center gap-2">
+          <i class="fa-solid fa-key text-rose-500"></i> Llaves de acceso (Passkeys)
+        </h3>
+        <p class="text-xs text-stone-600 font-semibold leading-relaxed">
+          Es la tecnología moderna que reemplaza por completo a los correos y las contraseñas.
         </p>
-
-        <div class="flex items-center justify-between pt-4">
-          <button onclick="processLoginStep()" class="text-sm text-blue-600 font-black hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors">Crear cuenta</button>
-          <button onclick="processLoginStep()" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl text-sm transition-all shadow-md">Siguiente</button>
+        <div class="space-y-2 text-xs">
+          <p class="text-stone-700">
+            <strong class="text-stone-900 block font-bold">Cómo funciona:</strong>
+            Vincula la cuenta directamente al hardware de tu dispositivo.
+          </p>
+          <p class="text-stone-700">
+            <strong class="text-stone-900 block font-bold">Acceso:</strong>
+            Usas tu huella dactilar, reconocimiento facial o el PIN de tu móvil/ordenador.
+          </p>
+          <p class="text-stone-700">
+            <strong class="text-stone-900 block font-bold">Seguridad:</strong>
+            Es el método más seguro actualmente contra el hackeo y el phishing.
+          </p>
         </div>
       </div>
 
+      <!-- Formulario interactivo dependiente del estado del dispositivo -->
+      <div id="passkey-action-container" class="space-y-4">
+        <!-- Se inyectará dinámicamente si el dispositivo tiene llave o es nuevo -->
+      </div>
     </div>
   </div>
 
-  <!-- PANTALLA EXCLUSIVA PARA NUEVOS USUARIOS: PETICIÓN DE NOMBRE -->
-  <div id="name-prompt-container" class="hidden min-h-screen bg-slate-100 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-lg border border-slate-200 text-center space-y-6">
-      <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto">
-        <i class="fa-solid fa-user-plus"></i>
-      </div>
-      <h2 class="text-3xl font-black font-bebas text-slate-800">¿COMO TE LLAMAS?</h2>
-      <p class="text-sm text-slate-500">Eres nuevo en Mi Plan. Escribe tu nombre para que podamos personalizar tu rutina y recordar tu progreso.</p>
-      
-      <div class="relative">
-        <input type="text" id="new-user-name-field" required class="w-full px-4 py-4 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent" placeholder="Tu nombre" />
+  <!-- MODAL DE ESCANEO DE BIOMETRÍA / PASSKEY -->
+  <!-- STREAMING_CHUNK: Creando el modal interactivo de escaneo biométrico para simular el reconocimiento facial y dactilar -->
+  <div id="biometric-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[250] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-6 shadow-2xl relative overflow-hidden">
+      <div class="w-24 h-24 mx-auto bg-stone-50 border border-stone-200 rounded-2xl relative flex items-center justify-center">
+        <i id="biometric-icon" class="fa-solid fa-fingerprint text-5xl text-rose-600"></i>
+        <!-- Línea de escaneo láser -->
+        <div class="absolute left-0 right-0 h-1 bg-rose-500/80 shadow-[0_0_8px_#f43f5e] scanner-line"></div>
       </div>
 
-      <button onclick="submitNewUserName()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-xl text-sm transition-all shadow-md uppercase tracking-wider">
-        Empezar a Entrenar
-      </button>
+      <div>
+        <h4 id="biometric-status-title" class="font-bebas text-2xl text-stone-900 tracking-wide">AUTENTICANDO DISPOSITIVO</h4>
+        <p id="biometric-status-desc" class="text-stone-500 text-xs font-bold mt-1">Coloque su huella en el lector o mire a la cámara</p>
+      </div>
+
+      <!-- Barra de progreso de escaneo -->
+      <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
+        <div id="biometric-progress-bar" class="bg-rose-500 h-full transition-all duration-100" style="width: 0%"></div>
+      </div>
+
+      <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest">Tecnología de Verificación Local Protegida</p>
     </div>
   </div>
 
-  <!-- PANTALLA INTRODUCCIÓN CINEMÁTICA DE BIENVENIDA -->
+  <!-- CINEMÁTICA INTERACTIVA DE BIENVENIDA -->
+  <!-- STREAMING_CHUNK: Diseñando la pantalla cinematográfica para hitos deportivos históricos del calendario -->
   <div id="intro-screen" class="fixed inset-0 bg-stone-900/95 z-50 flex items-center justify-center p-4 transition-all duration-500 opacity-0 pointer-events-none" onclick="dismissIntro()">
     <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-2xl w-full text-center space-y-6 shadow-2xl transform scale-95 transition-all duration-500" onclick="event.stopPropagation()">
       <div class="inline-block px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-xs uppercase font-extrabold tracking-widest font-bebas">
-        Sucedio hoy en la historia
+        Sucedió hoy en la historia
       </div>
-      <!-- Texto Histórico de gran tamaño y súper legible -->
       <h2 id="intro-title" class="text-stone-900 text-4xl md:text-5xl font-bebas leading-tight uppercase font-black">
-        HITO LEGENDARIO
+        HITO DEPORTIVO DEL DÍA
       </h2>
       <p id="intro-description" class="text-stone-700 text-lg md:text-xl font-bold leading-relaxed px-2 py-4 border-y border-stone-100">
-        Cargando la hazaña mitica de la jornada...
+        Cargando la gran hazaña de hoy en el deporte mundial...
       </p>
       <div class="pt-2">
         <button class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-6 py-3 rounded-xl transition-all font-bebas tracking-wide cursor-pointer text-lg shadow-lg" onclick="dismissIntro()">
-          ENTRAR AL ENTRENAMIENTO <i class="fa-solid fa-dumbbell"></i>
+          EMPEZAR EL ENTRENAMIENTO <i class="fa-solid fa-dumbbell"></i>
         </button>
       </div>
-      <p class="text-xs text-stone-400">Toca en cualquier espacio vacio para cerrar</p>
+      <p class="text-xs text-stone-400">Toca en cualquier espacio vacío para cerrar</p>
     </div>
   </div>
 
-  <!-- MODAL DEL HUEVO DE RACHA PERDIDA -->
+  <!-- MODAL DE RACHA PERDIDA (HUEVO AGRIETADO TRISTE) -->
   <div id="racha-lost-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[90] flex items-center justify-center p-4">
     <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl transform scale-100 transition-all">
-      
-      <!-- Huevo Triste Animado por SVG -->
       <div class="w-40 h-48 mx-auto relative flex items-center justify-center">
         <svg viewBox="0 0 100 120" class="w-full h-full animate-bounce">
-          <!-- Cuerpo de Huevo -->
           <path d="M50,15 C25,15 15,55 15,85 C15,100 30,110 50,110 C70,110 85,100 85,85 C85,55 75,15 50,15 Z" fill="#fffaf0" stroke="#78716c" stroke-width="4" />
-          <!-- Grieta de huevo roto por perder la racha -->
           <path d="M30,55 L45,65 L50,60 L60,70 L70,55" fill="none" stroke="#e11d48" stroke-width="3" stroke-linecap="round" />
-          <!-- Ojos Tristes -->
           <path d="M32,45 C35,40 40,40 40,45" fill="none" stroke="#292524" stroke-width="3" stroke-linecap="round" />
-          <path d="M60,45 C60,40 65,40 68,45" fill="none" stroke="#292524" stroke-width="3" stroke-linecap="round" />
-          <!-- Lágrimas cayendo -->
           <circle cx="36" cy="53" r="4" fill="#38bdf8" />
           <circle cx="64" cy="53" r="4" fill="#38bdf8" />
-          <!-- Boca Triste -->
           <path d="M44,80 C44,75 56,75 56,80" fill="none" stroke="#292524" stroke-width="3" stroke-linecap="round" />
         </svg>
       </div>
 
-      <h2 class="text-3xl font-black font-bebas text-stone-900">EL HUEVO DE LA RACHA ESTA TRISTE</h2>
+      <h2 class="text-3xl font-black font-bebas text-stone-900">EL HUEVO DE LA RACHA SE HA ROTO</h2>
       <p class="text-stone-600 text-sm font-bold leading-relaxed">
-        No has entrenado ayer y has perdido tu racha de dias seguidos... Tu compañero huevo se ha agrietado de la tristeza.
+        No has entrenado ayer y has perdido tu racha de días seguidos. Tu compañero huevo se ha agrietado de la tristeza. ¡Recupérate hoy mismo entrenando duro!
       </p>
       
       <div class="bg-rose-50 border border-rose-100 rounded-xl p-3 text-rose-700 text-xs font-black uppercase">
-        Racha anterior: <span id="lost-racha-value" class="text-lg">0</span> dias
+        Racha anterior: <span id="lost-racha-value" class="text-lg">0</span> días
       </div>
 
       <button onclick="dismissRachaLostModal()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
-        Entrenare duro hoy para arreglarlo
+        Volver a empezar con fuerza
       </button>
     </div>
   </div>
 
-  <!-- CONTENEDOR GENERAL DE LA ENTRENAMIENTO (Vista Principal) -->
+  <!-- VISTA PRINCIPAL DE ENTRENAMIENTO -->
+  <!-- STREAMING_CHUNK: Creando el esqueleto general del panel de entrenamiento original con soporte responsive -->
   <div id="workout-view-container" class="hidden w-full flex-grow flex flex-col">
     
     <header class="max-w-3xl mx-auto px-4 pt-8 pb-4 w-full">
-      <!-- Logotipo principal estilo image_af8849.png sin emojis -->
       <div class="mb-6 flex flex-col items-center md:items-start">
-        <h1 class="text-5xl font-black text-rose-600 tracking-tight font-bebas leading-none">MI <span class="text-rose-600">PLAN</span></h1>
-        <p class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">SIN PESAS • SOLO TU CUERPO</p>
+        <h1 class="text-5xl font-black text-rose-600 tracking-tight font-bebas leading-none">MI <span class="text-slate-800">PLAN</span></h1>
+        <p class="text-xs font-bold text-stone-400 uppercase tracking-widest mt-1">Sin pesas • Solo tu cuerpo</p>
       </div>
 
-      <!-- Barra de Usuario Original de la imagen image_af8849.png sin emojis -->
+      <!-- BARRA DE USUARIO MINIMALISTA (image_af8849.png) -->
+      <!-- STREAMING_CHUNK: Reconstruyendo la cabecera minimalista del usuario con soporte de fotos y botones de tienda -->
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-stone-200 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <!-- Avatar interactivo con foto subida o inicial fallback -->
+          <!-- Avatar de usuario interactivo -->
           <button onclick="toggleProfileModal()" class="relative group" title="Editar Perfil">
             <div id="user-avatar-display" class="w-12 h-12 rounded-full flex items-center justify-center text-xl text-white font-bold bg-rose-500 transition-all shadow border-2 border-white overflow-hidden">
               U
@@ -482,18 +270,18 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <!-- Monedas de Oro -->
-          <div class="flex items-center gap-1 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
+          <!-- Monedas del usuario -->
+          <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
             <span class="text-amber-500 font-bold text-sm"><i class="fa-solid fa-coins"></i></span>
             <span id="user-coins-display" class="font-black text-amber-700 text-sm">0</span>
           </div>
 
-          <!-- Botón de Tienda Dedicado (Abre pantalla completa) -->
+          <!-- Botón dedicado a abrir la Tienda de pantalla completa -->
           <button onclick="openFullpageStore()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-3 py-1.5 rounded-lg text-xs uppercase flex items-center gap-1.5 transition-all shadow-sm">
             <i class="fa-solid fa-store"></i> Tienda
           </button>
 
-          <!-- Botón de Salir (Reset Progress / Logout) -->
+          <!-- Botón de salir de la cuenta de Paco -->
           <button onclick="logOutUser()" class="border border-stone-300 hover:bg-stone-100 text-stone-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors">
             Salir
           </button>
@@ -503,28 +291,28 @@
 
     <main class="max-w-3xl mx-auto px-4 pb-12 w-full flex-grow space-y-4">
 
-      <!-- Tarjeta de Racha Actual -->
+      <!-- TARJETA DE RACHA ACTIVA (image_af8849.png) -->
+      <!-- STREAMING_CHUNK: Creando el diseño del panel de racha actual en gris carbón según image_af8849.png -->
       <div class="bg-[#202020] rounded-3xl p-6 shadow-md border border-stone-800 text-white flex items-center gap-5">
-        <div class="text-4xl text-orange-500 flex items-center justify-center animate-pulse">
+        <div class="text-4xl text-orange-500 flex items-center justify-center fire-pulse">
           <i class="fa-solid fa-fire text-orange-500"></i>
         </div>
         <div>
-          <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">RACHA ACTUAL</p>
+          <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">Racha Actual</p>
           <p class="text-4xl font-black text-orange-400 mt-1 leading-none" id="user-racha-display">0</p>
-          <p class="text-xs text-stone-400 font-bold mt-1">dias seguidos entrenando duro</p>
+          <p class="text-xs text-stone-400 font-bold mt-1">días seguidos entrenando duro</p>
         </div>
       </div>
 
-      <!-- Tarjeta de Experiencia (XP) -->
+      <!-- TARJETA DE EXPERIENCIA XP (image_af8849.png) -->
+      <!-- STREAMING_CHUNK: Configurando la barra de progreso de experiencia al nivel actual del atleta -->
       <div class="bg-[#202020] rounded-3xl p-6 shadow-md border border-stone-800 text-white">
         <div class="flex items-center gap-4">
-          <!-- Insignia de Nivel -->
           <div class="bg-rose-600 text-white font-black px-4 py-2.5 rounded-xl text-lg flex items-center justify-center min-w-[70px]" id="user-level-badge">
             NV. 1
           </div>
           <div class="flex-grow">
-            <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2">EXPERIENCIA (XP)</p>
-            <!-- Barra de Progreso XP -->
+            <p class="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-2">Experiencia (XP)</p>
             <div class="w-full bg-stone-800 rounded-full h-3 overflow-hidden border border-stone-700">
               <div id="user-xp-bar" class="bg-rose-600 h-full transition-all duration-300" style="width: 0%"></div>
             </div>
@@ -533,37 +321,35 @@
         </div>
       </div>
 
-      <!-- Carrusel de Selección Semanal idéntico a image_af8849.png -->
-      <div class="grid grid-cols-7 gap-1.5" id="week-calendar-grid">
-        <!-- Rellenado dinámicamente con JS -->
-      </div>
+      <!-- CALENDARIO DE SELECCIÓN DE DÍAS (image_af8849.png) -->
+      <div class="grid grid-cols-7 gap-1.5" id="week-calendar-grid"></div>
 
-      <!-- Consejo del Día original sin emojis -->
+      <!-- CONSEJO DEL DÍA CON DECORACIÓN LATERAL (image_af8849.png) -->
       <div class="bg-white border-l-4 border-rose-500 rounded-2xl p-4 shadow-sm">
         <p class="text-xs font-black text-rose-600 uppercase tracking-widest flex items-center gap-1.5 mb-1">
-          <i class="fa-solid fa-lightbulb"></i> CONSEJO DEL DIA
+          <i class="fa-solid fa-lightbulb"></i> Consejo del Día
         </p>
-        <p class="text-sm text-stone-700 font-bold">
-          Empieza la semana con energia. Haz cada ejercicio despacio al principio para perfeccionar tu tecnica de calistenia.
+        <p id="daily-tip-text" class="text-sm text-stone-700 font-bold">
+          Empieza la semana con energía. Haz cada ejercicio despacio al principio.
         </p>
       </div>
 
-      <!-- Listado de Ejercicios del Día de Hoy -->
+      <!-- LISTA DE EJERCICIOS DEL DÍA DE ENTRENAMIENTO -->
+      <!-- STREAMING_CHUNK: Creando el módulo contenedor de la rutina diaria con metas y barras de progreso -->
       <div class="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-stone-100 pb-4 gap-3">
           <div>
             <h2 id="current-routine-title" class="text-3xl font-black text-stone-900 font-bebas">LUNES</h2>
             <p id="current-routine-meta" class="text-xs font-bold text-stone-500 mt-1">
-              Duracion: <span class="text-rose-600 font-extrabold">15-20 min</span> • <span class="text-indigo-600 font-extrabold">+60 XP</span> • <span class="text-amber-600 font-extrabold">MONEDAS +25</span>
+              Duración: <span class="text-rose-600 font-extrabold">15-20 min</span> • <span class="text-indigo-600 font-extrabold">+60 XP</span> • <span class="text-amber-600 font-extrabold">MONEDAS +25</span>
             </p>
           </div>
           
-          <button onclick="finishRoutineAndGetDrop()" id="btn-finish-routine" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-2.5 rounded-2xl shadow-sm text-sm flex items-center justify-center gap-1.5 transition-all w-full sm:w-auto">
-            <i class="fa-solid fa-check-double"></i> Terminar Rutina
+          <button onclick="finishRoutineAndTriggerLevelUp()" id="btn-finish-routine" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-5 py-2.5 rounded-2xl shadow-sm text-sm flex items-center justify-center gap-1.5 transition-all w-full sm:w-auto">
+            <i class="fa-solid fa-circle-check"></i> Completar Entrenamiento
           </button>
         </div>
 
-        <!-- Barra de Progreso del Entrenamiento -->
         <div>
           <div class="flex justify-between items-center text-xs font-extrabold text-stone-500 mb-2 uppercase tracking-wide">
             <span id="exercises-progress-text">0 de 5 Ejercicios</span>
@@ -574,17 +360,15 @@
           </div>
         </div>
 
-        <!-- Lista dinámica de Ejercicios (Sensibles y totalmente clickeables) -->
-        <div id="exercises-list-container" class="space-y-3">
-          <!-- Rellenado por JS -->
-        </div>
+        <!-- Bloques ultra-sensibles clicables en cualquier parte de la tarjeta -->
+        <div id="exercises-list-container" class="space-y-3"></div>
       </div>
 
     </main>
-
   </div>
 
-  <!-- VISTA DE TIENDA A PANTALLA COMPLETA -->
+  <!-- VISTA DE TIENDA FITNESS A PANTALLA COMPLETA -->
+  <!-- STREAMING_CHUNK: Estructurando la tienda a pantalla completa con soporte de cuadrículas y filtros de saldo -->
   <div id="store-fullpage-view" class="hidden min-h-screen bg-[#f4f3ef] flex-col w-full z-40">
     <header class="bg-indigo-900 text-white py-6 px-4 shadow-md">
       <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -599,14 +383,12 @@
         </div>
 
         <div class="flex items-center gap-4">
-          <!-- Monedas del usuario -->
           <div class="bg-indigo-800 border border-indigo-700 px-4 py-2 rounded-xl flex items-center gap-2">
             <span class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></span>
             <span id="store-coins-display" class="font-black text-amber-300 text-lg">0</span>
-            <span class="text-xs text-indigo-300 font-bold uppercase">MONEDAS</span>
+            <span class="text-xs text-indigo-300 font-bold uppercase">Monedas</span>
           </div>
 
-          <!-- Botón de Salir de la Tienda -->
           <button onclick="closeFullpageStore()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase flex items-center gap-2 transition-all shadow-md">
             <i class="fa-solid fa-arrow-left"></i> Volver al Entrenamiento
           </button>
@@ -616,42 +398,35 @@
 
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow space-y-8">
       
-      <!-- Sección: Artículos de Entrenamiento y Personalización -->
+      <!-- Suplementos y Equipación de la tienda -->
       <div>
         <h2 class="text-xl font-black text-stone-800 uppercase tracking-wider border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-dumbbell text-rose-500"></i> ARTICULOS DE ENTRENAMIENTO
+          <i class="fa-solid fa-dumbbell text-rose-500"></i> Artículos de Entrenamiento
         </h2>
-        <div id="store-items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Rellenado dinámicamente con JS -->
-        </div>
+        <div id="store-items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
 
-      <!-- Sección: Videojuegos Retro (abren en pestaña nueva y activan contador de 30 min) -->
+      <!-- Videojuegos retro para calistenia -->
       <div>
         <h2 class="text-xl font-black text-stone-800 uppercase tracking-wider border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-gamepad text-indigo-500"></i> VIDEOJUEGOS RETRO (30 MINUTOS MAX)
+          <i class="fa-solid fa-gamepad text-indigo-500"></i> Videojuegos de Entretenimiento (30 Minutos)
         </h2>
-        <p class="text-xs text-stone-500 mb-4 font-bold uppercase">
-          Al jugar a un juego adquirido, se iniciará un temporizador de 30 minutos. Al terminar el tiempo, serás bloqueado por seguridad.
-        </p>
-        <div id="store-games-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Rellenado dinámicamente con JS -->
-        </div>
+        <div id="store-games-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
 
     </main>
   </div>
 
-  <!-- Alerta de Temporizador de Juego Activo en la pantalla principal -->
+  <!-- ALERTA DE TIEMPO DE JUEGO ACTIVO EN LA BARRA -->
   <div id="game-timer-banner" class="hidden bg-amber-500 text-stone-900 font-extrabold py-3 px-4 text-center text-sm flex items-center justify-center gap-3 shadow-md">
-    <span><i class="fa-solid fa-clock animate-spin"></i> TIEMPO DE JUEGO ACTIVO:</span>
+    <span><i class="fa-solid fa-clock"></i> Tiempo de Juego Activo:</span>
     <span id="game-countdown-text" class="bg-stone-900 text-amber-400 px-3 py-1 rounded-lg font-mono text-base">30:00</span>
     <button onclick="terminateGameSession()" class="bg-rose-700 hover:bg-rose-800 text-white text-xs px-3 py-1.5 rounded-lg uppercase tracking-wider font-black">
-      Cerrar Sesion de Juego
+      Cerrar Sesión de Juego
     </button>
   </div>
 
-  <!-- Bloqueo por Expulsión de Juego (Fin de los 30 Minutos) -->
+  <!-- BLOQUEO POR FIN DE TIEMPO DE 30 MINUTOS -->
   <div id="game-lockout-overlay" class="hidden fixed inset-0 bg-stone-950/95 z-50 flex items-center justify-center p-4">
     <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl">
       <div class="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-4xl mx-auto animate-bounce">
@@ -659,7 +434,7 @@
       </div>
       <h2 class="text-3xl font-black font-bebas text-stone-900">TIEMPO DE JUEGO AGOTADO</h2>
       <p class="text-stone-600 text-sm font-bold">
-        Has superado el limite diario de 30 minutos de juego. Tu salud es lo primero, ¡es hora de volver al entrenamiento fisico de calistenia!
+        Has superado el límite diario de 30 minutos de juego. Tu salud es lo primero, ¡es hora de volver al entrenamiento físico de calistenia!
       </p>
       <button onclick="dismissLockout()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
         Entendido, Volver al Entrenamiento
@@ -667,11 +442,11 @@
     </div>
   </div>
 
-  <!-- Modal del Ejercicio del Hombrecillo Animado -->
+  <!-- MODAL DE VISUALIZACIÓN DEL STICKMAN ANIMADO EN CANVAS -->
+  <!-- STREAMING_CHUNK: Creando el reproductor modal dinámico del instructor virtual de calistenia -->
   <div id="exercise-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
       
-      <!-- Cabecera del reproductor -->
       <div class="bg-stone-900 p-5 text-white flex justify-between items-center">
         <div>
           <h3 id="modal-exercise-name" class="text-xl font-black font-bebas tracking-wide">EJERCICIO</h3>
@@ -682,25 +457,23 @@
         </button>
       </div>
 
-      <!-- Área de Visualización del Stickman en Canvas -->
       <div class="relative bg-stone-100 border-b border-stone-200 flex items-center justify-center p-4">
         <canvas id="stickman-canvas" width="400" height="260" class="w-full max-w-[400px] h-auto bg-stone-50 rounded-2xl shadow-inner border border-stone-200"></canvas>
       </div>
 
-      <!-- Métricas y Acción -->
       <div class="p-6 space-y-4 text-center">
         <p class="text-stone-600 text-sm">
-          Sigue las repeticiones del instructor virtual con una tecnica excelente para evitar sobrecargas.
+          Sigue las repeticiones del instructor virtual con una técnica excelente para evitar sobrecargas.
         </p>
 
-        <!-- Objetivo -->
+        <!-- Unidad del ejercicio en vueltas (vta) -->
         <div class="bg-rose-50 border border-rose-100 rounded-2xl py-3 px-5 inline-block">
           <span id="modal-target-qty" class="text-2xl font-black text-rose-600">10</span>
           <span id="modal-target-unit" class="text-sm font-bold text-rose-800 ml-1">vueltas</span>
         </div>
 
         <div>
-          <button onclick="markCurrentExerciseDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 rounded-2xl transition-all shadow-sm hover:shadow text-sm">
+          <button onclick="markCurrentExerciseDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-2xl transition-all shadow-sm hover:shadow text-sm">
             <i class="fa-solid fa-square-check"></i> Marcar Ejercicio como Hecho
           </button>
         </div>
@@ -710,6 +483,7 @@
   </div>
 
   <!-- MODAL ESPECIAL: CELEBRACIÓN DE SUBIDA DE NIVEL -->
+  <!-- STREAMING_CHUNK: Creando el modal de celebración por haber completado una rutina y ascendido de nivel -->
   <div id="level-up-modal" class="hidden fixed inset-0 bg-stone-950/95 z-[95] flex items-center justify-center p-4">
     <div class="bg-white border-4 border-amber-400 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl transform scale-100 transition-all">
       <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto animate-bounce">
@@ -720,7 +494,7 @@
         Has ascendido al <span class="text-rose-600 text-xl font-black" id="unlocked-level-title">NIVEL X</span>
       </p>
       <p class="text-xs text-stone-400 font-bold uppercase">
-        Tu esfuerzo tiene recompensa. A continuacion vas a poder abrir una caja Starr Drop Especial.
+        Tu esfuerzo tiene recompensa. A continuación vas a poder abrir una caja Starr Drop Especial.
       </p>
       <button onclick="transitionToStarrDrop()" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black py-4 rounded-xl uppercase tracking-wider text-sm transition-all shadow-md">
         Abrir Starr Drop de Regalo <i class="fa-solid fa-gift"></i>
@@ -729,21 +503,19 @@
   </div>
 
   <!-- MODAL EXCLUSIVO: APERTURA DE STARR DROPS -->
+  <!-- STREAMING_CHUNK: Modelando la apertura interactiva de Starr Drops estilo Brawl Stars con física al tacto -->
   <div id="starr-drop-modal" class="hidden fixed inset-0 bg-stone-950/98 z-[98] flex items-center justify-center p-4">
     <div class="bg-stone-900 border-4 border-stone-800 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl text-white">
-      
       <span class="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-bold uppercase tracking-widest">
         Regalo por Subida de Nivel
       </span>
-
       <h3 class="text-3xl font-black font-bebas text-amber-400">STARR DROP EXCLUSIVO</h3>
       <p class="text-xs text-stone-400 max-w-sm mx-auto">
         Golpea la caja de regalo para ir aumentando su rareza. Consigue un drop Legendario o Ultralegendario.
       </p>
 
-      <!-- Panel Interactivo del Starr Drop -->
       <div class="relative py-8 flex flex-col items-center justify-center">
-        
+        <!-- Contenedor del Starr Drop interactivo -->
         <div id="starr-drop-container" class="cursor-pointer transition-all duration-150 select-none flex flex-col items-center">
           <div id="starr-drop-body" class="w-32 h-32 rounded-full flex items-center justify-center bg-stone-700 border-4 border-stone-600 shadow-[0_0_20px_rgba(100,116,139,0.3)] relative transition-all duration-150">
             <i class="fa-solid fa-gift text-white text-5xl"></i>
@@ -756,7 +528,7 @@
           </p>
         </div>
 
-        <!-- Recompensa final revelada -->
+        <!-- Tarjeta de recompensa final revelada -->
         <div id="starr-drop-reward-card" class="hidden transform scale-95 opacity-0 transition-all duration-300 bg-stone-800 border-2 border-amber-400 rounded-2xl p-6 w-full max-w-xs text-center">
           <span id="reward-rarity-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-400 text-stone-950">
             ESPECIAL
@@ -771,12 +543,12 @@
             Reclamar Regalo
           </button>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Modal de Edición de Perfil Detallado -->
+  <!-- MODAL DE EDICIÓN DE PERFIL DETALLADO -->
+  <!-- STREAMING_CHUNK: Creando el módulo de personalización detallada con cargador de archivos y selector de avatar -->
   <div id="profile-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
       
@@ -791,40 +563,33 @@
       </div>
 
       <div class="p-6 space-y-4 max-h-[450px] overflow-y-auto">
-        
-        <!-- Foto de Perfil Actual -->
         <div class="flex flex-col items-center justify-center pb-2 border-b border-stone-100">
-          <div id="modal-avatar-preview" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl text-white font-bold bg-rose-500 shadow-md border-2 border-white overflow-hidden mb-3">
+          <div id="modal-avatar-preview" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl text-white font-bold mb-3 bg-rose-500 shadow-md border-2 border-white overflow-hidden">
             U
           </div>
-          <p class="text-xs text-stone-400 font-extrabold uppercase">Foto de Perfil Activa</p>
+          <p class="text-xs text-stone-400 font-extrabold uppercase font-bebas">Foto de Perfil Activa</p>
         </div>
 
-        <!-- Cargar Foto desde el ordenador -->
         <div class="space-y-1.5">
           <label class="block text-xs font-black text-stone-500 uppercase">Subir Imagen de Perfil</label>
           <input type="file" id="avatar-image-input" accept="image/*" onchange="uploadProfileImage(event)" class="block w-full text-xs text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 cursor-pointer" />
         </div>
 
-        <!-- Nombre del deportista -->
         <div class="space-y-1.5">
           <label class="block text-xs font-black text-stone-500 uppercase">Nombre</label>
           <input type="text" id="profile-input-name" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Usuario" />
         </div>
 
-        <!-- Correo electrónico -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Correo Electronico</label>
+          <label class="block text-xs font-black text-stone-500 uppercase">Correo Electrónico</label>
           <input type="email" id="profile-input-email" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="correo@entrenamiento.com" />
         </div>
 
-        <!-- Rango / Título deportivo -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Titulo Deportivo</label>
+          <label class="block text-xs font-black text-stone-500 uppercase">Título Deportivo</label>
           <input type="text" id="profile-input-title" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Principiante" />
         </div>
 
-        <!-- Cambiar color de fondo -->
         <div class="space-y-1.5">
           <label class="block text-xs font-black text-stone-500 uppercase">Color de Fondo del Avatar</label>
           <div class="flex gap-2">
@@ -835,18 +600,6 @@
             <button onclick="changeBg('bg-stone-800')" class="w-7 h-7 rounded-full bg-stone-800 border border-white"></button>
           </div>
         </div>
-
-        <!-- Herramientas de testeo adictivas -->
-        <div class="pt-4 border-t border-stone-100">
-          <span class="block text-[10px] font-black text-stone-400 uppercase tracking-wider mb-2">Herramientas de Desarrollador</span>
-          <div class="grid grid-cols-2 gap-2">
-            <!-- Botón de simulación de racha perdida removido como se especificó -->
-            <button onclick="addFreeCoins()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-extrabold p-2 rounded-lg text-[10px] uppercase border border-amber-200 col-span-2">
-              Obtener 500 Monedas Gratis
-            </button>
-          </div>
-        </div>
-
       </div>
 
       <div class="bg-stone-50 p-4 border-t border-stone-100 flex justify-end gap-2">
@@ -862,7 +615,162 @@
   </div>
 
   <script>
-    // Sintetizador de audio integrado autónomo para evitar dependencias
+    // ═══════════════════════════════════════════════════════
+    //  DATOS DE LA PLATAFORMA (Sujeto a image_af8849.png)
+    // ═══════════════════════════════════════════════════════
+    const USERS_DB_KEY = 'fit_users_db_v5';
+    const SESSION_KEY = 'fit_session_v5';
+
+    let userState = {
+      username: "Usuario",
+      email: "correo@entrenamiento.com",
+      password: "pass",
+      userTitle: "Principiante",
+      avatarBg: "bg-rose-500",
+      avatarImage: null,
+      level: 1,
+      xp: 0,
+      xpNeeded: 100,
+      coins: 0,
+      racha: 0,
+      lastWorkoutDate: null,
+      completedToday: false,
+      inventory: []
+    };
+
+    // 7 días de entrenamiento según las imágenes exactas (unidades en vueltas)
+    const WEEKLY_ROUTINES = {
+      1: {
+        name: "LUNES",
+        duration: "15-20 min",
+        xp: 60,
+        coins: 25,
+        tip: "Empieza la semana con energía. Haz cada ejercicio despacio al principio.",
+        exercises: [
+          { id: "cal_lun", name: "Calentamiento", desc: "Salta en el sitio o corre sin moverte", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "sent_lun", name: "Sentadillas", desc: "Baja con la espalda recta hasta formar 90 grados", baseQty: 8, unit: "repeticiones", type: "squat" },
+          { id: "flex_lun", name: "Flexiones de rodillas", desc: "Mantén el abdomen firme al bajar el torso", baseQty: 5, unit: "repeticiones", type: "pushup" },
+          { id: "plank_lun", name: "Plancha", desc: "Apoya los antebrazos y mantén el cuerpo recto", baseQty: 20, unit: "vueltas", type: "plank" },
+          { id: "est_lun", name: "Estiramiento", desc: "Estira piernas y brazos suavemente", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      2: {
+        name: "MARTES",
+        duration: "20-30 min",
+        xp: 80,
+        coins: 35,
+        tip: "Martes de resistencia. Descansa entre series solo 30-40 segundos.",
+        exercises: [
+          { id: "cal_mar", name: "Calentamiento", desc: "Jumping jacks", baseQty: 3, unit: "vueltas", type: "warmup" },
+          { id: "zan_mar", name: "Zancadas", desc: "3 series de 8 repeticiones por pierna", baseQty: 8, unit: "repeticiones", type: "stretch" },
+          { id: "flex_mar", name: "Flexiones normales", desc: "3 series de 5 a 8 repeticiones", baseQty: 6, unit: "repeticiones", type: "pushup" },
+          { id: "super_mar", name: "Superman", desc: "3 series de 10 repeticiones", baseQty: 10, unit: "repeticiones", type: "stretch" },
+          { id: "abd_mar", name: "Abdominales", desc: "3 series de 10 repeticiones", baseQty: 10, unit: "repeticiones", type: "squat" },
+          { id: "est_mar", name: "Estiramiento", desc: "Estiramiento completo", baseQty: 3, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      3: {
+        name: "MIÉRCOLES",
+        duration: "15-20 min",
+        xp: 60,
+        coins: 25,
+        tip: "Mitad de semana. Hoy trabajamos el tronco y la estabilidad.",
+        exercises: [
+          { id: "cal_mie", name: "Calentamiento", desc: "Movimientos de cuello, hombros y cadera", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "plank_mie", name: "Plancha lateral", desc: "2 series de 15 segundos por lado", baseQty: 15, unit: "vueltas", type: "plank" },
+          { id: "sumo_mie", name: "Sentadillas sumo", desc: "3 series de 10 repeticiones", baseQty: 10, unit: "repeticiones", type: "squat" },
+          { id: "triceps_mie", name: "Fondos de tríceps", desc: "3 series de 8 repeticiones (silla)", baseQty: 8, unit: "repeticiones", type: "pushup" },
+          { id: "est_mie", name: "Estiramiento lateral", desc: "Estiramiento de costados", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      4: {
+        name: "JUEVES",
+        duration: "15-20 min",
+        xp: 60,
+        coins: 25,
+        tip: "¡Casi el fin de semana! Hoy trabajamos las piernas con potencia.",
+        exercises: [
+          { id: "cal_jue", name: "Calentamiento", desc: "Trotar en el sitio levantando rodillas", baseQty: 2, unit: "vueltas", type: "warmup" },
+          { id: "jump_jue", name: "Sentadillas con salto", desc: "3 series de 6 repeticiones", baseQty: 6, unit: "repeticiones", type: "squat" },
+          { id: "mont_jue", name: "Montañero", desc: "3 series de 20 segundos", baseQty: 20, unit: "vueltas", type: "plank" },
+          { id: "glute_jue", name: "Puente de glúteos", desc: "3 series de 12 repeticiones", baseQty: 12, unit: "repeticiones", type: "stretch" },
+          { id: "est_jue", name: "Estiramiento", desc: "Cuádriceps, pantorrillas y lumbar", baseQty: 2, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      5: {
+        name: "VIERNES",
+        duration: "30-35 min",
+        xp: 100,
+        coins: 50,
+        tip: "¡Viernes! El entrenamiento más completo. Dale todo lo que tienes.",
+        exercises: [
+          { id: "cal_vie", name: "Calentamiento", desc: "Saltos, carrera y articulaciones", baseQty: 3, unit: "vueltas", type: "warmup" },
+          { id: "sent_vie", name: "Sentadillas", desc: "4 series de 10 repeticiones", baseQty: 10, unit: "repeticiones", type: "squat" },
+          { id: "flex_vie", name: "Flexiones", desc: "4 series de 8 repeticiones", baseQty: 8, unit: "repeticiones", type: "pushup" },
+          { id: "bic_vie", name: "Abdominales bicicleta", desc: "3 series de 15 repeticiones", baseQty: 15, unit: "repeticiones", type: "stretch" },
+          { id: "burp_vie", name: "Burpee (versión fácil)", desc: "3 series de 5 repeticiones", baseQty: 5, unit: "pushup" },
+          { id: "plank_vie", name: "Plancha", desc: "3 series de 25 segundos", baseQty: 25, unit: "vueltas", type: "plank" },
+          { id: "est_vie", name: "Estiramiento completo", desc: "Todo el cuerpo", baseQty: 5, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      6: {
+        name: "SÁBADO",
+        duration: "30-45 min",
+        xp: 120,
+        coins: 60,
+        tip: "Fin de semana. Puedes tomarlo más tranquilo o ir con todo. Tú decides.",
+        exercises: [
+          { id: "cal_sab", name: "Calentamiento libre", desc: "Baile, saltos, lo que quieras", baseQty: 4, unit: "vueltas", type: "warmup" },
+          { id: "sent_sab", name: "Sentadillas lentas", desc: "4 series de 12 repeticiones", baseQty: 12, unit: "repeticiones", type: "squat" },
+          { id: "diam_sab", name: "Flexiones diamante", desc: "3 series de 5 repeticiones", baseQty: 5, unit: "repeticiones", type: "pushup" },
+          { id: "salt_sab", name: "Saltos a una altura baja", desc: "3 series de 8 repeticiones (escalón)", baseQty: 8, unit: "repeticiones", type: "stretch" },
+          { id: "abd_sab", name: "Abdominales V", desc: "3 series de 8 repeticiones", baseQty: 8, unit: "repeticiones", type: "stretch" },
+          { id: "walk_sab", name: "Caminar tranquilo", desc: "Paseo de recuperación", baseQty: 5, unit: "vueltas", type: "warmup" },
+          { id: "est_sab", name: "Estiramiento completo", desc: "Todo el cuerpo con calma", baseQty: 6, unit: "vueltas", type: "stretch" }
+        ]
+      },
+      0: {
+        name: "DOMINGO",
+        duration: "Descanso",
+        xp: 0,
+        coins: 0,
+        tip: "El descanso es parte del entrenamiento. Los músculos crecen cuando descansas."
+      }
+    };
+
+    // Tienda Fitness Premium organizada sin emojis
+    const STORE_ITEMS = [
+      { id: "item_1", name: "Batido Energético de Fresa", category: "Suplementos", cost: 30, desc: "Bebida proteica ideal para acelerar la recuperación deportiva.", icon: "fa-prescription-bottle" },
+      { id: "item_2", name: "Guantes de Calistenia Pro", category: "Equipamiento", cost: 75, desc: "Previene la aparición de callos al colgarte en el parque de entrenamiento.", icon: "fa-mitten" },
+      { id: "item_3", name: "Shaker Mezclador de Acero", category: "Equipamiento", cost: 150, desc: "Un lujoso mezclador metálico para llevar tus bebidas de entrenamiento.", icon: "fa-bottle-water" },
+      { id: "item_4", name: "Título Especial: Gladiador", category: "Titulos", cost: 200, desc: "Equipa este imponente título en tu perfil para lucir tu esfuerzo.", icon: "fa-crown" },
+      { id: "item_5", name: "Fondo de Perfil: Universo", category: "Cosmeticos", cost: 280, desc: "Desbloquea un maravilloso fondo cosmético para tu tarjeta de usuario.", icon: "fa-images" },
+      { id: "item_6", name: "Aura de Poder de Titanio", category: "Cosmeticos", cost: 350, desc: "Efecto místico que rodea tu avatar con pura potencia visual.", icon: "fa-wand-magic-sparkles" },
+      { id: "item_7", name: "Trofeo de Campeón 1976", category: "Cosmeticos", cost: 500, desc: "El trofeo definitivo para conmemorar los hitos del deporte clásico.", icon: "fa-trophy" },
+      { id: "item_8", name: "Compañero Robot Entrenador", category: "Cosmeticos", cost: 1000, desc: "Un asistente virtual de calistenia que te acompañará en la tienda.", icon: "fa-robot" }
+    ];
+
+    // Videojuegos integrados directamente en la tienda (con las URLs específicas)
+    const STORE_GAMES = [
+      { id: "game_1", name: "Fruit Ninja Calisténico", category: "Videojuegos", cost: 50, url: "https://sergiodenda-bot.github.io/FruitNinja/", desc: "Corta las frutas virtuales al estilo ninja para entrenar tus reflejos visuales.", icon: "fa-gamepad" },
+      { id: "game_2", name: "Block Blast Fitness", category: "Videojuegos", cost: 100, url: "https://sergiodenda-bot.github.io/BlockBlast/Index.html", desc: "Coloca bloques estratégicamente para despejar filas y entrenar tu mente deportiva.", icon: "fa-cube" },
+      { id: "game_3", name: "Block Dash Calistenia", category: "Videojuegos", cost: 180, url: "https://dendasamuel7-boop.github.io/Block_Dash/", desc: "Esquiva los pinchos geométricos saltando con la precisión de un gimnasta.", icon: "fa-bolt" },
+      { id: "game_4", name: "Mario Retro Calisténico", category: "Videojuegos", cost: 250, url: "https://tinyfishingame.com/new-games/", desc: "Sumérgete en este clásico de plataformas retro adaptado para motivar tu rutina.", icon: "fa-gamepad" }
+    ];
+
+    // Base de datos de historia del deporte por fechas
+    const HISTORICAL_EVENTS = {
+      "20-06": "Un 20 de junio de 1976, Antonin Panenka patenta su mítico penalti en la final de la Eurocopa frente a Alemania, cambiando la historia del fútbol para siempre con su vaselina.",
+      "21-06": "Un 21 de junio de 1970, la selección de fútbol de Brasil liderada por Pelé se consagra campeona del mundo al derrotar a Italia 4-1 en México.",
+      "22-06": "Un 22 de junio de 1986, Diego Maradona anota la Mano de Dios y el Gol del Siglo frente a Inglaterra en el Mundial de México.",
+      "07-07": "Un 7 de julio de 1957, Pelé debuta con la selección de Brasil marcando un gol contra Argentina a los 16 años, comenzando su reinado legendario."
+    };
+  </script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════
+    //  SINTETIZADOR DE AUDIO (Web Audio API)
+    // ═══════════════════════════════════════════════════════
     let audioCtx = null;
 
     function initAudio() {
@@ -872,100 +780,287 @@
     }
 
     function playSynthSound(type) {
-      initAudio();
-      if (!audioCtx) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
 
-      const now = audioCtx.currentTime;
-
-      if (type === 'click') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(600, now);
-        gain.gain.setValueAtTime(0.05, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.1);
-
-      } else if (type === 'success') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.setValueAtTime(554, now + 0.1);
-        gain.gain.setValueAtTime(0.06, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.3);
-
-      } else if (type === 'hit') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(120, now);
-        osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.15);
-
-      } else if (type === 'upgrade') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.4);
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.4);
-
-      } else if (type === 'level_up') {
-        const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // C4, E4, G4, C5, E5
-        notes.forEach((freq, idx) => {
+        if (type === 'click') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
-          osc.type = "square";
-          osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-          gain.gain.setValueAtTime(0.04, now + idx * 0.1);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.4);
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
-          osc.start(now + idx * 0.1);
-          osc.stop(now + idx * 0.1 + 0.4);
-        });
+          osc.start(now);
+          osc.stop(now + 0.08);
 
-      } else if (type === 'racha_lost') {
-        const notes = [392.00, 349.23, 311.13, 261.63]; // G4, F4, Eb4, C4
-        notes.forEach((freq, idx) => {
+        } else if (type === 'success') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(400, now);
+          osc.frequency.setValueAtTime(520, now + 0.08);
+          osc.frequency.setValueAtTime(640, now + 0.16);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+
+        } else if (type === 'hit') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(freq, now + idx * 0.15);
-          gain.gain.setValueAtTime(0.06, now + idx * 0.15);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + 0.3);
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
-          osc.start(now + idx * 0.15);
-          osc.stop(now + idx * 0.15 + 0.3);
-        });
+          osc.start(now);
+          osc.stop(now + 0.12);
+
+        } else if (type === 'upgrade') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(280, now);
+          osc.frequency.exponentialRampToValueAtTime(1100, now + 0.35);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+
+        } else if (type === 'level_up') {
+          const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "square";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            gain.gain.setValueAtTime(0.03, now + idx * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.1);
+            osc.stop(now + idx * 0.1 + 0.35);
+          });
+
+        } else if (type === 'racha_lost') {
+          const notes = [440.00, 392.00, 349.23, 293.66];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+            gain.gain.setValueAtTime(0.05, now + idx * 0.14);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.14 + 0.28);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + idx * 0.14);
+            osc.stop(now + idx * 0.14 + 0.28);
+          });
+        }
+      } catch (err) {
+        console.warn("Audio Context bloqueado o no soportado por el navegador.");
+      }
+    }
+  </script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════
+    //  SISTEMA DE LLAVES DE ACCESO (PASSKEYS) SIMULADO
+    // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Implementando la lógica del hardware simulado de Passkeys con bases de datos locales
+    function getLocalStorageDB() {
+      try {
+        return JSON.parse(localStorage.getItem(USERS_DB_KEY)) || {};
+      } catch(e) {
+        return {};
       }
     }
 
-    let gameActive = false;
+    function saveLocalStorageDB(db) {
+      localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+    }
+
+    function getRegisteredDeviceKey() {
+      return localStorage.getItem('fit_passkey_registered_id');
+    }
+
+    function setRegisteredDeviceKey(email) {
+      localStorage.setItem('fit_passkey_registered_id', email);
+    }
+
+    function clearSession() {
+      // No eliminamos la Passkey del hardware local, solo "cerramos sesión" para simular
+      localStorage.removeItem(SESSION_KEY);
+    }
+
+    function renderPasskeyInterface() {
+      const container = document.getElementById("passkey-action-container");
+      const savedEmail = getRegisteredDeviceKey();
+
+      if (savedEmail) {
+        // Dispositivo ya configurado con una Passkey
+        const db = getLocalStorageDB();
+        const userData = db[savedEmail] || { username: "Usuario" };
+
+        container.innerHTML = `
+          <div class="text-center space-y-4">
+            <div class="p-3 bg-stone-50 border border-stone-200 rounded-xl">
+              <p class="text-xs text-stone-500 font-bold">Llave de acceso detectada para:</p>
+              <p class="text-base font-black text-stone-800">${userData.username}</p>
+              <p class="text-[10px] text-stone-400 font-mono">${savedEmail}</p>
+            </div>
+
+            <button onclick="triggerBiometricScan('login', '${savedEmail}')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-fingerprint text-xl"></i> Iniciar Sesión con mi Llave
+            </button>
+
+            <button onclick="resetPasskeyProvisioning()" class="text-xs text-stone-400 hover:text-stone-600 font-bold transition-colors underline block mx-auto">
+              Configurar un dispositivo o usuario nuevo
+            </button>
+          </div>
+        `;
+      } else {
+        // Dispositivo nuevo - Crear cuenta mediante Passkey
+        container.innerHTML = `
+          <div class="space-y-4">
+            <p class="text-xs font-black text-rose-500 uppercase tracking-wider text-center">Registrar Nueva Cuenta con Passkey</p>
+            
+            <div class="space-y-3">
+              <input type="text" id="reg-name" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Escribe tu Nombre">
+              <input type="email" id="reg-email" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Escribe tu Correo Electrónico">
+            </div>
+
+            <button onclick="validateAndRegisterPasskey()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wide uppercase shadow-md transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-key-skeleton"></i> Crear Llave de Acceso
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function resetPasskeyProvisioning() {
+      playSynthSound('click');
+      localStorage.removeItem('fit_passkey_registered_id');
+      renderPasskeyInterface();
+    }
+
+    function validateAndRegisterPasskey() {
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim().toLowerCase();
+
+      if (!name || !email) {
+        showToast("Rellene su nombre y correo para vincular la llave.", "error");
+        return;
+      }
+
+      // Simulamos la creación biométrica de Passkey
+      triggerBiometricScan('register', email, name);
+    }
+
+    // Activación de la animación de escaneo de huella/cara
+    // STREAMING_CHUNK: Controlando las animaciones del lector biométrico simulando autenticación por hardware real
+    function triggerBiometricScan(actionType, email, username = "") {
+      playSynthSound('click');
+      
+      const modal = document.getElementById("biometric-modal");
+      const bar = document.getElementById("biometric-progress-bar");
+      const title = document.getElementById("biometric-status-title");
+      const desc = document.getElementById("biometric-status-desc");
+      const icon = document.getElementById("biometric-icon");
+
+      // Ajustamos icono visual al azar para simular reconocimiento facial o huella
+      if (Math.random() > 0.5) {
+        icon.className = "fa-solid fa-face-smile text-5xl text-rose-600";
+        desc.innerText = "Mirando fijamente a la cámara del dispositivo...";
+        title.innerText = "RECONOCIMIENTO FACIAL";
+      } else {
+        icon.className = "fa-solid fa-fingerprint text-5xl text-rose-600";
+        desc.innerText = "Coloque su huella en el sensor táctil...";
+        title.innerText = "ESCANEANDO HUELLA DIGITAL";
+      }
+
+      modal.classList.remove("hidden");
+      bar.style.width = "0%";
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 5;
+        bar.style.width = `${progress}%`;
+
+        // Vibración sonora del escáner
+        if (progress % 20 === 0) {
+          playSynthSound('click');
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            completePasskeyAuthentication(actionType, email, username);
+          }, 300);
+        }
+      }, 100);
+    }
+
+    function completePasskeyAuthentication(actionType, email, username) {
+      const db = getLocalStorageDB();
+
+      if (actionType === 'register') {
+        // Guardamos en la base de datos local
+        db[email] = {
+          username: username,
+          email: email,
+          userTitle: "Principiante",
+          avatarBg: "bg-rose-500",
+          avatarImage: null,
+          level: 1,
+          xp: 0,
+          xpNeeded: 100,
+          coins: 0,
+          racha: 0,
+          lastWorkoutDate: null,
+          completedToday: false,
+          inventory: []
+        };
+        saveLocalStorageDB(db);
+        setRegisteredDeviceKey(email);
+        showToast("¡Llave de acceso creada y guardada con éxito!", "success");
+      }
+
+      // Establecemos sesión activa
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ email }));
+      playSynthSound('success');
+      loadUserApp(email);
+    }
+
+    function logOutUser() {
+      playSynthSound('click');
+      clearSession();
+      document.getElementById("workout-view-container").classList.add("hidden");
+      document.getElementById("auth-screen").classList.remove("hidden");
+      renderPasskeyInterface();
+    }
+  </script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════
+    //  VARIABLES DE CONTROL DE JUEGO Y TIEMPOS
+    // ═══════════════════════════════════════════════════════
+    let activeGameTimer = null;
     let gameWindowRef = null;
-    let gameTimerInterval = null;
     let gameSecondsRemaining = 1800; // 30 minutos
 
-    // Variables del Canvas Stickman
+    // Variables del stickman Canvas
     let canvas, ctx;
     let animationId = null;
     let animFrame = 0;
@@ -979,13 +1074,25 @@
     const RARITIES = [
       { name: "ESPECIAL", color: "bg-emerald-500", border: "border-emerald-400", text: "text-emerald-400", shadow: "shadow-[0_0_20px_rgba(16,185,129,0.5)]" },
       { name: "SUPERESPECIAL", color: "bg-blue-600", border: "border-blue-400", text: "text-blue-400", shadow: "shadow-[0_0_20px_rgba(37,99,235,0.5)]" },
-      { name: "EPICO", color: "bg-purple-600", border: "border-purple-400", text: "text-purple-400", shadow: "shadow-[0_0_20px_rgba(147,51,234,0.5)]" },
-      { name: "MITICO", color: "bg-rose-600", border: "border-rose-400", text: "text-rose-400", shadow: "shadow-[0_0_20px_rgba(225,29,72,0.5)]" },
+      { name: "ÉPICO", color: "bg-purple-600", border: "border-purple-400", text: "text-purple-400", shadow: "shadow-[0_0_20px_rgba(147,51,234,0.5)]" },
+      { name: "MÍTICO", color: "bg-rose-600", border: "border-rose-400", text: "text-rose-400", shadow: "shadow-[0_0_20px_rgba(225,29,72,0.5)]" },
       { name: "LEGENDARIO", color: "bg-amber-500", border: "border-amber-400", text: "text-amber-400", shadow: "shadow-[0_0_20px_rgba(245,158,11,0.5)]" },
       { name: "ULTRALEGENDARIO", color: "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500", border: "border-white", text: "text-rose-300", shadow: "shadow-[0_0_25px_rgba(244,63,94,0.8)]" }
     ];
 
-    // Comprobar si el usuario ha perdido su racha
+    function loadUserApp(email) {
+      const db = getLocalStorageDB();
+      userState = db[email];
+
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("workout-view-container").classList.remove("hidden");
+
+      checkRachaLoss();
+      updateUserUI();
+      triggerHistoricalIntro();
+    }
+
+    // Comprobar caída de racha por inactividad de más de 48 horas
     function checkRachaLoss() {
       if (!userState.lastWorkoutDate) return;
 
@@ -995,25 +1102,20 @@
       const lastWorkout = new Date(userState.lastWorkoutDate);
       lastWorkout.setHours(0,0,0,0);
 
-      // Calcular diferencia en milisegundos y pasar a días
       const diffTime = today - lastWorkout;
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-      // Si ha pasado más de 1 día completo sin entrenar (es decir, diffDays >= 2)
       if (diffDays >= 2 && userState.racha > 0) {
-        // Guardar la racha perdida para mostrar en la interfaz
         const lostRachaValue = userState.racha;
         userState.racha = 0;
         syncStateToCloud();
 
-        // Mostrar el modal del Huevo Triste
         document.getElementById("lost-racha-value").innerText = lostRachaValue;
         document.getElementById("racha-lost-modal").classList.remove("hidden");
         
-        // Reproducir sonido de fracaso triste
         setTimeout(() => {
           playSynthSound('racha_lost');
-        }, 1000);
+        }, 800);
       }
     }
 
@@ -1022,14 +1124,7 @@
       document.getElementById("racha-lost-modal").classList.add("hidden");
     }
 
-    function addFreeCoins() {
-      playSynthSound('success');
-      userState.coins += 500;
-      syncStateToCloud();
-      updateUserUI();
-      showToast("Has recibido 500 Monedas gratis", "success");
-    }
-
+    // Mostrar el hito deportivo real basado en la fecha de hoy
     function triggerHistoricalIntro() {
       const today = new Date();
       const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -1038,24 +1133,30 @@
 
       let historicalFact = HISTORICAL_EVENTS[dateKey];
       if (!historicalFact) {
-        historicalFact = `UN DIA COMO HOY EN EL DEPORTE: Un ${day}/${month}, un atleta legendario rompio las marcas mundiales, inspirando a millones a superarse de forma natural en calistenia. ¡Hoy es tu dia de gloria!`;
+        historicalFact = `Un ${day}/${month} de un año memorable para el fútbol internacional, un deportista batió los límites físicos demostrando la potencia de la calistenia y la disciplina física. ¡Hoy es tu día para brillar!`;
       }
 
-      document.getElementById("intro-title").innerText = `SUCEDIO HOY (${day}/${month})`;
+      document.getElementById("intro-title").innerText = `SUCEDIÓ UN ${day}/${month}`;
       document.getElementById("intro-description").innerText = historicalFact;
 
       const intro = document.getElementById("intro-screen");
-      intro.classList.remove("pointer-events-none");
-      intro.classList.remove("opacity-0");
+      intro.classList.remove("pointer-events-none", "opacity-0");
       intro.querySelector("div").classList.remove("scale-95");
     }
 
     function dismissIntro() {
       playSynthSound('click');
       const intro = document.getElementById("intro-screen");
-      intro.classList.add("opacity-0");
-      intro.classList.add("pointer-events-none");
+      intro.classList.add("opacity-0", "pointer-events-none");
       intro.querySelector("div").classList.add("scale-95");
+    }
+
+    function syncStateToCloud() {
+      const db = getLocalStorageDB();
+      if (userState.email) {
+        db[userState.email] = userState;
+        saveLocalStorageDB(db);
+      }
     }
 
     function updateUserUI() {
@@ -1066,12 +1167,12 @@
       document.getElementById("user-racha-display").innerText = userState.racha;
       document.getElementById("user-level-badge").innerText = `NV. ${userState.level}`;
 
-      // Calcular barra de experiencia
+      // Barra de experiencia
       const progressPercent = Math.min(100, Math.max(0, (userState.xp / userState.xpNeeded) * 100));
       document.getElementById("user-xp-bar").style.width = `${progressPercent}%`;
       document.getElementById("user-xp-text").innerText = `${userState.xp} / ${userState.xpNeeded} XP para subir de nivel`;
 
-      // Renderizar el Avatar
+      // Renderizar el avatar con foto o iniciales
       const avatarBox = document.getElementById("user-avatar-display");
       if (userState.avatarImage) {
         avatarBox.innerHTML = `<img src="${userState.avatarImage}" class="w-full h-full object-cover" />`;
@@ -1084,32 +1185,36 @@
       renderCurrentRoutine();
     }
 
+    // Renderizado del calendario minimalista de selección de días (image_af8849.png)
+    // STREAMING_CHUNK: Creando el calendario interactivo restringiendo las rutinas de días no actuales
     function renderWeekCalendar() {
       const grid = document.getElementById("week-calendar-grid");
       grid.innerHTML = "";
 
       const daysShort = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
       const todayIndex = new Date().getDay(); 
-
       const orderedDays = [1, 2, 3, 4, 5, 6, 0];
 
       orderedDays.forEach(dayIndex => {
         const isToday = (dayIndex === todayIndex);
         const dayName = daysShort[dayIndex];
+        const isDone = localStorage.getItem(`routine_done_${dayIndex}_${userState.email}`) === "true";
 
         const btn = document.createElement("button");
-        btn.className = `day-pill p-3 rounded-2xl border text-center font-bold text-xs uppercase flex flex-col items-center justify-center h-14 ${
+        btn.className = `day-pill p-3 rounded-2xl border text-center font-bold text-xs uppercase flex flex-col items-center justify-center h-14 transition-all ${
           isToday
-            ? "bg-rose-500 border-rose-500 text-white font-black shadow-sm"
-            : "bg-white border-stone-200 text-stone-500 hover:border-stone-300"
+            ? "bg-rose-500 border-rose-500 text-white font-black shadow-md scale-105"
+            : isDone
+              ? "bg-emerald-100 border-emerald-300 text-emerald-800"
+              : "bg-white border-stone-200 text-stone-500 hover:border-stone-300"
         }`;
 
         btn.onclick = () => {
           playSynthSound('click');
           if (!isToday) {
-            showToast(`Hoy es ${daysShort[todayIndex]}. Solo puedes registrar la rutina de hoy.`, "error");
+            showToast(`Hoy es ${daysShort[todayIndex]}. Solo se permite completar la rutina del día de hoy para evitar lesiones.`, "error");
           } else {
-            showToast("Estas en el entrenamiento de hoy. ¡A por todas!", "success");
+            showToast("Estás en tu sesión actual de entrenamiento. ¡Sigue adelante!", "success");
           }
         };
 
@@ -1122,6 +1227,8 @@
       });
     }
 
+    // Renderizar la rutina correspondiente según el día de hoy
+    // STREAMING_CHUNK: Vinculando el volumen de repeticiones en vueltas al nivel actual de la cuenta del deportista
     function renderCurrentRoutine() {
       const container = document.getElementById("exercises-list-container");
       container.innerHTML = "";
@@ -1132,25 +1239,46 @@
       if (!currentRoutine) return;
 
       document.getElementById("current-routine-title").innerText = currentRoutine.name;
+      document.getElementById("daily-tip-text").innerText = currentRoutine.tip;
 
-      // Escalabilidad de dificultad por Nivel (+8% repeticiones/tiempo por nivel)
+      if (todayIndex === 0) {
+        // Domingo: Descanso
+        container.innerHTML = `
+          <div class="text-center py-12 px-6 border border-dashed border-stone-300 rounded-3xl bg-stone-50">
+            <div class="text-stone-400 text-5xl mb-4"><i class="fa-solid fa-moon"></i></div>
+            <h3 class="font-bebas text-2xl text-stone-800 mb-2">Día de Descanso Absoluto</h3>
+            <p class="text-sm text-stone-600 max-w-sm mx-auto leading-relaxed">
+              Tu cuerpo necesita descansar para crecer y hacerse más fuerte. Hoy toca recargar energías y dormir bien. ¡Los músculos crecen cuando descansas!
+            </p>
+          </div>
+        `;
+        document.getElementById("btn-finish-routine").style.display = "none";
+        document.getElementById("exercises-progress-text").innerText = "Día de reposo";
+        document.getElementById("exercises-progress-percent").innerText = "-";
+        document.getElementById("exercises-progress-bar").style.width = "0%";
+        return;
+      }
+
+      document.getElementById("btn-finish-routine").style.display = "block";
+
+      // Escalabilidad de repeticiones de Paco según su nivel (+8% de volumen por nivel)
       const levelMultiplier = 1 + (userState.level - 1) * 0.08;
       const multiplierPercentage = Math.round((userState.level - 1) * 8);
 
       document.getElementById("current-routine-meta").innerHTML = `
-        Duracion: <span class="text-rose-600 font-extrabold">${currentRoutine.duration}</span> • 
+        Duración: <span class="text-rose-600 font-extrabold">${currentRoutine.duration}</span> • 
         <span class="text-indigo-600 font-extrabold">+${currentRoutine.xp} XP</span> • 
         <span class="text-amber-600 font-extrabold">MONEDAS +${currentRoutine.coins}</span> 
-        <span class="text-[10px] text-stone-400 font-extrabold block sm:inline sm:ml-2">(Dificultad Nivel ${userState.level}: +${multiplierPercentage}% repeticiones)</span>
+        <span class="text-[10px] text-stone-400 font-extrabold block sm:inline sm:ml-2">(Nivel ${userState.level}: +${multiplierPercentage}% repeticiones)</span>
       `;
 
       let completedCount = 0;
 
-      currentRoutine.exercises.forEach((ex, idx) => {
-        const isDone = localStorage.getItem(`done_${ex.id}`) === "true";
+      currentRoutine.exercises.forEach((ex) => {
+        const isDone = localStorage.getItem(`done_${ex.id}_${userState.email}`) === "true";
         if (isDone) completedCount++;
 
-        // Cantidad escalada
+        // Cantidad de vueltas escalada
         const scaledQty = Math.ceil(ex.baseQty * levelMultiplier);
 
         const card = document.createElement("div");
@@ -1203,8 +1331,8 @@
 
     function toggleExerciseStatus(exId) {
       playSynthSound('success');
-      const isDone = localStorage.getItem(`done_${exId}`) === "true";
-      localStorage.setItem(`done_${exId}`, (!isDone).toString());
+      const isDone = localStorage.getItem(`done_${exId}_${userState.email}`) === "true";
+      localStorage.setItem(`done_${exId}_${userState.email}`, (!isDone).toString());
       renderCurrentRoutine();
     }
 
@@ -1245,18 +1373,21 @@
 
     function markCurrentExerciseDone() {
       if (activeExerciseId) {
-        localStorage.setItem(`done_${activeExerciseId}`, "true");
-        showToast("Ejercicio completado con exito", "success");
+        localStorage.setItem(`done_${activeExerciseId}_${userState.email}`, "true");
+        showToast("Ejercicio completado con éxito.", "success");
         closeExerciseModal();
         renderCurrentRoutine();
       }
     }
 
-    // Motor de Dibujo 2D Vectorial para los Ejercicios de Calistenia
+    // ═══════════════════════════════════════════════════════
+    //  DIBUJO 2D DEL STICKMAN ANIMADO PARA CALISTENIA
+    // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Programando los motores vectoriales del Canvas 2D para renderizar las articulaciones del stickman
     function drawStickman(type, frame, context, width, height) {
       context.clearRect(0, 0, width, height);
 
-      // Cuadrícula ligera de fondo
+      // Cuadrícula de fondo
       context.strokeStyle = "#e8e7e1";
       context.lineWidth = 1;
       for (let x = 0; x < width; x += 40) {
@@ -1456,8 +1587,14 @@
         drawFloor(footY);
       }
     }
+  </script>
 
-    function finishRoutineAndGetDrop() {
+  <script>
+    // ═══════════════════════════════════════════════════════
+    //  EVENTOS Y LOGICA DE NIVELES Y STARR DROPS
+    // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Procesando los estados de finalización de entrenamientos para gatillar Starr Drops
+    function finishRoutineAndTriggerLevelUp() {
       const todayIndex = new Date().getDay();
       const currentRoutine = WEEKLY_ROUTINES[todayIndex];
 
@@ -1465,12 +1602,12 @@
 
       let allDone = true;
       currentRoutine.exercises.forEach(ex => {
-        const isDone = localStorage.getItem(`done_${ex.id}`) === "true";
+        const isDone = localStorage.getItem(`done_${ex.id}_${userState.email}`) === "true";
         if (!isDone) allDone = false;
       });
 
       if (!allDone) {
-        showToast("Registra todos los ejercicios de hoy como hechos para finalizar", "error");
+        showToast("Registra todos los ejercicios de hoy como hechos para completar.", "error");
         return;
       }
 
@@ -1480,10 +1617,11 @@
       userState.racha += 1; 
       userState.lastWorkoutDate = new Date().toISOString(); 
 
-      showToast(`Rutina completada. +${currentRoutine.xp} XP y +${currentRoutine.coins} Monedas`, "success");
+      localStorage.setItem(`routine_done_${todayIndex}_${userState.email}`, "true");
+
+      showToast(`Entrenamiento completado con éxito. +${currentRoutine.xp} XP y +${currentRoutine.coins} Monedas`, "success");
       playSynthSound('success');
 
-      // Comprobar subida de nivel
       if (userState.xp >= userState.xpNeeded) {
         userState.xp -= userState.xpNeeded;
         userState.level += 1;
@@ -1564,24 +1702,23 @@
         dropRewardCard.classList.remove("scale-95", "opacity-0");
       }, 50);
 
-      // Recompensas exclusivas de monedas y cosméticos sin XP ni escudos de racha
+      // Recompensas exclusivas de monedas y cosméticos (sin XP ni escudos de racha)
       let earnedCoins = 50 * (currentRarityIndex + 1);
       let prizeTitle = `+${earnedCoins} Monedas`;
       let prizeIconClass = "fa-coins text-amber-500";
-      let prizeDesc = "Sumadas de manera directa a tu cuenta deportiva.";
+      let prizeDesc = "Sumadas de manera directa a tu cuenta de usuario.";
 
       if (currentRarityIndex >= 2 && Math.random() > 0.5) {
         const gymItems = [
           "Cinta de sudor de camuflaje",
-          "Mancuerna retro de plastico",
-          "Camiseta fitness holografica",
-          "Banda elastica ultra resistente"
+          "Mancuerna retro de plástico",
+          "Camiseta fitness holográfica",
+          "Banda elástica ultra resistente"
         ];
         const randomItem = gymItems[Math.floor(Math.random() * gymItems.length)];
         prizeTitle = randomItem;
         prizeIconClass = "fa-dumbbell text-indigo-500";
         prizeDesc = "Un nuevo equipamiento exclusivo añadido a tu inventario.";
-        
         userState.inventory.push(randomItem);
       }
 
@@ -1611,7 +1748,202 @@
 
       updateUserUI();
     }
+  </script>
 
+  <script>
+    // ═══════════════════════════════════════════════════════
+    //  TIENDA FITNESS COMPLETA Y SECCIONES DE JUEGOS
+    // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Creando el listado dinámico de la tienda fitness con control inteligente de saldo
+    function openFullpageStore() {
+      playSynthSound('click');
+      document.getElementById("workout-view-container").classList.add("hidden");
+      document.getElementById("store-fullpage-view").classList.remove("hidden");
+      renderFullpageStore();
+    }
+
+    function closeFullpageStore() {
+      playSynthSound('click');
+      document.getElementById("store-fullpage-view").classList.add("hidden");
+      document.getElementById("workout-view-container").classList.remove("hidden");
+    }
+
+    function renderFullpageStore() {
+      document.getElementById("store-coins-display").innerText = userState.coins;
+
+      const itemsContainer = document.getElementById("store-items-grid");
+      const gamesContainer = document.getElementById("store-games-grid");
+
+      itemsContainer.innerHTML = "";
+      gamesContainer.innerHTML = "";
+
+      // Listar artículos y atenuar en gris si no hay saldo suficiente
+      STORE_ITEMS.forEach(item => {
+        const ownsItem = userState.inventory.includes(item.name);
+        const canAfford = userState.coins >= item.cost;
+
+        const card = document.createElement("div");
+        
+        if (!ownsItem && !canAfford) {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-stone-100 opacity-50 grayscale gap-4";
+        } else {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-white shadow-sm hover:border-indigo-400 hover:shadow-md transition-all gap-4";
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-xl">
+              <i class="fa-solid ${item.icon}"></i>
+            </div>
+            <div class="flex-grow">
+              <span class="text-[10px] font-black uppercase text-indigo-500 tracking-wider bg-indigo-50 px-2 py-0.5 rounded">${item.category}</span>
+              <h4 class="font-black text-stone-800 text-base mt-1">${item.name}</h4>
+              <p class="text-xs text-stone-500 mt-0.5">${item.desc}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 justify-end sm:justify-center">
+            <span class="font-black text-amber-600 text-sm flex items-center gap-1">
+              <i class="fa-solid fa-coins"></i> ${item.cost}
+            </span>
+            <button onclick="buyStoreItem('${item.name}', ${item.cost})" 
+              class="font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm ${
+                ownsItem 
+                  ? "bg-stone-200 text-stone-400 cursor-not-allowed" 
+                  : canAfford 
+                    ? "bg-indigo-600 hover:bg-indigo-700 text-white" 
+                    : "bg-stone-300 text-stone-500 cursor-not-allowed"
+              }" ${ownsItem || !canAfford ? "disabled" : ""}>
+              ${ownsItem ? "ADQUIRIDO" : "COMPRAR"}
+            </button>
+          </div>
+        `;
+        itemsContainer.appendChild(card);
+      });
+
+      // Listar videojuegos y atenuar en gris si no hay saldo suficiente
+      STORE_GAMES.forEach(game => {
+        const ownsItem = userState.inventory.includes(game.name);
+        const canAfford = userState.coins >= game.cost;
+
+        const card = document.createElement("div");
+
+        if (!ownsItem && !canAfford) {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-stone-100 opacity-50 grayscale gap-4";
+        } else {
+          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-white shadow-sm hover:border-emerald-400 hover:shadow-md transition-all gap-4";
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center gap-3 text-left">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-xl">
+              <i class="fa-solid ${game.icon}"></i>
+            </div>
+            <div class="flex-grow">
+              <span class="text-[10px] font-black uppercase text-emerald-500 tracking-wider bg-emerald-50 px-2 py-0.5 rounded">${game.category}</span>
+              <h4 class="font-black text-stone-800 text-base mt-1">${game.name}</h4>
+              <p class="text-xs text-stone-500 mt-0.5">${game.desc}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 justify-end sm:justify-center">
+            ${ownsItem 
+              ? `<button onclick="launchGame('${game.url}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm">
+                  JUGAR (30 MIN)
+                 </button>`
+              : `
+                <span class="font-black text-amber-600 text-sm flex items-center gap-1">
+                  <i class="fa-solid fa-coins"></i> ${game.cost}
+                </span>
+                <button onclick="buyStoreItem('${game.name}', ${game.cost})" 
+                  class="font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm ${
+                    canAfford ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-stone-300 text-stone-500 cursor-not-allowed"
+                  }" ${!canAfford ? "disabled" : ""}>
+                  COMPRAR
+                </button>
+              `
+            }
+          </div>
+        `;
+        gamesContainer.appendChild(card);
+      });
+    }
+
+    function buyStoreItem(name, cost) {
+      if (userState.coins < cost) {
+        showToast("No tienes suficientes monedas.", "error");
+        return;
+      }
+
+      playSynthSound('success');
+      userState.coins -= cost;
+      userState.inventory.push(name);
+      
+      if (name.includes("Gladiador")) {
+        userState.userTitle = "Gladiador";
+      }
+
+      showToast(`Adquiriste ${name} con éxito.`, "success");
+      syncStateToCloud();
+      updateUserUI();
+      renderFullpageStore();
+    }
+
+    // Abrir juego en nueva pestaña y controlar sesión de 30 minutos
+    function launchGame(gameUrl) {
+      playSynthSound('success');
+      showToast("Abriendo juego en una pestaña externa...", "info");
+      
+      gameWindowRef = window.open(gameUrl, '_blank');
+      gameSecondsRemaining = 1800; // 30 minutos
+      
+      closeFullpageStore();
+      document.getElementById("game-timer-banner").classList.remove("hidden");
+
+      if (activeGameTimer) clearInterval(activeGameTimer);
+
+      activeGameTimer = setInterval(() => {
+        gameSecondsRemaining--;
+        updateGameTimerDisplay();
+
+        if (gameSecondsRemaining <= 0) {
+          triggerGameLockout();
+        }
+      }, 1000);
+    }
+
+    function updateGameTimerDisplay() {
+      const mins = Math.floor(gameSecondsRemaining / 60);
+      const secs = gameSecondsRemaining % 60;
+      const formattedTime = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      document.getElementById("game-countdown-text").innerText = formattedTime;
+    }
+
+    function terminateGameSession() {
+      playSynthSound('click');
+      if (gameWindowRef && !gameWindowRef.closed) {
+        gameWindowRef.close();
+      }
+
+      clearInterval(activeGameTimer);
+      document.getElementById("game-timer-banner").classList.add("hidden");
+      showToast("Sesión de juego cerrada.", "info");
+    }
+
+    function triggerGameLockout() {
+      terminateGameSession();
+      document.getElementById("game-lockout-overlay").classList.remove("hidden");
+    }
+
+    function dismissLockout() {
+      playSynthSound('click');
+      document.getElementById("game-lockout-overlay").classList.add("hidden");
+    }
+  </script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════
+    //  EDICIÓN DE PERFIL DEL ATLETA
+    // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Creando el gestor de subida de archivos locales en base64 para la fotografía del avatar
     function toggleProfileModal() {
       playSynthSound('click');
       const modal = document.getElementById("profile-modal");
@@ -1644,7 +1976,7 @@
         reader.onload = function(e) {
           userState.avatarImage = e.target.result;
           updateModalAvatarPreview();
-          showToast("Imagen de perfil lista para guardar", "info");
+          showToast("Imagen de perfil seleccionada.", "info");
         };
         reader.readAsDataURL(file);
       }
@@ -1655,14 +1987,14 @@
       userState.avatarImage = null;
       document.getElementById("avatar-image-input").value = "";
       updateModalAvatarPreview();
-      showToast("Se ha quitado la foto de perfil", "info");
+      showToast("Se quitó la foto de perfil.", "info");
     }
 
     function changeBg(bgClass) {
       playSynthSound('click');
       userState.avatarBg = bgClass;
       updateModalAvatarPreview();
-      showToast("Color del avatar actualizado", "success");
+      showToast("Color de fondo actualizado.", "success");
     }
 
     function saveDetailedProfile() {
@@ -1678,197 +2010,9 @@
       syncStateToCloud();
       updateUserUI();
       toggleProfileModal();
-      showToast("Tu perfil se ha guardado correctamente", "success");
+      showToast("Perfil guardado correctamente.", "success");
     }
 
-    function openFullpageStore() {
-      playSynthSound('click');
-      document.getElementById("workout-view-container").classList.add("hidden");
-      document.getElementById("store-fullpage-view").classList.remove("hidden");
-      renderFullpageStore();
-    }
-
-    function closeFullpageStore() {
-      playSynthSound('click');
-      document.getElementById("store-fullpage-view").classList.add("hidden");
-      document.getElementById("workout-view-container").classList.remove("hidden");
-    }
-
-    function renderFullpageStore() {
-      document.getElementById("store-coins-display").innerText = userState.coins;
-
-      const itemsContainer = document.getElementById("store-items-grid");
-      const gamesContainer = document.getElementById("store-games-grid");
-
-      itemsContainer.innerHTML = "";
-      gamesContainer.innerHTML = "";
-
-      STORE_ITEMS.forEach(item => {
-        const ownsItem = userState.inventory.includes(item.name);
-        const canAfford = userState.coins >= item.cost;
-
-        const card = document.createElement("div");
-        
-        if (!ownsItem && !canAfford) {
-          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-stone-100 opacity-60 grayscale gap-4";
-        } else {
-          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-white shadow-sm hover:border-indigo-400 hover:shadow-md transition-all gap-4";
-        }
-
-        card.innerHTML = `
-          <div class="flex items-center gap-3 text-left">
-            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-xl">
-              <i class="fa-solid ${item.icon}"></i>
-            </div>
-            <div class="flex-grow">
-              <span class="text-[10px] font-black uppercase text-indigo-500 tracking-wider bg-indigo-50 px-2 py-0.5 rounded">${item.category}</span>
-              <h4 class="font-black text-stone-800 text-base mt-1">${item.name}</h4>
-              <p class="text-xs text-stone-500 mt-0.5">${item.desc}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3 justify-end sm:justify-center">
-            <span class="font-black text-amber-600 text-sm flex items-center gap-1">
-              <i class="fa-solid fa-coins"></i> ${item.cost}
-            </span>
-            <button onclick="buyStoreItem('${item.name}', ${item.cost})" 
-              class="font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm ${
-                ownsItem 
-                  ? "bg-stone-200 text-stone-400 cursor-not-allowed" 
-                  : canAfford 
-                    ? "bg-indigo-600 hover:bg-indigo-700 text-white" 
-                    : "bg-stone-300 text-stone-500 cursor-not-allowed"
-              }" ${ownsItem ? "disabled" : ""}>
-              ${ownsItem ? "ADQUIRIDO" : "COMPRAR"}
-            </button>
-          </div>
-        `;
-        itemsContainer.appendChild(card);
-      });
-
-      STORE_GAMES.forEach(game => {
-        const ownsItem = userState.inventory.includes(game.name);
-        const canAfford = userState.coins >= game.cost;
-
-        const card = document.createElement("div");
-
-        if (!ownsItem && !canAfford) {
-          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-stone-100 opacity-60 grayscale gap-4";
-        } else {
-          card.className = "flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-stone-200 rounded-2xl bg-white shadow-sm hover:border-emerald-400 hover:shadow-md transition-all gap-4";
-        }
-
-        card.innerHTML = `
-          <div class="flex items-center gap-3 text-left">
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-xl">
-              <i class="fa-solid ${game.icon}"></i>
-            </div>
-            <div class="flex-grow">
-              <span class="text-[10px] font-black uppercase text-emerald-500 tracking-wider bg-emerald-50 px-2 py-0.5 rounded">${game.category}</span>
-              <h4 class="font-black text-stone-800 text-base mt-1">${game.name}</h4>
-              <p class="text-xs text-stone-500 mt-0.5">${game.desc}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3 justify-end sm:justify-center">
-            ${ownsItem 
-              ? `<button onclick="launchGame('${game.url}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm">
-                  JUGAR (30 MIN)
-                 </button>`
-              : `
-                <span class="font-black text-amber-600 text-sm flex items-center gap-1">
-                  <i class="fa-solid fa-coins"></i> ${game.cost}
-                </span>
-                <button onclick="buyStoreItem('${game.name}', ${game.cost})" 
-                  class="font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-all shadow-sm ${
-                    canAfford ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-stone-300 text-stone-500 cursor-not-allowed"
-                  }">
-                  COMPRAR
-                </button>
-              `
-            }
-          </div>
-        `;
-        gamesContainer.appendChild(card);
-      });
-    }
-
-    function buyStoreItem(name, cost) {
-      if (userState.coins < cost) {
-        showToast("No tienes suficientes monedas. Completa mas entrenamientos", "error");
-        return;
-      }
-
-      playSynthSound('success');
-      userState.coins -= cost;
-      userState.inventory.push(name);
-      
-      if (name.includes("Gladiador")) {
-        userState.userTitle = "Gladiador";
-      }
-
-      showToast(`Has adquirido ${name} con exito`, "success");
-      syncStateToCloud();
-      updateUserUI();
-      renderFullpageStore();
-    }
-
-    function launchGame(gameUrl) {
-      if (gameActive) {
-        showToast("Ya tienes un juego activo. Espera a que termine tu sesion.", "error");
-        return;
-      }
-
-      playSynthSound('success');
-      showToast("Abriendo juego en una nueva pestaña externa...", "info");
-      
-      gameWindowRef = window.open(gameUrl, '_blank');
-      
-      gameActive = true;
-      gameSecondsRemaining = 1800; // 30 minutos
-      
-      closeFullpageStore();
-      
-      document.getElementById("game-timer-banner").classList.remove("hidden");
-
-      gameTimerInterval = setInterval(() => {
-        gameSecondsRemaining--;
-        updateGameTimerDisplay();
-
-        if (gameSecondsRemaining <= 0) {
-          triggerGameLockout();
-        }
-      }, 1000);
-    }
-
-    function updateGameTimerDisplay() {
-      const mins = Math.floor(gameSecondsRemaining / 60);
-      const secs = gameSecondsRemaining % 60;
-      const formattedTime = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      document.getElementById("game-countdown-text").innerText = formattedTime;
-    }
-
-    function terminateGameSession() {
-      playSynthSound('click');
-      if (gameWindowRef && !gameWindowRef.closed) {
-        gameWindowRef.close();
-      }
-
-      clearInterval(gameTimerInterval);
-      gameActive = false;
-      document.getElementById("game-timer-banner").classList.add("hidden");
-      showToast("Sesion de juego cerrada.", "info");
-    }
-
-    function triggerGameLockout() {
-      terminateGameSession();
-      document.getElementById("game-lockout-overlay").classList.remove("hidden");
-    }
-
-    function dismissLockout() {
-      playSynthSound('click');
-      document.getElementById("game-lockout-overlay").classList.add("hidden");
-    }
-
-    // Toasts informativos
     function showToast(msg, type = "info") {
       const container = document.getElementById("toast-container");
       const toast = document.createElement("div");
@@ -1897,6 +2041,24 @@
         setTimeout(() => toast.remove(), 300);
       }, 4000);
     }
+
+    // Inicializador al cargar la página
+    // STREAMING_CHUNK: Validando persistencia de sesión por Hardware en carga de ventana
+    window.onload = function() {
+      const session = localStorage.getItem(SESSION_KEY);
+      if (session) {
+        try {
+          const { email } = JSON.parse(session);
+          loadUserApp(email);
+        } catch (e) {
+          document.getElementById("auth-screen").classList.remove("hidden");
+          renderPasskeyInterface();
+        }
+      } else {
+        document.getElementById("auth-screen").classList.remove("hidden");
+        renderPasskeyInterface();
+      }
+    };
   </script>
 
 </body>
