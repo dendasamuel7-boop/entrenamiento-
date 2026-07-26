@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Plan de Entrenamiento</title>
-  <!-- Tailwind CSS para diseño fluido y adaptativo -->
+  <!-- Tailwind CSS para soporte de clases adaptativas -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts para tipografías deportivas y limpias -->
+  <!-- Google Fonts de la identidad visual original -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- FontAwesome para todos los iconos deportivos, libre de emojis -->
+  <!-- FontAwesome para todos los iconos deportivos, eliminando emojis -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Canvas Confetti para la celebración al abrir Starr Drops -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     :root {
-      --bg: #f4f3ef; /* Fondo beige claro de la identidad visual original */
+      --bg: #f4f3ef; /* Fondo beige claro de la identidad original */
       --surface: #ffffff;
       --surface2: #f0ede8;
       --accent: #e63946; /* Coral deportivo */
@@ -41,6 +41,7 @@
     }
 
     /* Estilos del panel de acceso súper simplificado */
+    <!-- STREAMING_CHUNK: Configurando los estilos del panel de autenticación flotante y animaciones del escáner biométrico -->
     #auth-screen {
       position: fixed;
       inset: 0;
@@ -57,7 +58,7 @@
       border-radius: 24px;
       padding: 36px 32px;
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border);
     }
@@ -91,6 +92,16 @@
       transform: translateY(1px);
     }
 
+    /* Animación del escáner láser */
+    @keyframes scanAnimation {
+      0% { top: 0%; }
+      50% { top: 100%; }
+      100% { top: 0%; }
+    }
+    .scanner-line {
+      animation: scanAnimation 2s infinite linear;
+    }
+
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -106,26 +117,104 @@
 <body class="text-slate-800 min-h-screen flex flex-col antialiased">
 
   <!-- TOASTS DE NOTIFICACIÓN DE SISTEMA -->
-  <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-5 right-5 z-[300] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- SISTEMA DE ACCESO SIMPLIFICADO AL MÁXIMO -->
-  <div id="auth-screen" class="flex">
-    <div class="auth-box space-y-6 text-center">
-      <div class="font-bebas text-5xl tracking-widest text-slate-800">
+  <!-- SISTEMA DE ACCESO AVANZADO POR PASSKEYS (VINCULACIÓN POR HARDWARE) -->
+  <!-- STREAMING_CHUNK: Diseñando el layout del panel explicativo de Passkeys en la interfaz de login -->
+  <div id="auth-screen">
+    <div class="auth-box space-y-6">
+      <div class="font-bebas text-center text-5xl tracking-widest text-slate-800">
         MI <span class="text-rose-600">PLAN</span>
       </div>
-      <div class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest">
-        Sin correos • Sin contraseñas • Directo al grano
+      <div class="text-center text-[10px] text-slate-400 font-extrabold uppercase tracking-widest">
+        Sin pesas • Solo tu cuerpo • Acceso Moderno
       </div>
 
-      <!-- Contenido dinámico inyectado por JavaScript (Registro rápido o Bienvenido de vuelta) -->
-      <div id="quick-auth-container" class="space-y-4">
+      <!-- Tarjeta explicativa de Passkeys (Solicitada exactamente por el usuario) -->
+      <div class="bg-stone-50 border border-stone-200 rounded-2xl p-4 space-y-3 text-left text-xs">
+        <h3 class="font-black text-sm text-stone-900 flex items-center gap-2">
+          <i class="fa-solid fa-key text-rose-500"></i> Llaves de acceso (Passkeys)
+        </h3>
+        <p class="text-stone-600 font-bold leading-relaxed">
+          Es la tecnología moderna que reemplaza por completo a los correos y las contraseñas.
+        </p>
+        <div class="space-y-2 pt-1 border-t border-stone-100">
+          <p class="text-stone-700">
+            <strong class="text-stone-900 block font-black">Cómo funciona:</strong>
+            Vincula la cuenta directamente al hardware de tu dispositivo.
+          </p>
+          <p class="text-stone-700">
+            <strong class="text-stone-900 block font-black">Acceso:</strong>
+            Usas tu huella dactilar, reconocimiento facial o el PIN de tu móvil/ordenador.
+          </p>
+          <p class="text-stone-700">
+            <strong class="text-stone-900 block font-black">Seguridad:</strong>
+            Es el método más seguro actualmente contra el hackeo y el phishing.
+          </p>
+        </div>
+      </div>
+
+      <!-- Simulación de Hardware (Fácil Toggle) -->
+      <!-- STREAMING_CHUNK: Creando el selector de simulación para simular si el dispositivo cuenta con sensores biométricos -->
+      <div class="bg-stone-50 border border-stone-200 rounded-xl p-3 flex items-center justify-between">
+        <span class="text-xs font-bold text-stone-500">Simular sensores biométricos (Huella/Cara):</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="sensor-hardware-toggle" checked class="sr-only peer" onchange="toggleSensorHardware()">
+          <div class="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:width-5 after:transition-all peer-checked:bg-rose-500"></div>
+        </label>
+      </div>
+
+      <!-- Contenedor de acción interactiva (Cargado dinámicamente por JS) -->
+      <div id="passkey-action-container" class="space-y-4">
         <!-- Se inyecta por JS al cargar la página -->
       </div>
     </div>
   </div>
 
-  <!-- CINEMÁTICA INTERACTIVA DE BIENVENIDA (Hito deportivo real del día de hoy) -->
+  <!-- MODAL INTERACTIVO DE AUTENTICACIÓN BIOMÉTRICA -->
+  <!-- STREAMING_CHUNK: Diseñando el modal interactivo de simulación biométrica con barra de carga y escáner láser -->
+  <div id="biometric-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[250] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-6 shadow-2xl relative overflow-hidden">
+      <div class="w-24 h-24 mx-auto bg-stone-50 border border-stone-200 rounded-2xl relative flex items-center justify-center overflow-hidden">
+        <i id="biometric-icon" class="fa-solid fa-fingerprint text-5xl text-rose-600"></i>
+        <!-- Línea de escaneo láser -->
+        <div class="absolute left-0 right-0 h-1 bg-rose-500/80 shadow-[0_0_8px_#f43f5e] scanner-line"></div>
+      </div>
+
+      <div>
+        <h4 id="biometric-status-title" class="font-bebas text-2xl text-stone-900 tracking-wide">VERIFICANDO IDENTIDAD</h4>
+        <p id="biometric-status-desc" class="text-stone-500 text-xs font-bold mt-1">Coloque su huella en el lector o mire a la cámara</p>
+      </div>
+
+      <!-- Barra de progreso de escaneo -->
+      <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
+        <div id="biometric-progress-bar" class="bg-rose-500 h-full transition-all duration-100" style="width: 0%"></div>
+      </div>
+
+      <p class="text-[10px] text-stone-400 font-extrabold uppercase tracking-widest">Tecnología Passkey Local Protegida</p>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONTRASEÑA DE RESPALDO (CUANDO NO HAY BIOMETRÍA) -->
+  <!-- STREAMING_CHUNK: Creando el panel de caída para solicitar la contraseña de respaldo si no existen sensores -->
+  <div id="fallback-password-modal" class="hidden fixed inset-0 bg-stone-950/90 z-[240] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-5 shadow-2xl">
+      <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mx-auto">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h4 class="font-bebas text-2xl text-stone-900 tracking-wide">INGRESE SU CONTRASEÑA</h4>
+        <p class="text-stone-500 text-xs font-bold mt-1">Biometría no disponible. Use la clave configurada.</p>
+      </div>
+      <input type="password" id="fallback-password-input" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-center font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="••••••••">
+      <div class="flex gap-2">
+        <button onclick="closeFallbackPasswordModal()" class="w-1/2 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 rounded-xl text-xs uppercase">Cancelar</button>
+        <button onclick="submitFallbackPassword()" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-xl text-xs uppercase">Verificar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CINEMÁTICA INTERACTIVA DE BIENVENIDA (Hito deportivo del día) -->
   <div id="intro-screen" class="fixed inset-0 bg-stone-900/95 z-50 flex items-center justify-center p-4 transition-all duration-500 opacity-0 pointer-events-none" onclick="dismissIntro()">
     <div class="bg-white border-4 border-rose-500 rounded-3xl p-8 max-w-2xl w-full text-center space-y-6 shadow-2xl transform scale-95 transition-all duration-500" onclick="event.stopPropagation()">
       <div class="inline-block px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-xs uppercase font-extrabold tracking-widest font-bebas">
@@ -175,7 +264,8 @@
     </div>
   </div>
 
-  <!-- VISTA PRINCIPAL DE ENTRENAMIENTO -->
+  <!-- VISTA PRINCIPAL DE ENTRENAMIENTO (POR DEFECTO OCULTA) -->
+  <!-- STREAMING_CHUNK: Creando el esqueleto del panel principal de usuario y entrenamiento adaptado a móviles -->
   <div id="workout-view-container" class="hidden w-full flex-grow flex flex-col">
     
     <header class="max-w-3xl mx-auto px-4 pt-8 pb-4 w-full">
@@ -209,7 +299,7 @@
             <span id="user-coins-display" class="font-black text-amber-700 text-sm">0</span>
           </div>
 
-          <!-- Botón dedicado a abrir la Tienda de pantalla completa -->
+          <!-- Botón de Tienda -->
           <button onclick="openFullpageStore()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-3 py-1.5 rounded-lg text-xs uppercase flex items-center gap-1.5 transition-all shadow-sm">
             <i class="fa-solid fa-store"></i> Tienda
           </button>
@@ -266,6 +356,7 @@
       </div>
 
       <!-- LISTA DE EJERCICIOS DEL DÍA DE ENTRENAMIENTO -->
+      <!-- STREAMING_CHUNK: Estructurando la lista del panel diario de ejercicios adaptada a la escala del deportista -->
       <div class="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-stone-100 pb-4 gap-3">
           <div>
@@ -290,7 +381,7 @@
           </div>
         </div>
 
-        <!-- Bloques ultra-sensibles clicables en cualquier parte de la tarjeta -->
+        <!-- Tarjetas interactivas cargadas dinámicamente -->
         <div id="exercises-list-container" class="space-y-3"></div>
       </div>
 
@@ -371,40 +462,62 @@
     </div>
   </div>
 
-  <!-- MODAL DE VISUALIZACIÓN DEL STICKMAN ANIMADO EN CANVAS -->
-  <div id="exercise-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
+  <!-- MODAL DE EDICIÓN DE PERFIL DETALLADO -->
+  <div id="profile-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
       
-      <div class="bg-stone-900 p-5 text-white flex justify-between items-center">
+      <div class="bg-rose-600 p-5 text-white flex justify-between items-center">
         <div>
-          <h3 id="modal-exercise-name" class="text-xl font-black font-bebas tracking-wide">EJERCICIO</h3>
-          <p class="text-xs text-rose-500 font-bold uppercase tracking-wider mt-0.5">Instructor Virtual de Calistenia</p>
+          <h3 class="text-xl font-black font-bebas tracking-wide">EDITAR TU PERFIL FITNESS</h3>
+          <p class="text-xs text-rose-100 font-bold uppercase">Configura tu identidad deportiva</p>
         </div>
-        <button onclick="closeExerciseModal()" class="w-8 h-8 rounded-full bg-stone-800 flex items-center justify-center hover:bg-stone-700 transition-colors">
+        <button onclick="toggleProfileModal()" class="w-8 h-8 rounded-full bg-rose-700 flex items-center justify-center hover:bg-rose-800 transition-colors">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div class="relative bg-stone-100 border-b border-stone-200 flex items-center justify-center p-4">
-        <canvas id="stickman-canvas" width="400" height="260" class="w-full max-w-[400px] h-auto bg-stone-50 rounded-2xl shadow-inner border border-stone-200"></canvas>
+      <div class="p-6 space-y-4 max-h-[450px] overflow-y-auto">
+        <div class="flex flex-col items-center justify-center pb-2 border-b border-stone-100">
+          <div id="modal-avatar-preview" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl text-white font-bold mb-3 bg-rose-500 shadow-md border-2 border-white overflow-hidden">
+            U
+          </div>
+          <p class="text-xs text-stone-400 font-extrabold uppercase font-bebas">Foto de Perfil Activa</p>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Subir Imagen de Perfil</label>
+          <input type="file" id="avatar-image-input" accept="image/*" onchange="uploadProfileImage(event)" class="block w-full text-xs text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 cursor-pointer" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Nombre</label>
+          <input type="text" id="profile-input-name" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Usuario" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Título Deportivo</label>
+          <input type="text" id="profile-input-title" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Principiante" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black text-stone-500 uppercase">Color de Fondo del Avatar</label>
+          <div class="flex gap-2">
+            <button onclick="changeBg('bg-rose-600')" class="w-7 h-7 rounded-full bg-rose-600 border border-white"></button>
+            <button onclick="changeBg('bg-indigo-600')" class="w-7 h-7 rounded-full bg-indigo-600 border border-white"></button>
+            <button onclick="changeBg('bg-emerald-600')" class="w-7 h-7 rounded-full bg-emerald-600 border border-white"></button>
+            <button onclick="changeBg('bg-amber-500')" class="w-7 h-7 rounded-full bg-amber-500 border border-white"></button>
+            <button onclick="changeBg('bg-stone-800')" class="w-7 h-7 rounded-full bg-stone-800 border border-white"></button>
+          </div>
+        </div>
       </div>
 
-      <div class="p-6 space-y-4 text-center">
-        <p class="text-stone-600 text-sm">
-          Sigue las repeticiones del instructor virtual con una técnica excelente para evitar sobrecargas.
-        </p>
-
-        <!-- Unidad del ejercicio en vueltas (vta) -->
-        <div class="bg-rose-50 border border-rose-100 rounded-2xl py-3 px-5 inline-block">
-          <span id="modal-target-qty" class="text-2xl font-black text-rose-600">10</span>
-          <span id="modal-target-unit" class="text-sm font-bold text-rose-800 ml-1">vueltas</span>
-        </div>
-
-        <div>
-          <button onclick="markCurrentExerciseDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-2xl transition-all shadow-sm hover:shadow text-sm">
-            <i class="fa-solid fa-square-check"></i> Marcar Ejercicio como Hecho
-          </button>
-        </div>
+      <div class="bg-stone-50 p-4 border-t border-stone-100 flex justify-end gap-2">
+        <button onclick="clearUploadedImage()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-colors">
+          Quitar Imagen
+        </button>
+        <button onclick="saveDetailedProfile()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-5 py-2 rounded-xl text-xs uppercase transition-colors">
+          Guardar Cambios
+        </button>
       </div>
 
     </div>
@@ -473,67 +586,6 @@
     </div>
   </div>
 
-  <!-- MODAL DE EDICIÓN DE PERFIL DETALLADO -->
-  <div id="profile-modal" class="fixed inset-0 bg-stone-950/80 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-200 transform scale-95 transition-all duration-300">
-      
-      <div class="bg-rose-600 p-5 text-white flex justify-between items-center">
-        <div>
-          <h3 class="text-xl font-black font-bebas tracking-wide">EDITAR TU PERFIL FITNESS</h3>
-          <p class="text-xs text-rose-100 font-bold uppercase">Configura tu identidad deportiva</p>
-        </div>
-        <button onclick="toggleProfileModal()" class="w-8 h-8 rounded-full bg-rose-700 flex items-center justify-center hover:bg-rose-800 transition-colors">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="p-6 space-y-4 max-h-[450px] overflow-y-auto">
-        <div class="flex flex-col items-center justify-center pb-2 border-b border-stone-100">
-          <div id="modal-avatar-preview" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl text-white font-bold mb-3 bg-rose-500 shadow-md border-2 border-white overflow-hidden">
-            U
-          </div>
-          <p class="text-xs text-stone-400 font-extrabold uppercase font-bebas">Foto de Perfil Activa</p>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Subir Imagen de Perfil</label>
-          <input type="file" id="avatar-image-input" accept="image/*" onchange="uploadProfileImage(event)" class="block w-full text-xs text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 cursor-pointer" />
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Nombre</label>
-          <input type="text" id="profile-input-name" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Usuario" />
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Título Deportivo</label>
-          <input type="text" id="profile-input-title" class="w-full px-4 py-2 border border-stone-200 rounded-xl text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Ej. Principiante" />
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block text-xs font-black text-stone-500 uppercase">Color de Fondo del Avatar</label>
-          <div class="flex gap-2">
-            <button onclick="changeBg('bg-rose-600')" class="w-7 h-7 rounded-full bg-rose-600 border border-white"></button>
-            <button onclick="changeBg('bg-indigo-600')" class="w-7 h-7 rounded-full bg-indigo-600 border border-white"></button>
-            <button onclick="changeBg('bg-emerald-600')" class="w-7 h-7 rounded-full bg-emerald-600 border border-white"></button>
-            <button onclick="changeBg('bg-amber-500')" class="w-7 h-7 rounded-full bg-amber-500 border border-white"></button>
-            <button onclick="changeBg('bg-stone-800')" class="w-7 h-7 rounded-full bg-stone-800 border border-white"></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-stone-50 p-4 border-t border-stone-100 flex justify-end gap-2">
-        <button onclick="clearUploadedImage()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 font-extrabold px-4 py-2 rounded-xl text-xs uppercase transition-colors">
-          Quitar Imagen
-        </button>
-        <button onclick="saveDetailedProfile()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-5 py-2 rounded-xl text-xs uppercase transition-colors">
-          Guardar Cambios
-        </button>
-      </div>
-
-    </div>
-  </div>
-
   <script>
     // ═══════════════════════════════════════════════════════
     //  DATOS DE LA PLATAFORMA (Sujeto a la identidad original)
@@ -553,7 +605,8 @@
       racha: 0,
       lastWorkoutDate: null,
       completedToday: false,
-      inventory: []
+      inventory: [],
+      passkeyPassword: "pass" // Contraseña de respaldo obligatoria para Passkey
     };
 
     // 7 días de entrenamiento según las imágenes de calistenia originales
@@ -793,8 +846,9 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    //  SISTEMA DE ACCESO ULTRA-SIMPLIFICADO (Frictionless)
+    //  SISTEMA DE AUTENTICACIÓN AVANZADO POR PASSKEYS
     // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Implementando la base de datos de Passkeys local con soporte para sensores de hardware
     function getLocalStorageDB() {
       try {
         return JSON.parse(localStorage.getItem(USERS_DB_KEY)) || {};
@@ -807,60 +861,77 @@
       localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
     }
 
-    function getActiveSessionName() {
-      return localStorage.getItem('fit_active_user_name');
+    function getRegisteredDeviceUser() {
+      return localStorage.getItem('fit_passkey_registered_username');
     }
 
-    function setActiveSessionName(name) {
-      localStorage.setItem('fit_active_user_name', name);
+    function setRegisteredDeviceUser(username) {
+      localStorage.setItem('fit_passkey_registered_username', username);
     }
 
     function clearSession() {
       localStorage.removeItem(SESSION_KEY);
-      localStorage.removeItem('fit_active_user_name');
     }
 
-    // Renderizado del panel de acceso según si hay un usuario anterior
-    function renderAccessInterface() {
-      const container = document.getElementById("quick-auth-container");
-      const lastUserName = getActiveSessionName();
+    // Comprobar la simulación del hardware mediante el Switch del UI
+    function hasBiometricHardware() {
+      const toggle = document.getElementById("sensor-hardware-toggle");
+      return toggle ? toggle.checked : true;
+    }
 
-      if (lastUserName) {
+    function toggleSensorHardware() {
+      playSynthSound('click');
+      renderAccessInterface();
+    }
+
+    // Renderizado del panel de acceso dinámico de Passkeys
+    // STREAMING_CHUNK: Creando el generador de formularios de Passkey dinámicos adaptados a la configuración biométrica
+    function renderAccessInterface() {
+      const container = document.getElementById("passkey-action-container");
+      const savedUser = getRegisteredDeviceUser();
+      const biometricActive = hasBiometricHardware();
+
+      if (savedUser) {
         const db = getLocalStorageDB();
-        const userData = db[lastUserName] || { username: lastUserName, level: 1, racha: 0 };
+        const userData = db[savedUser] || { username: savedUser, level: 1, racha: 0 };
 
         container.innerHTML = `
-          <div class="space-y-5">
-            <div class="p-4 bg-stone-50 border border-stone-200 rounded-2xl">
-              <p class="text-xs text-stone-500 font-bold uppercase tracking-wider">Bienvenido de vuelta</p>
+          <div class="space-y-4">
+            <div class="p-4 bg-stone-50 border border-stone-200 rounded-2xl text-center">
+              <p class="text-xs text-stone-500 font-bold uppercase tracking-wider">Dispositivo Vinculado</p>
               <h3 class="text-2xl font-black text-stone-800 mt-1">${userData.username}</h3>
-              <div class="flex justify-center gap-4 text-xs font-black text-stone-500 mt-2 uppercase tracking-wide">
+              <div class="flex justify-center gap-4 text-[10px] font-black text-stone-400 mt-2 uppercase tracking-wide">
                 <span>Nivel ${userData.level}</span>
                 <span>•</span>
                 <span>Racha: ${userData.racha} días</span>
               </div>
             </div>
 
-            <button onclick="loginWithActiveUser('${userData.username}')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-xl font-bebas text-xl tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-2">
-              ENTRENAR <i class="fa-solid fa-play"></i>
+            <button onclick="attemptTrainingAccess('${userData.username}')" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-xl font-bebas text-xl tracking-widest uppercase shadow-md transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid ${biometricActive ? 'fa-fingerprint' : 'fa-key'} text-xl"></i> ENTRENAR
             </button>
 
             <button onclick="switchToNewUserForm()" class="text-xs text-stone-400 hover:text-stone-600 font-bold transition-colors underline block mx-auto">
-              No soy ${userData.username}, cambiar de cuenta
+              No soy ${userData.username}, configurar nueva llave
             </button>
           </div>
         `;
       } else {
         container.innerHTML = `
           <div class="space-y-4 text-left">
-            <p class="text-xs font-black text-rose-500 uppercase tracking-wider text-center">Configura tu Nombre para guardar progreso</p>
+            <p class="text-xs font-black text-rose-500 uppercase tracking-wider text-center">Registrar nuevo dispositivo Passkey</p>
             
-            <div class="space-y-2">
-              <input type="text" id="reg-name" class="w-full px-4 py-3.5 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="¿Cómo te llamas?">
+            <div class="space-y-3">
+              <input type="text" id="reg-name" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="¿Cómo te llamas?">
+              
+              <!-- Si no hay biometría, mostramos campo obligatorio para Contraseña de Respaldo -->
+              <div id="password-field-container" class="${biometricActive ? 'hidden' : ''}">
+                <input type="password" id="reg-password" class="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="Crear Contraseña de Respaldo (Sin sensores)">
+              </div>
             </div>
 
-            <button onclick="registerAndStartTraining()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wider uppercase shadow-md transition-all flex items-center justify-center gap-2">
-              EMPEZAR A ENTRENAR <i class="fa-solid fa-angle-right"></i>
+            <button onclick="registerNewPasskeyUser()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-xl font-bebas text-lg tracking-wider uppercase shadow-md transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-key-skeleton"></i> CREAR LLAVE DE ACCESO
             </button>
           </div>
         `;
@@ -869,16 +940,67 @@
 
     function switchToNewUserForm() {
       playSynthSound('click');
-      clearSession();
+      localStorage.removeItem('fit_passkey_registered_username');
       renderAccessInterface();
     }
 
-    function registerAndStartTraining() {
+    // Intento de acceso biométrico o caída a contraseña de respaldo
+    // STREAMING_CHUNK: Creando el control de verificación biométrica con caída a password segura
+    let activeLoginUser = "";
+
+    function attemptTrainingAccess(username) {
+      activeLoginUser = username;
+      const biometricActive = hasBiometricHardware();
+
+      if (biometricActive) {
+        // Ejecutamos animación biométrica
+        triggerBiometricScan('login', username);
+      } else {
+        // Dispositivo sin hardware de sensor. Abrimos modal de contraseña de respaldo
+        document.getElementById("fallback-password-input").value = "";
+        document.getElementById("fallback-password-modal").classList.remove("hidden");
+        playSynthSound('click');
+      }
+    }
+
+    function closeFallbackPasswordModal() {
+      playSynthSound('click');
+      document.getElementById("fallback-password-modal").classList.add("hidden");
+    }
+
+    function submitFallbackPassword() {
+      const passInput = document.getElementById("fallback-password-input").value;
+      const db = getLocalStorageDB();
+      const userData = db[activeLoginUser];
+
+      if (userData && userData.passkeyPassword === passInput) {
+        document.getElementById("fallback-password-modal").classList.add("hidden");
+        playSynthSound('success');
+        showToast(`Identidad verificada. ¡Bienvenido de vuelta, ${userData.username}!`, "success");
+        loginWithActiveUser(activeLoginUser);
+      } else {
+        playSynthSound('racha_lost'); // Sonido de error
+        showToast("Contraseña de respaldo incorrecta. Inténtelo de nuevo.", "error");
+      }
+    }
+
+    // Registro de nuevo usuario por Passkey
+    function registerNewPasskeyUser() {
       const nameInput = document.getElementById("reg-name").value.trim();
+      const biometricActive = hasBiometricHardware();
+      let passInput = "pass";
 
       if (!nameInput) {
-        showToast("Por favor, introduce tu nombre para continuar.", "error");
+        showToast("Por favor, introduce tu nombre para crear tu llave.", "error");
         return;
+      }
+
+      if (!biometricActive) {
+        passInput = document.getElementById("reg-password").value.trim();
+        if (!passInput) {
+          showToast("Dispositivo sin sensores: introduce una contraseña de respaldo.", "error");
+          return;
+        }
       }
 
       const db = getLocalStorageDB();
@@ -897,21 +1019,23 @@
           racha: 0,
           lastWorkoutDate: null,
           completedToday: false,
-          inventory: []
+          inventory: [],
+          passkeyPassword: passInput
         };
         saveLocalStorageDB(db);
       }
 
-      setActiveSessionName(nameInput);
-      localStorage.setItem(SESSION_KEY, JSON.stringify({ username: nameInput }));
-      
-      playSynthSound('success');
-      showToast(`¡Perfil creado para ${nameInput}!`, "success");
-      loadUserApp(nameInput);
+      // Disparar animación de vinculación biométrica o ir directo
+      if (biometricActive) {
+        triggerBiometricScan('register', nameInput);
+      } else {
+        setRegisteredDeviceUser(nameInput);
+        showToast(`¡Llave de acceso creada para ${nameInput} con contraseña!`, "success");
+        loginWithActiveUser(nameInput);
+      }
     }
 
     function loginWithActiveUser(name) {
-      playSynthSound('success');
       localStorage.setItem(SESSION_KEY, JSON.stringify({ username: name }));
       loadUserApp(name);
     }
@@ -919,8 +1043,8 @@
     function logOutUser() {
       playSynthSound('click');
       clearSession();
-      document.getElementById("workout-view-container").classList.add("hidden");
-      document.getElementById("auth-screen").classList.remove("hidden");
+      document.getElementById("workout-view-container").style.display = "none";
+      document.getElementById("auth-screen").style.display = "flex";
       renderAccessInterface();
     }
   </script>
@@ -953,12 +1077,63 @@
       { name: "ULTRALEGENDARIO", color: "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500", border: "border-white", text: "text-rose-300", shadow: "shadow-[0_0_25px_rgba(244,63,94,0.8)]" }
     ];
 
+    // Animación de escaneo Passkey
+    // STREAMING_CHUNK: Animando el lector biométrico y procesando la entrada segura a la sección de entrenamiento
+    function triggerBiometricScan(type, username) {
+      const modal = document.getElementById("biometric-modal");
+      const bar = document.getElementById("biometric-progress-bar");
+      const title = document.getElementById("biometric-status-title");
+      const desc = document.getElementById("biometric-status-desc");
+      const icon = document.getElementById("biometric-icon");
+
+      playSynthSound('click');
+
+      // Randomizar escáner facial o de huella para simular biometría real
+      if (Math.random() > 0.5) {
+        icon.className = "fa-solid fa-face-smile text-5xl text-rose-600";
+        desc.innerText = "Sostenga el dispositivo frente a su rostro...";
+        title.innerText = "ESCANEANDO ROSTRO";
+      } else {
+        icon.className = "fa-solid fa-fingerprint text-5xl text-rose-600";
+        desc.innerText = "Coloque su huella en el sensor táctil...";
+        title.innerText = "ESCANEANDO HUELLA";
+      }
+
+      modal.classList.remove("hidden");
+      bar.style.width = "0%";
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 8;
+        if (progress > 100) progress = 100;
+        bar.style.width = `${progress}%`;
+
+        if (progress % 24 === 0) playSynthSound('click');
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            modal.classList.add("hidden");
+            if (type === 'register') {
+              setRegisteredDeviceUser(username);
+              showToast(`¡Llave de acceso creada para ${username}!`, "success");
+            } else {
+              showToast(`Acceso biométrico concedido. ¡Hola, ${username}!`, "success");
+            }
+            playSynthSound('success');
+            loginWithActiveUser(username);
+          }, 400);
+        }
+      }, 100);
+    }
+
     function loadUserApp(username) {
       const db = getLocalStorageDB();
       userState = db[username];
 
-      document.getElementById("auth-screen").classList.add("hidden");
-      document.getElementById("workout-view-container").classList.remove("hidden");
+      // ¡Corregido! Ocultamos de forma implacable el login usando CSS inline para evitar conflictos con clases fixed
+      document.getElementById("auth-screen").style.display = "none";
+      document.getElementById("workout-view-container").style.display = "flex";
 
       checkRachaLoss();
       updateUserUI();
@@ -1059,6 +1234,7 @@
     }
 
     // Renderizado del calendario de días de la semana
+    // STREAMING_CHUNK: Diseñando el panel del calendario semanal con bloqueo de entrenamientos en días incorrectos
     function renderWeekCalendar() {
       const grid = document.getElementById("week-calendar-grid");
       grid.innerHTML = "";
@@ -1100,6 +1276,7 @@
     }
 
     // Renderizar la rutina correspondiente según el día de hoy (en vueltas escalables)
+    // STREAMING_CHUNK: Inicializando la rutina de ejercicios y escalando repeticiones según el nivel alcanzado
     function renderCurrentRoutine() {
       const container = document.getElementById("exercises-list-container");
       container.innerHTML = "";
@@ -1464,6 +1641,7 @@
     // ═══════════════════════════════════════════════════════
     //  EVENTOS Y GESTIÓN DE RECOMPENSAS / NIVELES
     // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Validando la finalización de la sesión completa de ejercicios y distribuyendo monedas y XP
     function finishRoutineAndTriggerLevelUp() {
       const todayIndex = new Date().getDay();
       const currentRoutine = WEEKLY_ROUTINES[todayIndex];
@@ -1576,7 +1754,7 @@
       let earnedCoins = 50 * (currentRarityIndex + 1);
       let prizeTitle = `+${earnedCoins} Monedas`;
       let prizeIconClass = "fa-coins text-amber-500";
-      let prizeDesc = "Sumadas de manera directa a tu cuenta de usuario.";
+      let prizeDesc = "Se han sumado a tu cuenta de usuario.";
 
       if (currentRarityIndex >= 2 && Math.random() > 0.5) {
         const gymItems = [
@@ -1624,17 +1802,18 @@
     // ═══════════════════════════════════════════════════════
     //  TIENDA FITNESS PREMIUM COMPLETA
     // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Creando el módulo de visualización de la tienda fitness con control inteligente de precios
     function openFullpageStore() {
       playSynthSound('click');
-      document.getElementById("workout-view-container").classList.add("hidden");
-      document.getElementById("store-fullpage-view").classList.remove("hidden");
+      document.getElementById("workout-view-container").style.display = "none";
+      document.getElementById("store-fullpage-view").style.display = "flex";
       renderFullpageStore();
     }
 
     function closeFullpageStore() {
       playSynthSound('click');
-      document.getElementById("store-fullpage-view").classList.add("hidden");
-      document.getElementById("workout-view-container").classList.remove("hidden");
+      document.getElementById("store-fullpage-view").style.display = "none";
+      document.getElementById("workout-view-container").style.display = "flex";
     }
 
     function renderFullpageStore() {
@@ -1812,6 +1991,7 @@
     // ═══════════════════════════════════════════════════════
     //  GESTIÓN DEL PERFIL DE USUARIO
     // ═══════════════════════════════════════════════════════
+    // STREAMING_CHUNK: Creando el control para actualizar el nombre de usuario y cambiar los estilos de color de avatar
     function toggleProfileModal() {
       playSynthSound('click');
       const modal = document.getElementById("profile-modal");
@@ -1881,7 +2061,7 @@
     function showToast(msg, type = "info") {
       const container = document.getElementById("toast-container");
       const toast = document.createElement("div");
-      toast.className = "p-4 rounded-2xl shadow-lg border text-sm font-black flex items-center gap-3 transition-all duration-300 transform translate-x-12 opacity-0 bg-white pointer-events-auto max-w-sm";
+      toast.className = "p-4 rounded-2xl shadow-lg border text-sm font-black flex items-center gap-3 transition-all duration-300 transform translate-x-12 opacity-0 bg-white pointer-events-auto max-w-sm z-[300]";
 
       let icon = '<i class="fa-solid fa-circle-info text-blue-500"></i>';
       if (type === "success") {
@@ -1908,6 +2088,7 @@
     }
 
     // Inicializador al cargar la página
+    // STREAMING_CHUNK: Validando la existencia de claves Passkey registradas en la carga inicial
     window.onload = function() {
       const session = localStorage.getItem(SESSION_KEY);
       if (session) {
@@ -1915,11 +2096,11 @@
           const { username } = JSON.parse(session);
           loadUserApp(username);
         } catch (e) {
-          document.getElementById("auth-screen").classList.remove("hidden");
+          document.getElementById("auth-screen").style.display = "flex";
           renderAccessInterface();
         }
       } else {
-        document.getElementById("auth-screen").classList.remove("hidden");
+        document.getElementById("auth-screen").style.display = "flex";
         renderAccessInterface();
       }
     };
@@ -1927,7 +2108,3 @@
 
 </body>
 </html>
-```
-eof
-
-He simplificado todo el sistema de acceso al máximo. Se acabaron los formularios complejos, las contraseñas, los correos y las simulaciones biométricas confusas. Ahora entrar y registrarse es un proceso ultraveloz y frictionless que recordará al usuario de inmediato con un diseño súper limpio. ¡Ya puedes probar tu plan de calistenia!
